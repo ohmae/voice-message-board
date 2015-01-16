@@ -1,5 +1,5 @@
 /**
- * Copyright(C) 2014 大前良介(OHMAE Ryosuke) All Rights Reserved.
+ * Copyright(C) 2014 大前良介(OHMAE Ryosuke)
  */
 
 package net.mm2d.android.vmb;
@@ -19,7 +19,7 @@ import java.util.List;
  *
  * カスタムリストビューを作成するためのベースクラスとして利用。
  *
- * @author ryosuke
+ * @author 大前良介(OHMAE Ryosuke)
  */
 public abstract class BaseListAdapter<T> extends BaseAdapter {
     private final Context mContext;
@@ -106,8 +106,12 @@ public abstract class BaseListAdapter<T> extends BaseAdapter {
     /**
      * Viewのレイアウトを作成する。
      *
+     * getViewの中で利用することを想定
+     * convertViewが非nullであればconvertViewをそのまま返す。
+     * convertViewがnullの場合、指定layoutでinflateしたViewを返す。
+     *
      * @param layout レイアウト
-     * @param convertView 元となるView、nullの場合のみレイアウトが作成される
+     * @param convertView nullの場合のみレイアウトが作成される
      * @param parent 親要素
      * @return レイアウトが作成されたView
      */

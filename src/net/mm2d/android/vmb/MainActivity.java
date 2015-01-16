@@ -1,5 +1,5 @@
 /**
- * Copyright(C) 2014 大前良介(OHMAE Ryosuke) All Rights Reserved.
+ * Copyright(C) 2014 大前良介(OHMAE Ryosuke)
  */
 
 package net.mm2d.android.vmb;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 /**
  * 起動後から表示されるActivity。
  *
- * @author ryosuke
+ * @author 大前良介(OHMAE Ryosuke)
  */
 public class MainActivity extends Activity implements SelectThemeDialog.SelectThemeListener {
     private static final String TAG_FONT_SIZE = "TAG_FONT_SIZE";
@@ -56,6 +56,7 @@ public class MainActivity extends Activity implements SelectThemeDialog.SelectTh
             }
         });
         mRoot.setOnTouchListener(new View.OnTouchListener() {
+            // GestureDetectorからperformClickをコール
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -175,9 +176,8 @@ public class MainActivity extends Activity implements SelectThemeDialog.SelectTh
      * テーマ設定のダイアログを起動。
      */
     private void showThemeDialog() {
-        SelectThemeDialog
-                .newInstance(getString(R.string.theme_select), mThemes)
-                .show(getFragmentManager(), "");
+        SelectThemeDialog.newInstance(getString(R.string.theme_select),
+                mThemes).show(getFragmentManager(), "");
     }
 
     /**
@@ -204,6 +204,9 @@ public class MainActivity extends Activity implements SelectThemeDialog.SelectTh
         edit.commit();
     }
 
+    /**
+     * タップでperformClick
+     */
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {

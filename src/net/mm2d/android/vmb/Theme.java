@@ -1,5 +1,5 @@
 /**
- * Copyright(C) 2014 大前良介(OHMAE Ryosuke) All Rights Reserved.
+ * Copyright(C) 2014 大前良介(OHMAE Ryosuke)
  */
 
 package net.mm2d.android.vmb;
@@ -12,7 +12,7 @@ import android.os.Parcelable;
  *
  * Parcelableを実装し、引数として渡せるようにしている。
  *
- * @author ryosuke
+ * @author 大前良介(OHMAE Ryosuke)
  */
 public class Theme implements Parcelable {
     private final String mName;
