@@ -15,7 +15,5 @@
     <string name="theme_black_white">Black background / White text</string>
     <string name="theme_black_yellow">Black background / Yellow text</string>
     <string name="theme_black_green">Black background / Green text</string>
-    <string name="title_activity_amain">AMainActivity</string>
-    <string name="hello_world">Hello world!</string>
 
 </resources>
