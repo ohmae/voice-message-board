@@ -25,6 +25,8 @@ import android.preference.PreferenceManager;
 import java.util.List;
 
 /**
+ * 設定画面。
+ *
  * @author 大前良介(OHMAE Ryosuke)
  */
 public class SettingsActivity extends PreferenceActivity {
@@ -71,6 +73,12 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
+    /**
+     * 画面サイズからXLARGE以上かを判定
+     * 
+     * @param context コンテキスト
+     * @return XLARGE以上ならtrue
+     */
     private static boolean isXLargeTablet(Context context) {
         final Configuration config = context.getResources().getConfiguration();
         final int layout = config.screenLayout;
@@ -78,11 +86,23 @@ public class SettingsActivity extends PreferenceActivity {
         return size >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
+    /**
+     * マルチペイン判定
+     * 
+     * @param context コンテキスト
+     * @return マルチペインにしない場合true
+     */
     private static boolean isSimplePreferences(Context context) {
         return ALWAYS_SIMPLE_PREFS
                 || !isXLargeTablet(context);
     }
 
+    /**
+     * バージョン情報を取得。
+     *
+     * @param context コンテキスト
+     * @return バージョン文字列
+     */
     private static String getVersionName(Context context) {
         final PackageManager pm = context.getPackageManager();
         String versionName = "";
@@ -95,6 +115,9 @@ public class SettingsActivity extends PreferenceActivity {
         return versionName;
     }
 
+    /**
+     * 設定変更を検出してSummaryに反映するリスナー。
+     */
     private static OnPreferenceChangeListener sSummaryListener = new OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
@@ -110,6 +133,9 @@ public class SettingsActivity extends PreferenceActivity {
         }
     };
 
+    /**
+     * Playストアへ飛ばすOnPreferenceClickListener。
+     */
     private static OnPreferenceClickListener sPlaystoreClickListener = new OnPreferenceClickListener() {
         @Override
         public boolean onPreferenceClick(Preference preference) {
@@ -121,6 +147,11 @@ public class SettingsActivity extends PreferenceActivity {
         }
     };
 
+    /**
+     * 設定結果を反映させるListenerとの接続。
+     *
+     * @param preference Preference
+     */
     private static void bindPreference(Preference preference) {
         preference.setOnPreferenceChangeListener(sSummaryListener);
         final Context context = preference.getContext();
@@ -129,6 +160,9 @@ public class SettingsActivity extends PreferenceActivity {
         sSummaryListener.onPreferenceChange(preference, value);
     }
 
+    /**
+     * 一般設定のFragment。
+     */
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +172,9 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
+    /**
+     * 情報表示のFragment。
+     */
     public static class InformationPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {

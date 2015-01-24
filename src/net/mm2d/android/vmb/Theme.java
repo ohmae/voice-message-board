@@ -77,6 +77,9 @@ public class Theme implements Parcelable {
         mForeground = source.readInt();
     }
 
+    /**
+     * Parcelable用CREATOR
+     */
     public static final Parcelable.Creator<Theme> CREATOR = new Parcelable.Creator<Theme>() {
         @Override
         public Theme createFromParcel(Parcel source) {

@@ -18,6 +18,14 @@
         android:title="@string/pref_title_candidate_list" />
 
     <SwitchPreference
+        android:defaultValue="false"
+        android:key="LIST_EDIT"
+        android:dependency="CANDIDATE_LIST"
+        android:summaryOff="@string/pref_description_list_edit_off"
+        android:summaryOn="@string/pref_description_list_edit_on"
+        android:title="@string/pref_title_list_edit" />
+
+    <SwitchPreference
         android:defaultValue="true"
         android:key="LONG_TAP_EDIT"
         android:summaryOff="@string/pref_desctiption_long_tap_edit_off"

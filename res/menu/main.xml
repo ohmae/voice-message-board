@@ -11,10 +11,15 @@
         android:title="@string/action_settings"/>
     <item
         android:id="@+id/action_theme"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@android:drawable/ic_menu_gallery"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/action_theme">
-    </item>
+        android:title="@string/action_theme"/>
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_edit"/>
 
 </menu>

@@ -49,6 +49,15 @@ public abstract class BaseListAdapter<T> extends BaseAdapter {
     }
 
     /**
+     * コンテキストを返す。
+     *
+     * @return コンテキスト
+     */
+    protected Context getContext() {
+        return mContext;
+    }
+
+    /**
      * 要素を追加。
      *
      * @param item 要素

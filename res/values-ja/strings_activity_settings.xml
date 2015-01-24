@@ -7,6 +7,9 @@
     <string name="pref_title_candidate_list">候補リストの表示</string>
     <string name="pref_description_candidate_list_on">音声認識に複数の候補がある場合、選択ダイアログを表示します</string>
     <string name="pref_description_candidate_list_off">選択ダイアログを表示しません</string>
+    <string name="pref_title_list_edit">候補リスト選択後編集</string>
+    <string name="pref_description_list_edit_on">候補リスト選択後、編集ダイアログを立ち上げます</string>
+    <string name="pref_description_list_edit_off">候補リスト選択後、画面に表示します</string>
     <string name="pref_title_long_tap_edit">ロングタップで編集</string>
     <string name="pref_desctiption_long_tap_edit_on">ロングタップした時に文字列編集ダイアログを表示します</string>
     <string name="pref_desctiption_long_tap_edit_off">文字列編集ダイアログを表示しません</string>

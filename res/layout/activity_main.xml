@@ -1,16 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment"
+    android:name="net.mm2d.android.vmb.MainFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/initial_string"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/font_size" />
-
-</FrameLayout>
+    android:layout_height="match_parent" />

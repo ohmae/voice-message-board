@@ -40,10 +40,6 @@ public class SelectThemeDialog extends DialogFragment {
     }
 
     /**
-     * タイトルのkey
-     */
-    private static final String KEY_TITLE = "KEY_TITLE";
-    /**
      * テーマリストのkey
      */
     private static final String KEY_THEME_LIST = "KEY_THEME_LIST";
@@ -55,13 +51,11 @@ public class SelectThemeDialog extends DialogFragment {
      * コンストラクタではなく
      * このstaticメソッドを利用する。
      *
-     * @param title タイトル
      * @param themes テーマリスト
      * @return 新規インスタンス
      */
-    public static SelectThemeDialog newInstance(String title, ArrayList<Theme> themes) {
+    public static SelectThemeDialog newInstance(ArrayList<Theme> themes) {
         final Bundle args = new Bundle();
-        args.putString(KEY_TITLE, title);
         args.putParcelableArrayList(KEY_THEME_LIST, themes);
         final SelectThemeDialog instance = new SelectThemeDialog();
         instance.setArguments(args);
@@ -81,10 +75,9 @@ public class SelectThemeDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
-        final String title = args.getString(KEY_TITLE);
         final ArrayList<Theme> themeList = args.getParcelableArrayList(KEY_THEME_LIST);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(title);
+        builder.setTitle(getActivity().getString(R.string.theme_select));
         final ListAdapter adapter = new ThemeListAdapter(getActivity(), themeList);
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
