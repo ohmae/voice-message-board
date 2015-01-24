@@ -31,8 +31,6 @@ import java.util.ArrayList;
 public class MainActivity extends Activity implements SelectThemeDialog.SelectThemeListener {
     private static final String TAG_FONT_SIZE = "TAG_FONT_SIZE";
     private static final String TAG_TEXT = "TAG_TEXT";
-    private static final String KEY_BACKGROUND = "KEY_BACKGROUND";
-    private static final String KEY_FOREGROUND = "KEY_FOREGROUND";
     private static final int REQUEST_CODE = 1;
     private float mFontSizeMin;
     private float mFontSizeMax;
@@ -86,8 +84,8 @@ public class MainActivity extends Activity implements SelectThemeDialog.SelectTh
 
     private void restoreTheme() {
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        final int bg = pref.getInt(KEY_BACKGROUND, Color.WHITE);
-        final int fg = pref.getInt(KEY_FOREGROUND, Color.BLACK);
+        final int bg = pref.getInt(Settings.KEY_BACKGROUND.name(), Color.WHITE);
+        final int fg = pref.getInt(Settings.KEY_FOREGROUND.name(), Color.BLACK);
         setTheme(bg, fg);
     }
 
@@ -166,6 +164,9 @@ public class MainActivity extends Activity implements SelectThemeDialog.SelectTh
         final int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.action_theme:
                 showThemeDialog();
                 break;
         }
@@ -199,8 +200,8 @@ public class MainActivity extends Activity implements SelectThemeDialog.SelectTh
         // 設定を保存する。
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         final SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(KEY_BACKGROUND, theme.getBackground());
-        edit.putInt(KEY_FOREGROUND, theme.getForeground());
+        edit.putInt(Settings.KEY_BACKGROUND.name(), theme.getBackground());
+        edit.putInt(Settings.KEY_FOREGROUND.name(), theme.getForeground());
         edit.commit();
     }
 
