@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
@@ -38,6 +39,7 @@ public class MainFragment extends Fragment {
     private float mFontSize;
     private View mRoot;
     private TextView mText;
+    private GridDrawable mGridDrawable;
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleDetector;
 
@@ -69,6 +71,7 @@ public class MainFragment extends Fragment {
                 return true;
             }
         });
+        mGridDrawable = new GridDrawable(getActivity());
         mScaleDetector = new ScaleGestureDetector(getActivity(), new ScaleListener());
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
         mFontSizeMin = getResources().getDimension(R.dimen.font_size_min);
@@ -186,8 +189,16 @@ public class MainFragment extends Fragment {
      * @param background 背景色
      * @param foreground 文字色
      */
+    @SuppressWarnings("deprecation")
+    @SuppressLint("NewApi")
     private void setTheme(int background, int foreground) {
-        mRoot.setBackgroundColor(background);
+        mGridDrawable.setColor(background);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mRoot.setBackground(mGridDrawable); // API Lv.16
+        } else {
+            mRoot.setBackgroundDrawable(mGridDrawable);
+        }
+        mRoot.invalidate();
         mText.setTextColor(foreground);
     }
 
