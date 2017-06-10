@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_candidate_list">Candidate list</string>
+    <string name="pref_description_candidate_list_on">If there is more than one candidate in speech recognition, display a selection dialog.</string>
+    <string name="pref_description_candidate_list_off">Don\'t display a selection dialog.</string>
+    <string name="pref_title_list_edit">Edit on select</string>
+    <string name="pref_description_list_edit_on">After the candidate list selection, launch the edit dialog.</string>
+    <string name="pref_description_list_edit_off">After the candidate list selection, display on the screen.</string>
+    <string name="pref_title_long_tap_edit">Edit on long tap</string>
+    <string name="pref_description_long_tap_edit_on">Displays a string edit dialog when you long tap.</string>
+    <string name="pref_description_long_tap_edit_off">Don\'t display a string edit dialog.</string>
+    <string name="pref_title_screen_orientation">Screen orientation</string>
+    <string-array name="pref_screen_orientation_titles">
+        <item>Depend on system settings</item>
+        <item>Fixed to Landscape</item>
+        <item>Fixed to Portrait</item>
+    </string-array>
+    <string-array name="pref_screen_orientation_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="pref_header_information">Information</string>
+    <string name="pref_title_play_store">Play Store</string>
+    <string name="pref_description_play_store">Go to Play Store</string>
+    <string name="pref_title_copyright">Copyright</string>
+    <string name="pref_description_copyright">Copyright© 大前良介 (OHMAE Ryosuke)</string>
+    <string name="pref_title_version_number">Version</string>
+</resources>
