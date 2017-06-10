@@ -1,4 +1,4 @@
-# Voice Mssage Board
+# Voice Message Board
 
 ## Install
 [Google Play](https://play.google.com/store/apps/details?id=net.mm2d.android.vmb)
