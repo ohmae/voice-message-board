@@ -14,7 +14,6 @@ import android.preference.PreferenceActivity;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
@@ -22,8 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A {@link PreferenceActivity} which implements and proxies the necessary calls
@@ -33,8 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     private AppCompatDelegate mDelegate;
-    private AtomicBoolean mFinishAfterTransitionLatch = new AtomicBoolean();
-    private AtomicBoolean mFinishLatch = new AtomicBoolean();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,23 +131,6 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                 finish();
             }
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void finishAfterTransition() {
-        if (mFinishAfterTransitionLatch.getAndSet(true)) {
-            return;
-        }
-        super.finishAfterTransition();
-    }
-
-    @Override
-    public void finish() {
-        if (mFinishLatch.getAndSet(true)) {
-            return;
-        }
-        super.finish();
     }
 
     @Override

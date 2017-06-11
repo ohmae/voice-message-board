@@ -230,8 +230,8 @@ public class MainFragment extends Fragment {
      * 値が最小値よりも小さければ最小値、最大値より大きければ最大値にして返す。
      *
      * @param value 値
-     * @param min 最小値
-     * @param max 最大値
+     * @param min   最小値
+     * @param max   最大値
      * @return 丸められた値
      */
     private float clamp(float value, float min, float max) {

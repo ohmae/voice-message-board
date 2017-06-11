@@ -25,7 +25,7 @@ public class Theme implements Parcelable {
     /**
      * インスタンス作成。
      *
-     * @param name 名前
+     * @param name            名前
      * @param backgroundColor 背景色
      * @param foregroundColor 文字色
      */

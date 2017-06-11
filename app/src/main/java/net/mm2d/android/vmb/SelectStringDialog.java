@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -74,6 +75,7 @@ public class SelectStringDialog extends DialogFragment {
         }
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
@@ -90,10 +92,6 @@ public class SelectStringDialog extends DialogFragment {
     }
 
     private static class StringListAdapter extends BaseListAdapter<String> {
-        public StringListAdapter(Context context) {
-            super(context);
-        }
-
         public StringListAdapter(Context context, Collection<? extends String> collection) {
             super(context, collection);
         }

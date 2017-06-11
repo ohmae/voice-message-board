@@ -76,7 +76,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     /**
      * 画面サイズからXLARGE以上かを判定
-     * 
+     *
      * @param context コンテキスト
      * @return XLARGE以上ならtrue
      */
@@ -89,7 +89,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     /**
      * マルチペイン判定
-     * 
+     *
      * @param context コンテキスト
      * @return マルチペインにしない場合true
      */

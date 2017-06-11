@@ -52,7 +52,7 @@ public class GridDrawable extends Drawable {
      * 描画色を設定する
      *
      * @param background 背景
-     * @param grid グリッド
+     * @param grid       グリッド
      */
     public void setColor(int background, int grid) {
         mBackgroundColor = background;

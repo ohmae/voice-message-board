@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -74,6 +75,7 @@ public class SelectThemeDialog extends DialogFragment {
         }
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
@@ -90,11 +92,7 @@ public class SelectThemeDialog extends DialogFragment {
     }
 
     private static class ThemeListAdapter extends BaseListAdapter<Theme> {
-        public ThemeListAdapter(Context context) {
-            super(context);
-        }
-
-        public ThemeListAdapter(Context context, Collection<? extends Theme> collection) {
+        ThemeListAdapter(Context context, Collection<? extends Theme> collection) {
             super(context, collection);
         }
 
@@ -110,5 +108,4 @@ public class SelectThemeDialog extends DialogFragment {
             return view;
         }
     }
-
 }

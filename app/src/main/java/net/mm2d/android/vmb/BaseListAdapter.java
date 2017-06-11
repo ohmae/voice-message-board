@@ -24,8 +24,7 @@ import java.util.List;
  *
  * @author 大前良介(OHMAE Ryosuke)
  */
-public abstract class BaseListAdapter<T> extends BaseAdapter {
-    private final Context mContext;
+abstract class BaseListAdapter<T> extends BaseAdapter {
     private final LayoutInflater mInflater;
     private final List<T> mList;
 
@@ -34,8 +33,7 @@ public abstract class BaseListAdapter<T> extends BaseAdapter {
      *
      * @param context コンテキスト
      */
-    public BaseListAdapter(Context context) {
-        mContext = context;
+    BaseListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         mList = new ArrayList<>();
     }
@@ -43,76 +41,12 @@ public abstract class BaseListAdapter<T> extends BaseAdapter {
     /**
      * インスタンス作成。
      *
-     * @param context コンテキスト
+     * @param context    コンテキスト
      * @param collection 要素
      */
-    public BaseListAdapter(Context context, Collection<? extends T> collection) {
+    BaseListAdapter(Context context, Collection<? extends T> collection) {
         this(context);
         mList.addAll(collection);
-    }
-
-    /**
-     * コンテキストを返す。
-     *
-     * @return コンテキスト
-     */
-    protected Context getContext() {
-        return mContext;
-    }
-
-    /**
-     * 要素を追加。
-     *
-     * @param item 要素
-     */
-    public void add(T item) {
-        mList.add(item);
-    }
-
-    /**
-     * 位置を指定して要素を追加。
-     *
-     * @param location 位置
-     * @param item 要素
-     */
-    public void add(int location, T item) {
-        mList.add(location, item);
-    }
-
-    /**
-     * 要素をまとめて追加。
-     *
-     * @param collection 要素のコレクション
-     */
-    public void addAll(Collection<? extends T> collection) {
-        mList.addAll(collection);
-    }
-
-    /**
-     * 指定場所の要素を削除。
-     *
-     * @param location 場所
-     * @return 削除できた場合その要素
-     */
-    public T remove(int location) {
-        return mList.remove(location);
-    }
-
-    /**
-     * 要素を削除。
-     *
-     * @param object 削除する要素
-     * @return 削除できた場合true、指定要素がなかった場合false
-     */
-    public boolean remove(T object) {
-        return mList.remove(object);
-    }
-
-    /**
-     * 要素をクリア。
-     */
-    public void clear() {
-        mList.clear();
     }
 
     /**
@@ -122,9 +56,9 @@ public abstract class BaseListAdapter<T> extends BaseAdapter {
      * convertViewが非nullであればconvertViewをそのまま返す。
      * convertViewがnullの場合、指定layoutでinflateしたViewを返す。
      *
-     * @param layout レイアウト
+     * @param layout      レイアウト
      * @param convertView nullの場合のみレイアウトが作成される
-     * @param parent 親要素
+     * @param parent      親要素
      * @return レイアウトが作成されたView
      */
     protected View inflateView(int layout, View convertView, ViewGroup parent) {
