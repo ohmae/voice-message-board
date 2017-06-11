@@ -24,8 +24,8 @@
     </string-array>
     <string name="pref_header_information">Information</string>
     <string name="pref_title_play_store">Play Store</string>
-    <string name="pref_description_play_store">Go to Play Store</string>
+    <string name="pref_description_play_store">I am waiting for evaluation, comments and requests</string>
     <string name="pref_title_copyright">Copyright</string>
-    <string name="pref_description_copyright">Copyright© 大前良介 (OHMAE Ryosuke)</string>
+    <string name="pref_description_copyright">© 大前良介 (OHMAE Ryosuke)</string>
     <string name="pref_title_version_number">Version</string>
 </resources>
