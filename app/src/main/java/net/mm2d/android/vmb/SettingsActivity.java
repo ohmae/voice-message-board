@@ -54,6 +54,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         bindPreference(findPreference(Settings.SCREEN_ORIENTATION.name()));
         findPreference(Settings.PLAY_STORE.name())
                 .setOnPreferenceClickListener(sPlayStoreClickListener);
+        findPreference(Settings.PRIVACY_POLICY.name())
+                .setOnPreferenceClickListener(sPrivacyPolicyClickListener);
         findPreference(Settings.VERSION_NUMBER.name())
                 .setSummary(getVersionName(this));
     }
@@ -147,6 +149,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     };
 
     /**
+     * プライバシーポリシーへ飛ばすOnPreferenceClickListener。
+     */
+    private static OnPreferenceClickListener sPrivacyPolicyClickListener = preference -> {
+        final Uri uri = Uri.parse("https://github.com/ohmae/VoiceMessageBoard/blob/develop/PRIVACY-POLICY.md");
+        final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        final Context context = preference.getContext();
+        try {
+            context.startActivity(intent);
+        } catch (final ActivityNotFoundException ignored) {
+        }
+        return true;
+    };
+
+    /**
      * 設定結果を反映させるListenerとの接続。
      *
      * @param preference Preference
@@ -181,6 +197,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_information);
             findPreference(Settings.PLAY_STORE.name())
                     .setOnPreferenceClickListener(sPlayStoreClickListener);
+            findPreference(Settings.PRIVACY_POLICY.name())
+                    .setOnPreferenceClickListener(sPrivacyPolicyClickListener);
             findPreference(Settings.VERSION_NUMBER.name())
                     .setSummary(getVersionName(getActivity()));
         }

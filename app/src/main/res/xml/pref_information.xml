@@ -6,6 +6,11 @@
         android:title="@string/pref_title_play_store"
         />
     <Preference
+        android:key="PRIVACY_POLICY"
+        android:summary="@string/pref_description_privacy_policy"
+        android:title="@string/pref_title_privacy_policy"
+        />
+    <Preference
         android:key="COPYRIGHT"
         android:summary="@string/pref_description_copyright"
         android:title="@string/pref_title_copyright"
