@@ -7,14 +7,14 @@
 
 package net.mm2d.android.vmb;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author 大前良介(OHMAE Ryosuke)
  */
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
         implements SelectThemeDialog.SelectThemeListener, SelectStringDialog.SelectStringListener,
         EditStringDialog.ConfirmStringListener {
     private ArrayList<Theme> mThemes;
@@ -52,6 +52,7 @@ public class MainActivity extends Activity
                 e.printStackTrace();
             }
         }
+        //noinspection WrongConstant
         setRequestedOrientation(orientation);
     }
 
@@ -102,7 +103,7 @@ public class MainActivity extends Activity
      * テーマ設定のダイアログを起動。
      */
     private void showThemeDialog() {
-        SelectThemeDialog.newInstance(mThemes).show(getFragmentManager(), "");
+        SelectThemeDialog.newInstance(mThemes).show(getSupportFragmentManager(), "");
     }
 
     /**
@@ -144,7 +145,7 @@ public class MainActivity extends Activity
      * @return MainFragment
      */
     private MainFragment getMainFragment() {
-        final Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment);
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (fragment instanceof MainFragment) {
             return (MainFragment) fragment;
         }

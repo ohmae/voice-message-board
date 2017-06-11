@@ -7,12 +7,12 @@
 
 package net.mm2d.android.vmb;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog.Builder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +73,7 @@ public class EditStringDialog extends DialogFragment {
         }
     }
 
-    @SuppressLint("InflateParams")
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
@@ -92,11 +92,11 @@ public class EditStringDialog extends DialogFragment {
             }
             return false;
         });
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getActivity().getString(R.string.string_edit));
-        builder.setView(mEditText);
-        builder.setPositiveButton(R.string.ok, (dialog, which) -> inputText());
-        return builder.create();
+        return new Builder(getActivity())
+                .setTitle(getActivity().getString(R.string.string_edit))
+                .setView(mEditText)
+                .setPositiveButton(R.string.ok, (dialog, which) -> inputText())
+                .create();
     }
 
     private void inputText() {

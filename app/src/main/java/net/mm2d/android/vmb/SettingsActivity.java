@@ -20,7 +20,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -32,7 +31,7 @@ import java.util.List;
  *
  * @author 大前良介(OHMAE Ryosuke)
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatPreferenceActivity {
     private static final boolean ALWAYS_SIMPLE_PREFS = false;
 
     @Override
@@ -52,11 +51,10 @@ public class SettingsActivity extends PreferenceActivity {
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_information);
         bindPreference(findPreference(Settings.SCREEN_ORIENTATION.name()));
-        Preference p;
-        p = findPreference(Settings.PLAY_STORE.name());
-        p.setOnPreferenceClickListener(sPlayStoreClickListener);
-        p = findPreference(Settings.VERSION_NUMBER.name());
-        p.setSummary(getVersionName(this));
+        findPreference(Settings.PLAY_STORE.name())
+                .setOnPreferenceClickListener(sPlayStoreClickListener);
+        findPreference(Settings.VERSION_NUMBER.name())
+                .setSummary(getVersionName(this));
     }
 
     @Override
@@ -86,7 +84,7 @@ public class SettingsActivity extends PreferenceActivity {
         final Configuration config = context.getResources().getConfiguration();
         final int layout = config.screenLayout;
         final int size = layout & Configuration.SCREENLAYOUT_SIZE_MASK;
-        return size >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+        return size >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     /**
@@ -137,9 +135,9 @@ public class SettingsActivity extends PreferenceActivity {
      * Playストアへ飛ばすOnPreferenceClickListener。
      */
     private static OnPreferenceClickListener sPlayStoreClickListener = preference -> {
-        final Context context = preference.getContext();
-        final Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
+        final Uri uri = Uri.parse("market://details?id=net.mm2d.android.vmb");
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        final Context context = preference.getContext();
         context.startActivity(intent);
         return true;
     };
@@ -177,11 +175,10 @@ public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_information);
-            Preference p;
-            p = findPreference(Settings.PLAY_STORE.name());
-            p.setOnPreferenceClickListener(sPlayStoreClickListener);
-            p = findPreference(Settings.VERSION_NUMBER.name());
-            p.setSummary(getVersionName(getActivity()));
+            findPreference(Settings.PLAY_STORE.name())
+                    .setOnPreferenceClickListener(sPlayStoreClickListener);
+            findPreference(Settings.VERSION_NUMBER.name())
+                    .setSummary(getVersionName(getActivity()));
         }
     }
 }
