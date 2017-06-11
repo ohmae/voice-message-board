@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="layout_margin">7dp</dimen>
+    <dimen name="font_size_min">10dp</dimen>
+    <dimen name="font_size_max">500dp</dimen>
+    <dimen name="font_size">50dp</dimen>
+    <dimen name="theme_font_size">22sp</dimen>
+    <dimen name="edit_font_size">30sp</dimen>
+    <dimen name="list_font_size">20sp</dimen>
+</resources>

@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "936479634217",
+    "firebase_url": "https://voicemessageboard.firebaseio.com",
+    "project_id": "voicemessageboard",
+    "storage_bucket": "voicemessageboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936479634217:android:ec1a3310a6140cf1",
+        "android_client_info": {
+          "package_name": "net.mm2d.android.vmb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936479634217-qmei0mga75qkej023iqjhp17q1d6mlse.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUT6kNicb119PVQkJ3oTWRpodVxPI_hxA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936479634217:android:f1f107f968560c56",
+        "android_client_info": {
+          "package_name": "net.mm2d.android.vmb.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936479634217-qmei0mga75qkej023iqjhp17q1d6mlse.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUT6kNicb119PVQkJ3oTWRpodVxPI_hxA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
