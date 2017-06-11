@@ -12,11 +12,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
+import android.support.annotation.ColorInt;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -42,6 +44,7 @@ public class MainFragment extends Fragment {
     private float mFontSize;
     private View mRoot;
     private TextView mText;
+    private Toolbar mToolbar;
     private GridDrawable mGridDrawable;
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleDetector;
@@ -49,6 +52,10 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
+        view.findViewById(R.id.fab).setOnClickListener(v -> {
+            startEdit();
+        });
+        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         mText = (TextView) view.findViewById(R.id.textView);
         mRoot = view.findViewById(R.id.root);
         mRoot.setOnClickListener(v -> startVoiceInput());
@@ -183,13 +190,25 @@ public class MainFragment extends Fragment {
     @SuppressLint("NewApi")
     private void setTheme(int background, int foreground) {
         mGridDrawable.setColor(background);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mRoot.setBackground(mGridDrawable); // API Lv.16
-        } else {
-            mRoot.setBackgroundDrawable(mGridDrawable);
-        }
+        ViewCompat.setBackground(mRoot, mGridDrawable);
         mRoot.invalidate();
         mText.setTextColor(foreground);
+        mToolbar.getOverflowIcon().setTint(getIconColor(background));
+    }
+
+    @ColorInt
+    private int getIconColor(@ColorInt int background) {
+        if (getBrightness(background) < 128) {
+            return Color.WHITE;
+        }
+        return Color.BLACK;
+    }
+
+    private int getBrightness(@ColorInt int color) {
+        return getBrightness(Color.red(color), Color.green(color), Color.blue(color));
+    }
+    private int getBrightness(int r, int g, int b) {
+        return clamp((int) (r * 0.299 + g * 0.587 + b * 0.114 + 0.5f), 0, 255);
     }
 
     /**
@@ -227,20 +246,26 @@ public class MainFragment extends Fragment {
     }
 
     /**
-     * 値が最小値よりも小さければ最小値、最大値より大きければ最大値にして返す。
+     * min以下はmin、max以上はmaxに飽和させる
      *
      * @param value 値
      * @param min   最小値
      * @param max   最大値
-     * @return 丸められた値
+     * @return 飽和させた値
      */
-    private float clamp(float value, float min, float max) {
-        if (value < min) {
-            value = min;
-        } else if (value > max) {
-            value = max;
-        }
-        return value;
+    private static int clamp(int value, int min, int max) {
+        return Math.min(Math.max(value, min), max);
     }
 
+    /**
+     * min以下はmin、max以上はmaxに飽和させる
+     *
+     * @param value 値
+     * @param min   最小値
+     * @param max   最大値
+     * @return 飽和させた値
+     */
+    private static float clamp(float value, float min, float max) {
+        return Math.min(Math.max(value, min), max);
+    }
 }
