@@ -14,4 +14,5 @@
     <string name="theme_black_white">黒地に白文字</string>
     <string name="theme_black_yellow">黒地に黄文字</string>
     <string name="theme_black_green">黒地に緑文字</string>
+    <string name="toast_can_not_use_voice_input">音声入力が起動できません</string>
 </resources>

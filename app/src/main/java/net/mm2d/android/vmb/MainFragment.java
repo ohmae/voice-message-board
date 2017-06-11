@@ -9,6 +9,7 @@ package net.mm2d.android.vmb;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -29,6 +30,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -122,7 +124,11 @@ public class MainFragment extends Fragment {
         final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        startActivityForResult(intent, REQUEST_CODE);
+        try {
+            startActivityForResult(intent, REQUEST_CODE);
+        } catch (final ActivityNotFoundException e) {
+            Toast.makeText(getActivity(), R.string.toast_can_not_use_voice_input, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

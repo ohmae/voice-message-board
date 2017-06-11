@@ -7,6 +7,7 @@
 
 package net.mm2d.android.vmb;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -138,7 +139,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         final Uri uri = Uri.parse("market://details?id=net.mm2d.android.vmb");
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         final Context context = preference.getContext();
-        context.startActivity(intent);
+        try {
+            context.startActivity(intent);
+        } catch (final ActivityNotFoundException ignored) {
+        }
         return true;
     };
 
