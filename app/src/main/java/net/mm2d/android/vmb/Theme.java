@@ -19,20 +19,20 @@ import android.os.Parcelable;
  */
 public class Theme implements Parcelable {
     private final String mName;
-    private final int mBackground;
-    private final int mForeground;
+    private final int mBackgroundColor;
+    private final int mForegroundColor;
 
     /**
      * インスタンス作成。
      *
      * @param name 名前
-     * @param background 背景色
-     * @param foreground 文字色
+     * @param backgroundColor 背景色
+     * @param foregroundColor 文字色
      */
-    public Theme(String name, int background, int foreground) {
+    public Theme(String name, int backgroundColor, int foregroundColor) {
         mName = name;
-        mBackground = background;
-        mForeground = foreground;
+        mBackgroundColor = backgroundColor;
+        mForegroundColor = foregroundColor;
     }
 
     /**
@@ -49,8 +49,8 @@ public class Theme implements Parcelable {
      *
      * @return 背景色
      */
-    public int getBackground() {
-        return mBackground;
+    public int getBackgroundColor() {
+        return mBackgroundColor;
     }
 
     /**
@@ -58,8 +58,8 @@ public class Theme implements Parcelable {
      *
      * @return 文字色
      */
-    public int getForeground() {
-        return mForeground;
+    public int getForegroundColor() {
+        return mForegroundColor;
     }
 
     @Override
@@ -70,14 +70,14 @@ public class Theme implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mName);
-        dest.writeInt(mBackground);
-        dest.writeInt(mForeground);
+        dest.writeInt(mBackgroundColor);
+        dest.writeInt(mForegroundColor);
     }
 
     private Theme(Parcel source) {
         mName = source.readString();
-        mBackground = source.readInt();
-        mForeground = source.readInt();
+        mBackgroundColor = source.readInt();
+        mForegroundColor = source.readInt();
     }
 
     /**

@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity
     public void onSelectTheme(Theme theme) {
         // 設定を保存する。
         getDefaultSharedPreferences().edit()
-                .putInt(Settings.KEY_BACKGROUND.name(), theme.getBackground())
-                .putInt(Settings.KEY_FOREGROUND.name(), theme.getForeground())
+                .putInt(Settings.KEY_BACKGROUND.name(), theme.getBackgroundColor())
+                .putInt(Settings.KEY_FOREGROUND.name(), theme.getForegroundColor())
                 .apply();
         getMainFragment().applyTheme();
     }

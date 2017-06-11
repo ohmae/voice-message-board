@@ -104,8 +104,8 @@ public class SelectThemeDialog extends DialogFragment {
             final TextView sample = (TextView) view.findViewById(R.id.textSample);
             final TextView title = (TextView) view.findViewById(R.id.textTitle);
             final Theme theme = getItem(position);
-            sample.setBackgroundColor(theme.getBackground());
-            sample.setTextColor(theme.getForeground());
+            sample.setBackgroundColor(theme.getBackgroundColor());
+            sample.setTextColor(theme.getForegroundColor());
             title.setText(theme.getName());
             return view;
         }
