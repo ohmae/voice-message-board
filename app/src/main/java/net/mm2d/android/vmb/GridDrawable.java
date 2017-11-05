@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * グリッド模様付き背景を描画するDrawable
@@ -33,7 +34,7 @@ public class GridDrawable extends Drawable {
      *
      * @param context コンテキスト
      */
-    public GridDrawable(Context context) {
+    public GridDrawable(@NonNull final Context context) {
         mPaint = new Paint();
         final float density = context.getResources().getDisplayMetrics().density;
         mGridSize = (int) (GRID_SIZE * density + 0.5f);
@@ -44,7 +45,7 @@ public class GridDrawable extends Drawable {
      *
      * @param size くりっどの大きさ(単位:ピクセル)
      */
-    public void setGridSize(int size) {
+    public void setGridSize(final int size) {
         mGridSize = size;
     }
 
@@ -54,7 +55,9 @@ public class GridDrawable extends Drawable {
      * @param background 背景
      * @param grid       グリッド
      */
-    public void setColor(int background, int grid) {
+    public void setColor(
+            final int background,
+            final int grid) {
         mBackgroundColor = background;
         mGridColor = grid;
         mPaint.setColor(mGridColor);
@@ -67,7 +70,7 @@ public class GridDrawable extends Drawable {
      *
      * @param background 背景
      */
-    public void setColor(int background) {
+    public void setColor(final int background) {
         final float[] hsv = new float[3];
         Color.RGBToHSV(Color.red(background), Color.green(background), Color.blue(background), hsv);
         if (hsv[2] > 0.5f) {
@@ -81,7 +84,7 @@ public class GridDrawable extends Drawable {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas) {
+    public void draw(@NonNull final Canvas canvas) {
         final int width = canvas.getWidth();
         final int height = canvas.getHeight();
         canvas.drawColor(mBackgroundColor);
@@ -94,12 +97,12 @@ public class GridDrawable extends Drawable {
     }
 
     @Override
-    public void setAlpha(int alpha) {
+    public void setAlpha(final int alpha) {
         mPaint.setAlpha(alpha);
     }
 
     @Override
-    public void setColorFilter(ColorFilter cf) {
+    public void setColorFilter(@Nullable final ColorFilter cf) {
         mPaint.setColorFilter(cf);
     }
 

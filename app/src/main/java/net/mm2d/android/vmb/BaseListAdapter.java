@@ -8,6 +8,8 @@
 package net.mm2d.android.vmb;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,7 @@ abstract class BaseListAdapter<T> extends BaseAdapter {
      *
      * @param context コンテキスト
      */
-    BaseListAdapter(Context context) {
+    BaseListAdapter(@NonNull final Context context) {
         mInflater = LayoutInflater.from(context);
         mList = new ArrayList<>();
     }
@@ -44,7 +46,9 @@ abstract class BaseListAdapter<T> extends BaseAdapter {
      * @param context    コンテキスト
      * @param collection 要素
      */
-    BaseListAdapter(Context context, Collection<? extends T> collection) {
+    BaseListAdapter(
+            @NonNull final Context context,
+            @NonNull final Collection<? extends T> collection) {
         this(context);
         mList.addAll(collection);
     }
@@ -61,11 +65,12 @@ abstract class BaseListAdapter<T> extends BaseAdapter {
      * @param parent      親要素
      * @return レイアウトが作成されたView
      */
-    protected View inflateView(int layout, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = mInflater.inflate(layout, parent, false);
-        }
-        return convertView;
+    @NonNull
+    protected View inflateView(
+            final int layout,
+            @Nullable final View convertView,
+            @NonNull final ViewGroup parent) {
+        return convertView != null ? convertView : mInflater.inflate(layout, parent, false);
     }
 
     @Override
@@ -74,12 +79,12 @@ abstract class BaseListAdapter<T> extends BaseAdapter {
     }
 
     @Override
-    public T getItem(int position) {
+    public T getItem(final int position) {
         return mList.get(position);
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         return position;
     }
 }

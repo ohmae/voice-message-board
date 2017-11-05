@@ -9,6 +9,7 @@ package net.mm2d.android.vmb;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * テーマを表現するクラス。
@@ -18,6 +19,7 @@ import android.os.Parcelable;
  * @author 大前良介(OHMAE Ryosuke)
  */
 public class Theme implements Parcelable {
+    @NonNull
     private final String mName;
     private final int mBackgroundColor;
     private final int mForegroundColor;
@@ -29,7 +31,10 @@ public class Theme implements Parcelable {
      * @param backgroundColor 背景色
      * @param foregroundColor 文字色
      */
-    public Theme(String name, int backgroundColor, int foregroundColor) {
+    public Theme(
+            @NonNull final String name,
+            final int backgroundColor,
+            final int foregroundColor) {
         mName = name;
         mBackgroundColor = backgroundColor;
         mForegroundColor = foregroundColor;
@@ -40,6 +45,7 @@ public class Theme implements Parcelable {
      *
      * @return 名前
      */
+    @NonNull
     public String getName() {
         return mName;
     }
@@ -68,13 +74,15 @@ public class Theme implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(
+            @NonNull final Parcel dest,
+            final int flags) {
         dest.writeString(mName);
         dest.writeInt(mBackgroundColor);
         dest.writeInt(mForegroundColor);
     }
 
-    private Theme(Parcel source) {
+    private Theme(@NonNull final Parcel source) {
         mName = source.readString();
         mBackgroundColor = source.readInt();
         mForegroundColor = source.readInt();
@@ -85,12 +93,14 @@ public class Theme implements Parcelable {
      */
     public static final Parcelable.Creator<Theme> CREATOR = new Parcelable.Creator<Theme>() {
         @Override
-        public Theme createFromParcel(Parcel source) {
+        @NonNull
+        public Theme createFromParcel(@NonNull final Parcel source) {
             return new Theme(source);
         }
 
         @Override
-        public Theme[] newArray(int size) {
+        @NonNull
+        public Theme[] newArray(final int size) {
             return new Theme[size];
         }
     };

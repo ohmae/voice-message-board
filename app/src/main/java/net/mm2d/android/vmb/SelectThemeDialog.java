@@ -7,11 +7,11 @@
 
 package net.mm2d.android.vmb;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -39,7 +39,7 @@ public class SelectThemeDialog extends DialogFragment {
          *
          * @param theme 選択されたテーマ
          */
-        void onSelectTheme(Theme theme);
+        void onSelectTheme(@NonNull Theme theme);
     }
 
     /**
@@ -57,7 +57,8 @@ public class SelectThemeDialog extends DialogFragment {
      * @param themes テーマリスト
      * @return 新規インスタンス
      */
-    public static SelectThemeDialog newInstance(ArrayList<Theme> themes) {
+    @NonNull
+    public static SelectThemeDialog newInstance(@NonNull final ArrayList<Theme> themes) {
         final Bundle args = new Bundle();
         args.putParcelableArrayList(KEY_THEME_LIST, themes);
         final SelectThemeDialog instance = new SelectThemeDialog();
@@ -68,16 +69,16 @@ public class SelectThemeDialog extends DialogFragment {
     private SelectThemeListener mEventListener;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof SelectThemeListener) {
-            mEventListener = (SelectThemeListener) activity;
+    public void onAttach(@NonNull final Context context) {
+        super.onAttach(context);
+        if (context instanceof SelectThemeListener) {
+            mEventListener = (SelectThemeListener) context;
         }
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         final Bundle args = getArguments();
         final ArrayList<Theme> themeList = args.getParcelableArrayList(KEY_THEME_LIST);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -92,15 +93,20 @@ public class SelectThemeDialog extends DialogFragment {
     }
 
     private static class ThemeListAdapter extends BaseListAdapter<Theme> {
-        ThemeListAdapter(Context context, Collection<? extends Theme> collection) {
+        ThemeListAdapter(
+                @NonNull final Context context,
+                @NonNull final Collection<? extends Theme> collection) {
             super(context, collection);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(
+                int position,
+                View convertView,
+                ViewGroup parent) {
             final View view = inflateView(R.layout.list_item_theme, convertView, parent);
-            final TextView sample = (TextView) view.findViewById(R.id.textSample);
-            final TextView title = (TextView) view.findViewById(R.id.textTitle);
+            final TextView sample = view.findViewById(R.id.textSample);
+            final TextView title = view.findViewById(R.id.textTitle);
             final Theme theme = getItem(position);
             sample.setBackgroundColor(theme.getBackgroundColor());
             sample.setTextColor(theme.getForegroundColor());

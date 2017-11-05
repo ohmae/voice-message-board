@@ -13,9 +13,10 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setTitle(null);
         initPreferences();
         makeThemes();
@@ -78,13 +79,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull final Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         final int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
@@ -111,12 +112,13 @@ public class MainActivity extends AppCompatActivity
      *
      * @return DefaultSharedPreferences
      */
+    @NonNull
     private SharedPreferences getDefaultSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
-    public void onSelectTheme(Theme theme) {
+    public void onSelectTheme(@NonNull final Theme theme) {
         // 設定を保存する。
         getDefaultSharedPreferences().edit()
                 .putInt(Settings.KEY_BACKGROUND.name(), theme.getBackgroundColor())
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSelectString(String string) {
+    public void onSelectString(@NonNull final String string) {
         getMainFragment().setText(string);
         // 継続して
         if (getDefaultSharedPreferences().getBoolean(Settings.LIST_EDIT.name(), false)) {
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConfirmString(String string) {
+    public void onConfirmString(@NonNull final String string) {
         getMainFragment().setText(string);
     }
 
@@ -144,6 +146,7 @@ public class MainActivity extends AppCompatActivity
      *
      * @return MainFragment
      */
+    @Nullable
     private MainFragment getMainFragment() {
         final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (fragment instanceof MainFragment) {

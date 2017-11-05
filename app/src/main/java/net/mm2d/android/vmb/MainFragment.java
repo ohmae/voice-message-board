@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
@@ -53,14 +55,16 @@ public class MainFragment extends Fragment {
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleDetector;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
-        view.findViewById(R.id.fab).setOnClickListener(v -> {
-            startEdit();
-        });
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mText = (TextView) view.findViewById(R.id.textView);
+        view.findViewById(R.id.fab).setOnClickListener(v -> startEdit());
+        mToolbar = view.findViewById(R.id.toolbar);
+        mText = view.findViewById(R.id.textView);
         mRoot = view.findViewById(R.id.root);
         mRoot.setOnClickListener(v -> startVoiceInput());
         mRoot.setOnLongClickListener(v -> {
@@ -87,7 +91,7 @@ public class MainFragment extends Fragment {
      *
      * @param savedInstanceState State
      */
-    private void onRestoreInstanceState(Bundle savedInstanceState) {
+    private void onRestoreInstanceState(@Nullable final Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             // 画面幅に初期文字列が収まる大きさに調整
             final int width = getResources().getDisplayMetrics().widthPixels;
@@ -110,7 +114,7 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         // テキストとフォントサイズを保存
         outState.putFloat(TAG_FONT_SIZE, mFontSize);
@@ -132,7 +136,10 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(
+            final int requestCode,
+            final int resultCode,
+            @NonNull final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((requestCode == MainFragment.REQUEST_CODE) && (resultCode == Activity.RESULT_OK)) {
             // 音声入力の結果を反映
@@ -163,7 +170,7 @@ public class MainFragment extends Fragment {
      *
      * @param string 表示する文字列
      */
-    public void setText(String string) {
+    public void setText(@NonNull final String string) {
         mText.setText(string);
     }
 
@@ -172,6 +179,7 @@ public class MainFragment extends Fragment {
      *
      * @return DefaultSharedPreferences
      */
+    @NonNull
     private SharedPreferences getDefaultSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
@@ -194,31 +202,35 @@ public class MainFragment extends Fragment {
      * @param background 背景色
      * @param foreground 文字色
      */
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
-    private void setTheme(int background, int foreground) {
+    private void setTheme(
+            final int background,
+            final int foreground) {
         mGridDrawable.setColor(background);
         ViewCompat.setBackground(mRoot, mGridDrawable);
         mRoot.invalidate();
         mText.setTextColor(foreground);
         final Drawable icon = mToolbar.getOverflowIcon();
         if (icon != null) {
-            DrawableCompat.setTint(icon, getIconColor(background));
+            DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background));
         }
     }
 
     @ColorInt
-    private int getIconColor(@ColorInt int background) {
+    private int getIconColor(@ColorInt final int background) {
         if (getBrightness(background) < 128) {
             return Color.WHITE;
         }
         return Color.BLACK;
     }
 
-    private int getBrightness(@ColorInt int color) {
+    private int getBrightness(@ColorInt final int color) {
         return getBrightness(Color.red(color), Color.green(color), Color.blue(color));
     }
-    private int getBrightness(int r, int g, int b) {
+
+    private int getBrightness(
+            int r,
+            int g,
+            int b) {
         return clamp((int) (r * 0.299 + g * 0.587 + b * 0.114 + 0.5f), 0, 255);
     }
 
@@ -230,13 +242,13 @@ public class MainFragment extends Fragment {
      */
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onSingleTapUp(MotionEvent e) {
+        public boolean onSingleTapUp(@NonNull final MotionEvent e) {
             mRoot.performClick();
             return true;
         }
 
         @Override
-        public void onLongPress(MotionEvent e) {
+        public void onLongPress(@NonNull final MotionEvent e) {
             if (getDefaultSharedPreferences().getBoolean(Settings.LONG_TAP_EDIT.name(), false)) {
                 mRoot.performLongClick();
             }
@@ -248,7 +260,7 @@ public class MainFragment extends Fragment {
      */
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
+        public boolean onScale(@NonNull final ScaleGestureDetector detector) {
             final float factor = detector.getScaleFactor();
             mFontSize = clamp(mFontSize * factor, mFontSizeMin, mFontSizeMax);
             mText.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFontSize);
@@ -264,7 +276,10 @@ public class MainFragment extends Fragment {
      * @param max   最大値
      * @return 飽和させた値
      */
-    private static int clamp(int value, int min, int max) {
+    private static int clamp(
+            final int value,
+            final int min,
+            final int max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -276,7 +291,10 @@ public class MainFragment extends Fragment {
      * @param max   最大値
      * @return 飽和させた値
      */
-    private static float clamp(float value, float min, float max) {
+    private static float clamp(
+            final float value,
+            final float min,
+            final float max) {
         return Math.min(Math.max(value, min), max);
     }
 }

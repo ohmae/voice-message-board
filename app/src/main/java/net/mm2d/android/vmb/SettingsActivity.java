@@ -24,6 +24,8 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private static final boolean ALWAYS_SIMPLE_PREFS = false;
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
+    protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         setupSimplePreferencesScreen();
     }
@@ -61,7 +63,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     @Override
-    protected boolean isValidFragment(String fragmentName) {
+    protected boolean isValidFragment(@NonNull final String fragmentName) {
         return true;
     }
 
@@ -71,7 +73,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     @Override
-    public void onBuildHeaders(List<Header> target) {
+    public void onBuildHeaders(@NonNull final List<Header> target) {
         if (!isSimplePreferences(this)) {
             loadHeadersFromResource(R.xml.pref_headers, target);
         }
@@ -83,7 +85,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * @param context コンテキスト
      * @return XLARGE以上ならtrue
      */
-    private static boolean isXLargeTablet(Context context) {
+    private static boolean isXLargeTablet(@NonNull final Context context) {
         final Configuration config = context.getResources().getConfiguration();
         final int layout = config.screenLayout;
         final int size = layout & Configuration.SCREENLAYOUT_SIZE_MASK;
@@ -96,7 +98,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * @param context コンテキスト
      * @return マルチペインにしない場合true
      */
-    private static boolean isSimplePreferences(Context context) {
+    private static boolean isSimplePreferences(@NonNull final Context context) {
         return ALWAYS_SIMPLE_PREFS
                 || !isXLargeTablet(context);
     }
@@ -107,7 +109,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * @param context コンテキスト
      * @return バージョン文字列
      */
-    private static String getVersionName(Context context) {
+    @NonNull
+    private static String getVersionName(@NonNull final Context context) {
         final PackageManager pm = context.getPackageManager();
         String versionName = "";
         try {
@@ -137,7 +140,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
      * Playストアへ飛ばすOnPreferenceClickListener。
      */
-    private static OnPreferenceClickListener sPlayStoreClickListener = preference -> {
+    private static final OnPreferenceClickListener sPlayStoreClickListener = preference -> {
         final Uri uri = Uri.parse("market://details?id=net.mm2d.android.vmb");
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         final Context context = preference.getContext();
@@ -151,7 +154,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
      * プライバシーポリシーへ飛ばすOnPreferenceClickListener。
      */
-    private static OnPreferenceClickListener sPrivacyPolicyClickListener = preference -> {
+    private static final OnPreferenceClickListener sPrivacyPolicyClickListener = preference -> {
         final Uri uri = Uri.parse("https://github.com/ohmae/VoiceMessageBoard/blob/develop/PRIVACY-POLICY.md");
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         final Context context = preference.getContext();
@@ -167,7 +170,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      *
      * @param preference Preference
      */
-    private static void bindPreference(Preference preference) {
+    private static void bindPreference(@NonNull final Preference preference) {
         preference.setOnPreferenceChangeListener(sSummaryListener);
         final Context context = preference.getContext();
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -180,7 +183,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate(@Nullable final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             bindPreference(findPreference(Settings.SCREEN_ORIENTATION.name()));
@@ -192,7 +195,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     public static class InformationPreferenceFragment extends PreferenceFragment {
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate(@Nullable final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_information);
             findPreference(Settings.PLAY_STORE.name())

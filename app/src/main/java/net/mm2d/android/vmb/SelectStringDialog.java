@@ -7,11 +7,11 @@
 
 package net.mm2d.android.vmb;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -39,7 +39,7 @@ public class SelectStringDialog extends DialogFragment {
          *
          * @param string 選択された文字列。
          */
-        void onSelectString(String string);
+        void onSelectString(@NonNull String string);
     }
 
     /**
@@ -57,7 +57,8 @@ public class SelectStringDialog extends DialogFragment {
      * @param strings 選択肢
      * @return 新規インスタンス
      */
-    public static SelectStringDialog newInstance(ArrayList<String> strings) {
+    @NonNull
+    public static SelectStringDialog newInstance(@NonNull final ArrayList<String> strings) {
         final SelectStringDialog instance = new SelectStringDialog();
         final Bundle args = new Bundle();
         args.putStringArrayList(KEY_STRING_LIST, strings);
@@ -68,20 +69,24 @@ public class SelectStringDialog extends DialogFragment {
     private SelectStringListener mEventListener;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof SelectStringListener) {
-            mEventListener = (SelectStringListener) activity;
+    public void onAttach(@NonNull final Context context) {
+        super.onAttach(context);
+        if (context instanceof SelectStringListener) {
+            mEventListener = (SelectStringListener) context;
         }
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Bundle args = getArguments();
-        final ArrayList<String> stringList = args.getStringArrayList(KEY_STRING_LIST);
+    public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getActivity().getString(R.string.string_select));
+        final Bundle args = getArguments();
+        final ArrayList<String> stringList = args.getStringArrayList(KEY_STRING_LIST);
+        if (stringList == null) {
+            dismiss();
+            return builder.create();
+        }
         final ListAdapter adapter = new StringListAdapter(getActivity(), stringList);
         builder.setAdapter(adapter, (dialog, which) -> {
             if (mEventListener != null) {
@@ -92,14 +97,19 @@ public class SelectStringDialog extends DialogFragment {
     }
 
     private static class StringListAdapter extends BaseListAdapter<String> {
-        public StringListAdapter(Context context, Collection<? extends String> collection) {
+        public StringListAdapter(
+                @NonNull final Context context,
+                @NonNull final Collection<? extends String> collection) {
             super(context, collection);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(
+                final int position,
+                @NonNull final View convertView,
+                @NonNull final ViewGroup parent) {
             final View view = inflateView(R.layout.list_item_string, convertView, parent);
-            final TextView text = (TextView) view.findViewById(R.id.textView);
+            final TextView text = view.findViewById(R.id.textView);
             text.setText(getItem(position));
             return text;
         }

@@ -7,12 +7,13 @@
 
 package net.mm2d.android.vmb;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class EditStringDialog extends DialogFragment {
          *
          * @param string 確定された文字列。
          */
-        void onConfirmString(String string);
+        void onConfirmString(@NonNull String string);
     }
 
     /**
@@ -54,7 +55,7 @@ public class EditStringDialog extends DialogFragment {
      * @param editString 編集する元の文字列
      * @return 新規インスタンス
      */
-    public static EditStringDialog newInstance(String editString) {
+    public static EditStringDialog newInstance(@NonNull final String editString) {
         final EditStringDialog instance = new EditStringDialog();
         final Bundle args = new Bundle();
         args.putString(KEY_STRING, editString);
@@ -66,21 +67,27 @@ public class EditStringDialog extends DialogFragment {
     private ConfirmStringListener mEventListener;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof ConfirmStringListener) {
-            mEventListener = (ConfirmStringListener) activity;
+    public void onAttach(@NonNull final Context context) {
+        super.onAttach(context);
+        if (context instanceof ConfirmStringListener) {
+            mEventListener = (ConfirmStringListener) context;
         }
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         final Bundle args = getArguments();
         final String string = args.getString(KEY_STRING);
+        if (string == null) {
+            dismiss();
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(getActivity().getString(R.string.string_edit))
+                    .create();
+        }
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_edit, null, false);
-        mEditText = (EditText) view.findViewById(R.id.editText);
+        mEditText = view.findViewById(R.id.editText);
         mEditText.setText(string);
         mEditText.setSelection(string.length());
         mEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -92,7 +99,7 @@ public class EditStringDialog extends DialogFragment {
             }
             return false;
         });
-        return new Builder(getActivity())
+        return new AlertDialog.Builder(getActivity())
                 .setTitle(getActivity().getString(R.string.string_edit))
                 .setView(mEditText)
                 .setPositiveButton(R.string.ok, (dialog, which) -> inputText())
@@ -106,7 +113,7 @@ public class EditStringDialog extends DialogFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         // 編集中の文字列を保存
         final Bundle args = getArguments();
