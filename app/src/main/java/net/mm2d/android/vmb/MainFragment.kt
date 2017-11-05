@@ -91,12 +91,12 @@ class MainFragment : Fragment() {
             // 画面幅に初期文字列が収まる大きさに調整
             val width = resources.displayMetrics.widthPixels
             val initialText = textView.text.toString()
-            if (initialText[0] <= '\u007e') {
+            fontSize = if (initialText[0] <= '\u007e') {
                 // 半角
-                fontSize = width.toFloat() / initialText.length * 2
+                width.toFloat() / initialText.length * 2
             } else {
                 // 全角
-                fontSize = width.toFloat() / initialText.length
+                width.toFloat() / initialText.length
             }
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
         } else {
