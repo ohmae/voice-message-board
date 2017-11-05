@@ -5,14 +5,14 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb;
+package net.mm2d.android.vmb
 
 /**
  * 設定値。
  *
  * @author 大前良介(OHMAE Ryosuke)
  */
-public enum Settings {
+enum class Settings {
     KEY_BACKGROUND,
     KEY_FOREGROUND,
     CANDIDATE_LIST,
@@ -23,5 +23,5 @@ public enum Settings {
     PRIVACY_POLICY,
     COPYRIGHT,
     VERSION_NUMBER,
-    SETTINGS_VERSION,
+    SETTINGS_VERSION
 }
