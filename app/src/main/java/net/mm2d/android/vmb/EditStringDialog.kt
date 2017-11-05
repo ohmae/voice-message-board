@@ -65,9 +65,10 @@ class EditStringDialog : DialogFragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE || keyCode == KeyEvent.KEYCODE_ENTER) {
                 inputText()
                 dismiss()
-                return@setOnEditorActionListener true
+                true
+            } else {
+                false
             }
-            false
         }
         return AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.string_edit))
@@ -104,9 +105,9 @@ class EditStringDialog : DialogFragment() {
          * @return 新規インスタンス
          */
         fun newInstance(editString: String): EditStringDialog {
-            val instance = EditStringDialog()
             val args = Bundle()
             args.putString(KEY_STRING, editString)
+            val instance = EditStringDialog()
             instance.arguments = args
             return instance
         }

@@ -133,7 +133,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 preference.context.startActivity(intent)
             } catch (ignored: ActivityNotFoundException) {
             }
-
             true
         }
 
@@ -147,7 +146,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 preference.context.startActivity(intent)
             } catch (ignored: ActivityNotFoundException) {
             }
-
             true
         }
 

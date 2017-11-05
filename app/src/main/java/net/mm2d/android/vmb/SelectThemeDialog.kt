@@ -48,34 +48,26 @@ class SelectThemeDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val args = arguments
-        val themeList = args.getParcelableArrayList<Theme>(KEY_THEME_LIST)
+        val themeList = arguments.getParcelableArrayList<Theme>(KEY_THEME_LIST)
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(activity.getString(R.string.theme_select))
         val adapter = ThemeListAdapter(activity, themeList!!)
         builder.setAdapter(adapter) { dialog, which ->
-            if (eventListener != null) {
-                eventListener!!.onSelectTheme(themeList[which])
-            }
+            eventListener!!.onSelectTheme(themeList[which])
         }
         return builder.create()
     }
 
-    private class ThemeListAdapter internal constructor(
-            context: Context,
-            collection: Collection<Theme>) : BaseListAdapter<Theme>(context, collection) {
+    private class ThemeListAdapter internal constructor(context: Context, collection: Collection<Theme>)
+        : BaseListAdapter<Theme>(context, collection) {
 
-        override fun getView(
-                position: Int,
-                convertView: View?,
-                parent: ViewGroup): View {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val theme = getItem(position)
             val view = inflateView(R.layout.list_item_theme, convertView, parent)
             val sample = view.findViewById<TextView>(R.id.textSample)
-            val title = view.findViewById<TextView>(R.id.textTitle)
-            val theme = getItem(position)
             sample.setBackgroundColor(theme.backgroundColor)
             sample.setTextColor(theme.foregroundColor)
-            title.text = theme.name
+            view.findViewById<TextView>(R.id.textTitle).text = theme.name
             return view
         }
     }

@@ -72,8 +72,7 @@ class SelectStringDialog : DialogFragment() {
                 convertView: View?,
                 parent: ViewGroup): View {
             val view = inflateView(R.layout.list_item_string, convertView, parent)
-            val text = view.findViewById<TextView>(R.id.textView)
-            text.text = getItem(position)
+            view.findViewById<TextView>(R.id.textView).text = getItem(position)
             return view
         }
     }

@@ -54,9 +54,7 @@ class Theme : Parcelable {
         return 0
     }
 
-    override fun writeToParcel(
-            dest: Parcel,
-            flags: Int) {
+    override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeString(name)
         dest.writeInt(backgroundColor)
         dest.writeInt(foregroundColor)

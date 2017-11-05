@@ -21,13 +21,7 @@ import java.util.*
  *
  * @author 大前良介(OHMAE Ryosuke)
  */
-abstract class BaseListAdapter<T>
-/**
- * インスタンス作成。
- *
- * @param context コンテキスト
- */
-(context: Context) : BaseAdapter() {
+abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val list: MutableList<T> = ArrayList()
 
@@ -37,9 +31,7 @@ abstract class BaseListAdapter<T>
      * @param context    コンテキスト
      * @param collection 要素
      */
-    constructor(
-            context: Context,
-            collection: Collection<T>) : this(context) {
+    constructor(context: Context, collection: Collection<T>) : this(context) {
         list.addAll(collection)
     }
 
@@ -55,10 +47,7 @@ abstract class BaseListAdapter<T>
      * @param parent      親要素
      * @return レイアウトが作成されたView
      */
-    protected fun inflateView(
-            layout: Int,
-            convertView: View?,
-            parent: ViewGroup): View {
+    protected fun inflateView(layout: Int, convertView: View?, parent: ViewGroup): View {
         return convertView ?: inflater.inflate(layout, parent, false)
     }
 
