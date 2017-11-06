@@ -21,7 +21,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
@@ -132,12 +131,11 @@ class MainFragment : Fragment() {
     override fun onActivityResult(
             requestCode: Int,
             resultCode: Int,
-            data: Intent) {
+            data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.e("TAG", "onActivityResult")
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // 音声入力の結果を反映
-            val results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val results = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             if (results.size > 1 && defaultSharedPreferences.getBoolean(Settings.CANDIDATE_LIST.name, false)) {
                 SelectStringDialog.newInstance(results).show(fragmentManager, "")
             } else {

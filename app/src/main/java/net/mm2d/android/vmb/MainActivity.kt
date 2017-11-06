@@ -113,7 +113,8 @@ class MainActivity : AppCompatActivity(),
      * テーマ設定のダイアログを起動。
      */
     private fun showThemeDialog() {
-        SelectThemeDialog.newInstance(themes).show(supportFragmentManager, "")
+        SelectThemeDialog.newInstance(themes)
+                .show(supportFragmentManager, "")
     }
 
     override fun onSelectTheme(theme: Theme) {
