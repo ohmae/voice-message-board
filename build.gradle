@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext.kotlin_version = '1.1.51'
     repositories {
         jcenter()
         google()
@@ -10,6 +11,7 @@ buildscript {
             exclude group: 'com.google.guava', module: 'guava-jdk5'
         }
         classpath 'com.google.firebase:firebase-plugins:1.1.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

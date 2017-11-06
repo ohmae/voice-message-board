@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/recognizer_dialog_title_margin"
+        android:layout_marginTop="@dimen/recognizer_dialog_margin"
+        android:text="@string/recognizer_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        />
+
+    <net.mm2d.android.vmb.BeatingView
+        android:id="@+id/beating_view"
+        android:layout_width="@dimen/recognizer_icon_area_size"
+        android:layout_height="@dimen/recognizer_icon_area_size"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/recognizer_dialog_margin"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_circle"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_voice"
+            />
+    </net.mm2d.android.vmb.BeatingView>
+</LinearLayout>
