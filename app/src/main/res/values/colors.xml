@@ -3,4 +3,5 @@
     <color name="primary">#212121</color>
     <color name="primaryDark">#000000</color>
     <color name="accent">#2962FF</color>
+    <color name="beating">#402962FF</color>
 </resources>

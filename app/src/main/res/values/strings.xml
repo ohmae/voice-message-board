@@ -15,4 +15,6 @@
     <string name="theme_black_yellow">Black background / Yellow text</string>
     <string name="theme_black_green">Black background / Green text</string>
     <string name="toast_can_not_use_voice_input">Can\'t launch Voice Input</string>
+    <string name="toast_voice_input_fail">Speech recognition failed</string>
+    <string name="recognizer_title">Input by Voice</string>
 </resources>
