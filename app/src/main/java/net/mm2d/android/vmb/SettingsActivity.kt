@@ -42,6 +42,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         bindPreference(findPreference(Settings.SCREEN_ORIENTATION.name))
         findPreference(Settings.PLAY_STORE.name).onPreferenceClickListener = sPlayStoreClickListener
         findPreference(Settings.PRIVACY_POLICY.name).onPreferenceClickListener = sPrivacyPolicyClickListener
+        findPreference(Settings.SOURCE_CODE.name).onPreferenceClickListener = sGitHubClickListener
+        findPreference(Settings.LICENSE.name).onPreferenceClickListener = sLicenseClickListener
         findPreference(Settings.VERSION_NUMBER.name).summary = BuildConfig.VERSION_NAME
     }
 
@@ -79,6 +81,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             addPreferencesFromResource(R.xml.pref_information)
             findPreference(Settings.PLAY_STORE.name).onPreferenceClickListener = sPlayStoreClickListener
             findPreference(Settings.PRIVACY_POLICY.name).onPreferenceClickListener = sPrivacyPolicyClickListener
+            findPreference(Settings.SOURCE_CODE.name).onPreferenceClickListener = sGitHubClickListener
+            findPreference(Settings.LICENSE.name).onPreferenceClickListener = sLicenseClickListener
             findPreference(Settings.VERSION_NUMBER.name).summary = BuildConfig.VERSION_NAME
         }
     }
@@ -140,12 +144,33 @@ class SettingsActivity : AppCompatPreferenceActivity() {
          * プライバシーポリシーへ飛ばすOnPreferenceClickListener。
          */
         private val sPrivacyPolicyClickListener = OnPreferenceClickListener { preference ->
-            val uri = Uri.parse("https://github.com/ohmae/VoiceMessageBoard/blob/develop/PRIVACY-POLICY.md")
+            openUrl(preference.context, "https://github.com/ohmae/VoiceMessageBoard/blob/develop/PRIVACY-POLICY.md")
+            true
+        }
+
+        /**
+         * GitHubへ飛ばすOnPreferenceClickListener。
+         */
+        private val sGitHubClickListener = OnPreferenceClickListener { preference ->
+            openUrl(preference.context, "https://github.com/ohmae/VoiceMessageBoard")
+            true
+        }
+
+        private fun openUrl(context : Context, url : String) {
+            val uri = Uri.parse(url)
             val intent = Intent(Intent.ACTION_VIEW, uri)
             try {
-                preference.context.startActivity(intent)
+                context.startActivity(intent)
             } catch (ignored: ActivityNotFoundException) {
             }
+        }
+
+        /**
+         * OSSライセンス表示へ飛ばす OnPreferenceClickListener。
+         */
+        private val sLicenseClickListener = OnPreferenceClickListener { preference ->
+            val intent = Intent(preference.context, LicenseActivity::class.java)
+            preference.context.startActivity(intent)
             true
         }
 

@@ -24,5 +24,7 @@ enum class Settings {
     PRIVACY_POLICY,
     COPYRIGHT,
     VERSION_NUMBER,
-    SETTINGS_VERSION
+    SETTINGS_VERSION,
+    SOURCE_CODE,
+    LICENSE,
 }
