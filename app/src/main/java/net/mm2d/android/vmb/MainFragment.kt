@@ -7,17 +7,21 @@
 
 package net.mm2d.android.vmb
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.Toolbar
@@ -120,21 +124,57 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
      */
     private fun startVoiceInput() {
         if (defaultSharedPreferences.getBoolean(Settings.SPEECH_RECOGNIZER.name, true)) {
-            val dialog = RecognizerDialog.newInstance();
-            dialog.setTargetFragment(this, 0)
-            dialog.show(fragmentManager, "")
+            startRecognizerDialogWithPermission()
         } else {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
-            try {
-                startActivityForResult(intent, REQUEST_CODE)
-            } catch (e: ActivityNotFoundException) {
-                Toast.makeText(activity, R.string.toast_can_not_use_voice_input, Toast.LENGTH_LONG).show()
-            }
+            startRecognizerActivity()
+        }
+    }
+
+    private fun startRecognizerDialogWithPermission() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSON_REQUEST_CODE)
+            return
+        }
+        startRecognizerDialog()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode != PERMISSON_REQUEST_CODE || permissions.isEmpty()) {
+            return
+        }
+        val index = permissions.indexOf(Manifest.permission.RECORD_AUDIO)
+        if (index < 0 || index > grantResults.size) {
+            return
+        }
+        if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+            startRecognizerDialog()
+            return
+        }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECORD_AUDIO)) {
+            Toast.makeText(context, R.string.toast_should_allow_permission, Toast.LENGTH_LONG).show()
+        } else {
+            PermissionDialog.newInstance().showAllowingStateLoss(fragmentManager, "")
+        }
+    }
+
+    private fun startRecognizerDialog() {
+        val dialog = RecognizerDialog.newInstance();
+        dialog.setTargetFragment(this, 0)
+        dialog.show(fragmentManager, "")
+    }
+
+    private fun startRecognizerActivity() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
+        try {
+            startActivityForResult(intent, RECOGNIZER_REQUEST_CODE)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(activity, R.string.toast_can_not_use_voice_input, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -150,7 +190,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != REQUEST_CODE || resultCode != Activity.RESULT_OK) {
+        if (requestCode != RECOGNIZER_REQUEST_CODE || resultCode != Activity.RESULT_OK) {
             return
         }
         // 音声入力の結果を反映
@@ -196,9 +236,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
      * @param background 背景色
      * @param foreground 文字色
      */
-    private fun setTheme(
-            background: Int,
-            foreground: Int) {
+    private fun setTheme(background: Int, foreground: Int) {
         gridDrawable.setColor(background)
         ViewCompat.setBackground(rootView, gridDrawable)
         rootView.invalidate()
@@ -282,6 +320,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     companion object {
         private val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private val TAG_TEXT = "TAG_TEXT"
-        private val REQUEST_CODE = 1
+        private val RECOGNIZER_REQUEST_CODE = 1
+        private val PERMISSON_REQUEST_CODE = 2
     }
 }
