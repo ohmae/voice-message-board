@@ -8,10 +8,14 @@
 package net.mm2d.android.vmb
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -20,6 +24,8 @@ import android.support.v7.widget.Toolbar
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
+import android.widget.Toast
+import java.util.*
 
 /**
  * テキストを大きく表示する画面。
@@ -113,9 +119,23 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
      * 音声入力開始。
      */
     private fun startVoiceInput() {
-        val dialog = RecognizerDialog.newInstance();
-        dialog.setTargetFragment(this, 0)
-        dialog.show(fragmentManager, "")
+        if (defaultSharedPreferences.getBoolean(Settings.SPEECH_RECOGNIZER.name, true)) {
+            val dialog = RecognizerDialog.newInstance();
+            dialog.setTargetFragment(this, 0)
+            dialog.show(fragmentManager, "")
+        } else {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
+            try {
+                startActivityForResult(intent, REQUEST_CODE)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(activity, R.string.toast_can_not_use_voice_input, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onRecognize(results: ArrayList<String>) {
@@ -127,6 +147,15 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         } else {
             setText(results[0])
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode != REQUEST_CODE || resultCode != Activity.RESULT_OK) {
+            return
+        }
+        // 音声入力の結果を反映
+        val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) ?: return
+        onRecognize(results)
     }
 
     /**

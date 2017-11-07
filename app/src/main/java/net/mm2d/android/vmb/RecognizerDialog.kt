@@ -18,6 +18,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.Toast
+import java.util.*
 
 /**
  * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
@@ -32,7 +33,22 @@ class RecognizerDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         recognizer = SpeechRecognizer.createSpeechRecognizer(context)
-        recognizer.setRecognitionListener(object : RecognitionListener {
+        recognizer.setRecognitionListener(createRecognitionListener())
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+        recognizer.startListening(intent)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_recognizer, null, false);
+        beatingView = view.findViewById(R.id.beating_view);
+        return AlertDialog.Builder(context)
+                .setView(view)
+                .create()
+    }
+
+    fun createRecognitionListener(): RecognitionListener {
+        return object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {
             }
 
@@ -58,35 +74,21 @@ class RecognizerDialog : DialogFragment() {
             }
 
             override fun onPartialResults(partialResults: Bundle?) {
-                if (partialResults == null) {
-                    return
-                }
-                val list = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                val list = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        ?: Collections.emptyList<String>()
                 if (list.sumBy { it.length } > 0) {
                     recognizer.stopListening()
                 }
             }
 
             override fun onResults(results: Bundle?) {
-                if (results == null) {
-                    return
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                if (list != null) {
+                    (targetFragment as? RecognizeListener)!!.onRecognize(list)
                 }
-                val list = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                (targetFragment as? RecognizeListener)!!.onRecognize(list)
                 dismiss()
             }
-        })
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-        recognizer.startListening(intent)
-        val view = LayoutInflater.from(context).inflate(R.layout.dialog_recognizer, null, false);
-        beatingView = view.findViewById(R.id.beating_view);
-        return AlertDialog.Builder(context)
-                .setView(view)
-                .create()
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
