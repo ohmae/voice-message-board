@@ -15,7 +15,7 @@ import android.os.Parcelable
  *
  * Parcelableを実装し、引数として渡せるようにしている。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class Theme : Parcelable {
     /**

@@ -34,7 +34,7 @@ import java.util.*
 /**
  * テキストを大きく表示する画面。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     private var fontSizeMin: Float = 0.0f
@@ -65,12 +65,12 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         toolbar = view.findViewById(R.id.toolbar)
         textView = view.findViewById(R.id.textView)
         rootView = view.findViewById(R.id.root)
-        rootView.setOnClickListener { v -> startVoiceInput() }
-        rootView.setOnLongClickListener { v ->
+        rootView.setOnClickListener { startVoiceInput() }
+        rootView.setOnLongClickListener {
             startEdit()
             true
         }
-        rootView.setOnTouchListener { v, event ->
+        rootView.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
             scaleDetector.onTouchEvent(event)
             true
@@ -161,7 +161,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     private fun startRecognizerDialog() {
         val dialog = RecognizerDialog.newInstance();
         dialog.setTargetFragment(this, 0)
-        dialog.show(fragmentManager, "")
+        dialog.showAllowingStateLoss(fragmentManager, "")
     }
 
     private fun startRecognizerActivity() {

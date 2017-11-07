@@ -20,7 +20,7 @@ import android.preference.Preference.OnPreferenceClickListener
 /**
  * 設定画面。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class SettingsActivity : AppCompatPreferenceActivity() {
 

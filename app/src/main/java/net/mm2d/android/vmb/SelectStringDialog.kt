@@ -20,7 +20,7 @@ import java.util.*
 /**
  * 音声認識の結果複数の候補が出た時に表示するダイアログ。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class SelectStringDialog : DialogFragment() {
 
@@ -57,8 +57,8 @@ class SelectStringDialog : DialogFragment() {
             return builder.create()
         }
         val adapter = StringListAdapter(activity, stringList)
-        builder.setAdapter(adapter) { dialog, which ->
-            eventListener!!.onSelectString(stringList[which])
+        builder.setAdapter(adapter) { _, which ->
+            eventListener?.onSelectString(stringList[which])
         }
         return builder.create()
     }
@@ -67,10 +67,7 @@ class SelectStringDialog : DialogFragment() {
             context: Context,
             collection: Collection<String>) : BaseListAdapter<String>(context, collection) {
 
-        override fun getView(
-                position: Int,
-                convertView: View?,
-                parent: ViewGroup): View {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = inflateView(R.layout.list_item_string, convertView, parent)
             view.findViewById<TextView>(R.id.textView).text = getItem(position)
             return view

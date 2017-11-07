@@ -19,7 +19,7 @@ import java.util.*
  *
  * カスタムリストビューを作成するためのベースクラスとして利用。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)

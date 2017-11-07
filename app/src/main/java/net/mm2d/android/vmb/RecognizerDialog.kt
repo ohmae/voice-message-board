@@ -15,13 +15,14 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v4.app.DialogFragment
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.Toast
 import java.util.*
 
 /**
- * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class RecognizerDialog : DialogFragment() {
     private lateinit var recognizer: SpeechRecognizer
@@ -32,7 +33,7 @@ class RecognizerDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        recognizer = SpeechRecognizer.createSpeechRecognizer(context)
+        recognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)
         recognizer.setRecognitionListener(createRecognitionListener())
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -84,7 +85,7 @@ class RecognizerDialog : DialogFragment() {
             override fun onResults(results: Bundle?) {
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (list != null) {
-                    (targetFragment as? RecognizeListener)!!.onRecognize(list)
+                    (targetFragment as? RecognizeListener)?.onRecognize(list)
                 }
                 dismiss()
             }
@@ -93,8 +94,13 @@ class RecognizerDialog : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        recognizer.stopListening()
         recognizer.destroy()
+    }
+
+    fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
+        val ft = manager.beginTransaction();
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
     }
 
     companion object {

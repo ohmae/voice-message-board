@@ -19,7 +19,7 @@ import android.widget.EditText
 /**
  * 文字列編集を行うダイアログ。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class EditStringDialog : DialogFragment() {
 
@@ -60,7 +60,7 @@ class EditStringDialog : DialogFragment() {
         editText = view.findViewById(R.id.editText)
         editText.setText(string)
         editText.setSelection(string.length)
-        editText.setOnEditorActionListener { v, actionId, event ->
+        editText.setOnEditorActionListener { _, actionId, event ->
             val keyCode = event?.keyCode ?: -1
             if (actionId == EditorInfo.IME_ACTION_DONE || keyCode == KeyEvent.KEYCODE_ENTER) {
                 inputText()
@@ -73,12 +73,12 @@ class EditStringDialog : DialogFragment() {
         return AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.string_edit))
                 .setView(editText)
-                .setPositiveButton(R.string.ok) { dialog, which -> inputText() }
+                .setPositiveButton(R.string.ok) { _, _ -> inputText() }
                 .create()
     }
 
     private fun inputText() {
-        eventListener!!.onConfirmString(editText.text.toString())
+        eventListener?.onConfirmString(editText.text.toString())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

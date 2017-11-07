@@ -20,7 +20,7 @@ import java.util.*
 /**
  * テーマ選択ダイアログ。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class SelectThemeDialog : DialogFragment() {
 
@@ -53,7 +53,7 @@ class SelectThemeDialog : DialogFragment() {
         builder.setTitle(activity.getString(R.string.theme_select))
         val adapter = ThemeListAdapter(activity, themeList!!)
         builder.setAdapter(adapter) { dialog, which ->
-            eventListener!!.onSelectTheme(themeList[which])
+            eventListener?.onSelectTheme(themeList[which])
         }
         return builder.create()
     }

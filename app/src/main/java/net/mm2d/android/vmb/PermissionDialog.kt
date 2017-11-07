@@ -16,14 +16,14 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 
 /**
- * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class PermissionDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(context)
                 .setTitle(R.string.dialog_permission_title)
                 .setMessage(R.string.dialog_permission_message)
-                .setPositiveButton(R.string.app_info) { dialog, which ->
+                .setPositiveButton(R.string.app_info) { _, _ ->
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     intent.data = Uri.parse("package:" + context.packageName)

@@ -15,7 +15,7 @@ import android.support.annotation.ColorInt
 /**
  * グリッド模様付き背景を描画するDrawable
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class GridDrawable(context: Context) : Drawable() {
     private val paint: Paint = Paint()

@@ -10,7 +10,7 @@ package net.mm2d.android.vmb
 /**
  * 設定値。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 enum class Settings {
     KEY_BACKGROUND,

@@ -21,7 +21,7 @@ import java.util.*
 /**
  * 起動後から表示されるActivity。
  *
- * @author 大前良介(OHMAE Ryosuke)
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainActivity : AppCompatActivity(),
         SelectThemeDialog.SelectThemeListener,
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        supportActionBar!!.title = null
+        supportActionBar?.title = null
         initPreferences()
         makeThemes()
     }
@@ -123,18 +123,18 @@ class MainActivity : AppCompatActivity(),
                 .putInt(Settings.KEY_BACKGROUND.name, theme.backgroundColor)
                 .putInt(Settings.KEY_FOREGROUND.name, theme.foregroundColor)
                 .apply()
-        mainFragment!!.applyTheme()
+        mainFragment?.applyTheme()
     }
 
     override fun onSelectString(string: String) {
-        mainFragment!!.setText(string)
+        mainFragment?.setText(string)
         // 継続して
         if (defaultSharedPreferences.getBoolean(Settings.LIST_EDIT.name, false)) {
-            mainFragment!!.startEdit()
+            mainFragment?.startEdit()
         }
     }
 
     override fun onConfirmString(string: String) {
-        mainFragment!!.setText(string)
+        mainFragment?.setText(string)
     }
 }
