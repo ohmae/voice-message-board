@@ -48,7 +48,7 @@ class RecognizerDialog : DialogFragment() {
                 .create()
     }
 
-    fun createRecognitionListener(): RecognitionListener {
+    private fun createRecognitionListener(): RecognitionListener {
         return object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {
             }

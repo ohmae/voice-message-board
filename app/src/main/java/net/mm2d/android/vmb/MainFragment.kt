@@ -56,10 +56,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         get() = PreferenceManager.getDefaultSharedPreferences(activity)
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
         view.findViewById<View>(R.id.fab).setOnClickListener { _ -> startEdit() }
         toolbar = view.findViewById(R.id.toolbar)

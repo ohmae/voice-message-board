@@ -67,10 +67,6 @@ class Theme : Parcelable {
     }
 
     companion object {
-
-        /**
-         * Parcelable用CREATOR
-         */
         @JvmField
         val CREATOR: Parcelable.Creator<Theme> = object : Parcelable.Creator<Theme> {
             override fun createFromParcel(source: Parcel): Theme {

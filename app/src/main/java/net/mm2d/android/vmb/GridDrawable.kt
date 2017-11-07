@@ -34,9 +34,7 @@ class GridDrawable(context: Context) : Drawable() {
      * @param background 背景
      * @param grid       グリッド
      */
-    fun setColor(
-            background: Int,
-            grid: Int) {
+    fun setColor(background: Int, grid: Int) {
         backgroundColor = background
         gridColor = grid
         paint.color = gridColor

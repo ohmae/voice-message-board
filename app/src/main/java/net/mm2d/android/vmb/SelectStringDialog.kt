@@ -63,9 +63,8 @@ class SelectStringDialog : DialogFragment() {
         return builder.create()
     }
 
-    class StringListAdapter(
-            context: Context,
-            collection: Collection<String>) : BaseListAdapter<String>(context, collection) {
+    class StringListAdapter(context: Context, collection: Collection<String>)
+        : BaseListAdapter<String>(context, collection) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = inflateView(R.layout.list_item_string, convertView, parent)
