@@ -77,7 +77,7 @@ class SelectThemeDialog : DialogFragment() {
         /**
          * テーマリストのkey
          */
-        private val KEY_THEME_LIST = "KEY_THEME_LIST"
+        private const val KEY_THEME_LIST = "KEY_THEME_LIST"
 
         /**
          * Dialogのインスタンスを作成。

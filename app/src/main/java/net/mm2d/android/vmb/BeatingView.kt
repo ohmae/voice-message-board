@@ -83,7 +83,7 @@ class BeatingView
     }
 
     companion object {
-        private val RMS_DB_MAX = 10.0f
-        private val RMS_DB_MIN = -2.12f
+        private const val RMS_DB_MAX = 10.0f
+        private const val RMS_DB_MIN = -2.12f
     }
 }

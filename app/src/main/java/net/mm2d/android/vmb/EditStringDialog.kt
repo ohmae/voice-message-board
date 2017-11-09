@@ -92,7 +92,7 @@ class EditStringDialog : DialogFragment() {
         /**
          * 選択文字列のkey
          */
-        private val KEY_STRING = "KEY_STRING"
+        private const val KEY_STRING = "KEY_STRING"
 
         /**
          * Dialogのインスタンスを作成。

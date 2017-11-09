@@ -130,14 +130,14 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     private fun startRecognizerDialogWithPermission() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSON_REQUEST_CODE)
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSION_REQUEST_CODE)
             return
         }
         startRecognizerDialog()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode != PERMISSON_REQUEST_CODE || permissions.isEmpty()) {
+        if (requestCode != PERMISSION_REQUEST_CODE || permissions.isEmpty()) {
             return
         }
         val index = permissions.indexOf(Manifest.permission.RECORD_AUDIO)
@@ -290,34 +290,35 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         }
     }
 
-    /**
-     * min以下はmin、max以上はmaxに飽和させる
-     *
-     * @param value 値
-     * @param min   最小値
-     * @param max   最大値
-     * @return 飽和させた値
-     */
-    private fun clamp(value: Int, min: Int, max: Int): Int {
-        return Math.min(Math.max(value, min), max)
-    }
-
-    /**
-     * min以下はmin、max以上はmaxに飽和させる
-     *
-     * @param value 値
-     * @param min   最小値
-     * @param max   最大値
-     * @return 飽和させた値
-     */
-    private fun clamp(value: Float, min: Float, max: Float): Float {
-        return Math.min(Math.max(value, min), max)
-    }
-
     companion object {
-        private val TAG_FONT_SIZE = "TAG_FONT_SIZE"
-        private val TAG_TEXT = "TAG_TEXT"
-        private val RECOGNIZER_REQUEST_CODE = 1
-        private val PERMISSON_REQUEST_CODE = 2
+        private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
+        private const val TAG_TEXT = "TAG_TEXT"
+        private const val RECOGNIZER_REQUEST_CODE = 1
+        private const val PERMISSION_REQUEST_CODE = 2
+
+        /**
+         * min以下はmin、max以上はmaxに飽和させる
+         *
+         * @param value 値
+         * @param min   最小値
+         * @param max   最大値
+         * @return 飽和させた値
+         */
+        private fun clamp(value: Int, min: Int, max: Int): Int {
+            return Math.min(Math.max(value, min), max)
+        }
+
+        /**
+         * min以下はmin、max以上はmaxに飽和させる
+         *
+         * @param value 値
+         * @param min   最小値
+         * @param max   最大値
+         * @return 飽和させた値
+         */
+        private fun clamp(value: Float, min: Float, max: Float): Float {
+            return Math.min(Math.max(value, min), max)
+        }
+
     }
 }

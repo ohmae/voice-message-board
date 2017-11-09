@@ -89,6 +89,6 @@ class GridDrawable(context: Context) : Drawable() {
     }
 
     companion object {
-        private val GRID_SIZE = 10
+        private const val GRID_SIZE = 10
     }
 }

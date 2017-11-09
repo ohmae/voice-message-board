@@ -88,7 +88,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     }
 
     companion object {
-        private val ALWAYS_SIMPLE_PREFS = false
+        private const val ALWAYS_SIMPLE_PREFS = false
 
         /**
          * 画面サイズからXLARGE以上かを判定
