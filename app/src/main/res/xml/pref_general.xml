@@ -10,6 +10,13 @@
         android:title="@string/pref_title_screen_orientation"
         />
     <SwitchPreference
+        android:defaultValue="true"
+        android:key="SPEECH_RECOGNIZER"
+        android:summaryOff="@string/pref_description_speech_recognizer_off"
+        android:summaryOn="@string/pref_description_speech_recognizer_on"
+        android:title="@string/pref_title_speech_recognizer"
+        />
+    <SwitchPreference
         android:defaultValue="false"
         android:key="CANDIDATE_LIST"
         android:summaryOff="@string/pref_description_candidate_list_off"

@@ -1,4 +1,5 @@
 # Voice Message Board
+[![license](https://img.shields.io/github/license/ohmae/VoiceMessageBoard.svg)](./LICENSE)
 
 ## Install
 [Google Play](https://play.google.com/store/apps/details?id=net.mm2d.android.vmb)

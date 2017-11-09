@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">声で伝言板</string>
     <string name="ok">OK</string>
+    <string name="cancel">キャンセル</string>
     <string name="action_settings">設定</string>
     <string name="action_theme">テーマを変更</string>
     <string name="action_edit">編集</string>
@@ -14,4 +15,11 @@
     <string name="theme_black_white">黒地に白文字</string>
     <string name="theme_black_yellow">黒地に黄文字</string>
     <string name="theme_black_green">黒地に緑文字</string>
+    <string name="toast_can_not_use_voice_input">音声入力が起動できません</string>
+    <string name="toast_voice_input_fail">音声認識に失敗しました</string>
+    <string name="toast_should_allow_permission">音声認識を利用するには権限を許可してください</string>
+    <string name="dialog_permission_title">権限の許可が必要</string>
+    <string name="dialog_permission_message">マイクへのアクセス権がありません。\n音声認識を利用するには「アプリ情報」から許可してください</string>
+    <string name="app_info">アプリ情報</string>
+    <string name="recognizer_title">声で入力します</string>
 </resources>
