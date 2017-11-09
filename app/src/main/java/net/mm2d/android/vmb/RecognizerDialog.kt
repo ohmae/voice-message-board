@@ -18,6 +18,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.widget.TextView
 import android.widget.Toast
 import java.util.*
 
@@ -26,7 +27,9 @@ import java.util.*
  */
 class RecognizerDialog : DialogFragment() {
     private lateinit var recognizer: SpeechRecognizer
+    private lateinit var textView: TextView
     private lateinit var beatingView: BeatingView
+    private lateinit var waveView: WaveView
 
     interface RecognizeListener {
         fun onRecognize(results: ArrayList<String>)
@@ -42,7 +45,9 @@ class RecognizerDialog : DialogFragment() {
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
         recognizer.startListening(intent)
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_recognizer, null, false);
-        beatingView = view.findViewById(R.id.beating_view);
+        beatingView = view.findViewById(R.id.beating_view)
+        waveView = view.findViewById(R.id.wave_view)
+        textView = view.findViewById(R.id.text)
         return AlertDialog.Builder(context)
                 .setView(view)
                 .create()
@@ -67,6 +72,7 @@ class RecognizerDialog : DialogFragment() {
 
             override fun onRmsChanged(rmsdB: Float) {
                 beatingView.onRmsChanged(rmsdB)
+                waveView.onRmsChanged(rmsdB)
             }
 
             override fun onError(error: Int) {
@@ -77,8 +83,8 @@ class RecognizerDialog : DialogFragment() {
             override fun onPartialResults(partialResults: Bundle?) {
                 val list = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         ?: Collections.emptyList<String>()
-                if (list.sumBy { it.length } > 0) {
-                    recognizer.stopListening()
+                if (list.size > 0 && !list[0].isEmpty()) {
+                    textView.text = list[0]
                 }
             }
 

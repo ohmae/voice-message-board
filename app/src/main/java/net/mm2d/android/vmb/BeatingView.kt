@@ -13,6 +13,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.support.annotation.Dimension
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.FrameLayout
@@ -23,11 +24,16 @@ import android.widget.FrameLayout
 class BeatingView
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : FrameLayout(context, attrs, defStyleAttr) {
+    @Dimension
     private val radiusMin: Float
+    @Dimension
     private val radiusMax: Float
     private val paint: Paint = Paint()
+    @Dimension
     private var radius = 0f
+    @Dimension
     private var startRadius = 0f
+    @Dimension
     private var targetRadius = 0f
     private var radiusAnimator: Animator? = null
 
