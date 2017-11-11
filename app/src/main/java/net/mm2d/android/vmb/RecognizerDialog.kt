@@ -17,7 +17,7 @@ import android.speech.SpeechRecognizer
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
-import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import net.mm2d.android.vmb.effect.BeatingView
@@ -46,8 +46,9 @@ class RecognizerDialog : DialogFragment() {
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
         recognizer.startListening(intent)
-        val view = LayoutInflater.from(context)
-                .inflate(R.layout.dialog_recognizer, null, false)
+        val inflater = activity.layoutInflater
+        val decorView = activity.window.decorView as ViewGroup
+        val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
         beatingView = view.findViewById(R.id.beating_view)
         waveView = view.findViewById(R.id.wave_view)
         textView = view.findViewById(R.id.text)

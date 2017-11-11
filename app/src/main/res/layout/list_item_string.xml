@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/layout_margin"
-    android:textAppearance="?android:attr/textAppearanceLarge"
     android:textSize="@dimen/list_font_size"
+    android:textColor="@color/primaryText"
     />
 
