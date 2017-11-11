@@ -105,6 +105,8 @@ class WaveView
         for (i in 0 until DIVISION) {
             queue.addLast(0f)
         }
+        sign = 1
+        offset = 0f
         val animator = ValueAnimator.ofFloat(0f, 1f)
         animator.duration = 200L
         animator.interpolator = LinearInterpolator()
