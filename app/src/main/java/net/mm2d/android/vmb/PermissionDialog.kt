@@ -35,7 +35,7 @@ class PermissionDialog : DialogFragment() {
     }
 
     fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        val ft = manager.beginTransaction();
+        val ft = manager.beginTransaction()
         ft.add(this, tag)
         ft.commitAllowingStateLoss()
     }

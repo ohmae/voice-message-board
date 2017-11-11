@@ -20,6 +20,8 @@ import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.TextView
 import android.widget.Toast
+import net.mm2d.android.vmb.effect.BeatingView
+import net.mm2d.android.vmb.effect.WaveView
 import java.util.*
 
 /**
@@ -44,7 +46,8 @@ class RecognizerDialog : DialogFragment() {
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
         recognizer.startListening(intent)
-        val view = LayoutInflater.from(context).inflate(R.layout.dialog_recognizer, null, false);
+        val view = LayoutInflater.from(context)
+                .inflate(R.layout.dialog_recognizer, null, false)
         beatingView = view.findViewById(R.id.beating_view)
         waveView = view.findViewById(R.id.wave_view)
         textView = view.findViewById(R.id.text)
@@ -104,7 +107,7 @@ class RecognizerDialog : DialogFragment() {
     }
 
     fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        val ft = manager.beginTransaction();
+        val ft = manager.beginTransaction()
         ft.add(this, tag)
         ft.commitAllowingStateLoss()
     }

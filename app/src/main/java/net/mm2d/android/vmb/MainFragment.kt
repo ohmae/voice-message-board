@@ -156,7 +156,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     }
 
     private fun startRecognizerDialog() {
-        val dialog = RecognizerDialog.newInstance();
+        val dialog = RecognizerDialog.newInstance()
         dialog.setTargetFragment(this, 0)
         dialog.showAllowingStateLoss(fragmentManager, "")
     }

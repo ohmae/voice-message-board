@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.effect
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
+import net.mm2d.android.vmb.R
 import java.util.*
 
 /**
@@ -38,10 +39,10 @@ class WaveView
     private val wave1Scale: Float
     private val wave2Scale: Float
 
-    private var waveAnimator: ValueAnimator? = null
+    private var waveAnimator: Animator? = null
     private var offset: Float = 0f
-    private var turn = 1
-    private var maxDb: Float = 0f
+    private var startSign = 1
+    private var amplitude: Float = 0f
 
     init {
         paint.isAntiAlias = true
@@ -56,29 +57,33 @@ class WaveView
     }
 
     fun onRmsChanged(rmsdB: Float) {
-        if (rmsdB > maxDb) {
-            maxDb = rmsdB
+        if (rmsdB > amplitude) {
+            amplitude = rmsdB
         }
     }
 
     private fun drawWave(canvas: Canvas, cy: Float, offset: Float, scale: Float) {
-        val step = (canvas.width / (DIVISION - 3)).toFloat()
-        var x = offset
-        var py = queue[0] * turn.toFloat() * scale + cy
+        val width = canvas.width.toFloat()
+        val height = canvas.height.toFloat()
+        val waveLength = width / (DIVISION - 3)
+        val handleLength = waveLength / 4
+        var sign = startSign
+        var xp = offset
+        var yp = queue[0] * sign * scale + cy
         path.reset()
-        path.moveTo(x, py)
+        path.moveTo(xp, yp)
         for (i in 1 until DIVISION) {
-            val x1 = x + step / 3
-            val x2 = x + step * 2 / 3
-            val x3 = x + step
-            val flag = (if (i % 2 == 0) 1 else -1) * turn
-            val ny = queue[i] * flag.toFloat() * scale + cy
-            path.cubicTo(x1, py, x2, ny, x3, ny)
-            x += step
-            py = ny
+            val xn = xp + waveLength
+            val x1 = xp + handleLength
+            val x2 = xn - handleLength
+            sign *= -1
+            val yn = queue[i] * sign * scale + cy
+            path.cubicTo(x1, yp, x2, yn, xn, yn)
+            xp = xn
+            yp = yn
         }
-        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
-        path.lineTo(0f, canvas.height.toFloat())
+        path.lineTo(width, height)
+        path.lineTo(0f, height)
         path.close()
         canvas.drawPath(path, paint)
     }
@@ -94,11 +99,10 @@ class WaveView
         super.dispatchDraw(canvas)
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
+    private fun startAnimation() {
         queue.clear()
         for (i in 0 until DIVISION) {
-            queue.add(0f)
+            queue.addLast(0f)
         }
         val animator = ValueAnimator.ofFloat(0f, 1f)
         animator.duration = 200L
@@ -110,23 +114,33 @@ class WaveView
         }
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationRepeat(animation: Animator) {
-                turn *= -1
-                queue.removeAt(0)
-                queue.add(maxDb)
-                maxDb = 0f
+                startSign *= -1
+                queue.removeFirst()
+                queue.addLast(Math.min(amplitude, MAX_AMPLITUDE))
+                amplitude = 0f
             }
         })
         animator.start()
         waveAnimator = animator
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
+    private fun stopAnimation() {
         waveAnimator?.cancel()
         waveAnimator = null
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        startAnimation();
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        stopAnimation()
+    }
+
     companion object {
         private const val DIVISION = 5
+        private const val MAX_AMPLITUDE = 10f
     }
 }
