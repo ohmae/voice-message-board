@@ -24,18 +24,21 @@ class PermissionDialog : DialogFragment() {
                 .setTitle(R.string.dialog_permission_title)
                 .setMessage(R.string.dialog_permission_message)
                 .setPositiveButton(R.string.app_info) { _, _ ->
-                    val intent = Intent()
-                    intent.action = android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    intent.data = Uri.parse("package:" + context.packageName)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
+                    startAppInfo()
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .create()
     }
 
+    private fun startAppInfo() {
+        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        intent.data = Uri.parse("package:" + context.packageName)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
     fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        val ft = manager.beginTransaction();
+        val ft = manager.beginTransaction()
         ft.add(this, tag)
         ft.commitAllowingStateLoss()
     }

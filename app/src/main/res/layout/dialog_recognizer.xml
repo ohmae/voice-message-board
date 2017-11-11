@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.mm2d.android.vmb.WaveView
+<net.mm2d.android.vmb.effect.WaveView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/wave_view"
@@ -20,11 +20,12 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/recognizer_dialog_title_margin"
             android:layout_marginTop="@dimen/recognizer_dialog_margin"
+            android:gravity="center_horizontal"
             android:text="@string/recognizer_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             />
 
-        <net.mm2d.android.vmb.BeatingView
+        <net.mm2d.android.vmb.effect.BeatingView
             android:id="@+id/beating_view"
             android:layout_width="@dimen/recognizer_icon_area_size"
             android:layout_height="@dimen/recognizer_icon_area_size"
@@ -45,6 +46,6 @@
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/ic_voice"
                 />
-        </net.mm2d.android.vmb.BeatingView>
+        </net.mm2d.android.vmb.effect.BeatingView>
     </LinearLayout>
-</net.mm2d.android.vmb.WaveView>
+</net.mm2d.android.vmb.effect.WaveView>

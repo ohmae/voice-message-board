@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 
@@ -56,7 +57,8 @@ class EditStringDialog : DialogFragment() {
                     .create()
         }
         val inflater = activity.layoutInflater
-        val view = inflater.inflate(R.layout.dialog_edit, null, false)
+        val decorView = activity.window.decorView as ViewGroup
+        val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
         editText = view.findViewById(R.id.editText)
         editText.setText(string)
         editText.setSelection(string.length)

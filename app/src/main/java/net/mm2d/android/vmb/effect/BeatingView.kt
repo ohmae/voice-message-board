@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.effect
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -17,6 +17,7 @@ import android.support.annotation.Dimension
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import net.mm2d.android.vmb.R
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)

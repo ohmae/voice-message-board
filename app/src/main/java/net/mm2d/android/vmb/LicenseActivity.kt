@@ -19,7 +19,7 @@ class LicenseActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setTitle(R.string.pref_title_license)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val webView = findViewById<WebView>(R.id.webView);
+        val webView = findViewById<WebView>(R.id.webView)
 
         webView.settings.setSupportZoom(false)
         webView.settings.displayZoomControls = false
