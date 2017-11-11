@@ -8,7 +8,6 @@
 package net.mm2d.android.vmb.effect
 
 import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -41,7 +40,7 @@ class WaveView
 
     private var waveAnimator: Animator? = null
     private var offset: Float = 0f
-    private var startSign = 1
+    private var sign = 1
     private var amplitude: Float = 0f
 
     init {
@@ -66,19 +65,20 @@ class WaveView
         val width = canvas.width.toFloat()
         val height = canvas.height.toFloat()
         val waveLength = width / (DIVISION - 3)
-        val handleLength = waveLength / 4
-        var sign = startSign
+        val handleLength = waveLength / 3
         var xp = offset
-        var yp = queue[0] * sign * scale + cy
+        var yp = queue[0] * scale + cy
         path.reset()
         path.moveTo(xp, yp)
         for (i in 1 until DIVISION) {
             val xn = xp + waveLength
             val x1 = xp + handleLength
             val x2 = xn - handleLength
-            sign *= -1
-            val yn = queue[i] * sign * scale + cy
+            val yn = queue[i] * scale + cy
             path.cubicTo(x1, yp, x2, yn, xn, yn)
+            if (xn > width) {
+                break
+            }
             xp = xn
             yp = yn
         }
@@ -100,6 +100,7 @@ class WaveView
     }
 
     private fun startAnimation() {
+        stopAnimation()
         queue.clear()
         for (i in 0 until DIVISION) {
             queue.addLast(0f)
@@ -109,17 +110,16 @@ class WaveView
         animator.interpolator = LinearInterpolator()
         animator.repeatCount = ValueAnimator.INFINITE
         animator.addUpdateListener { animation ->
+            val value = animation.animatedValue as Float
+            if (value < offset) {
+                sign *= -1
+                queue.removeFirst()
+                queue.addLast(Math.min(amplitude, MAX_AMPLITUDE) * sign)
+                amplitude = 0f
+            }
             offset = animation.animatedValue as Float
             invalidate()
         }
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationRepeat(animation: Animator) {
-                startSign *= -1
-                queue.removeFirst()
-                queue.addLast(Math.min(amplitude, MAX_AMPLITUDE))
-                amplitude = 0f
-            }
-        })
         animator.start()
         waveAnimator = animator
     }

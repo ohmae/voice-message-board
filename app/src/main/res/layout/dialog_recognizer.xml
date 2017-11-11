@@ -20,6 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/recognizer_dialog_title_margin"
             android:layout_marginTop="@dimen/recognizer_dialog_margin"
+            android:gravity="center_horizontal"
             android:text="@string/recognizer_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             />
