@@ -55,7 +55,7 @@ class SelectThemeDialog : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(activity.getString(R.string.theme_select))
         val adapter = ThemeListAdapter(activity, themeList!!)
-        builder.setAdapter(adapter) { dialog, which ->
+        builder.setAdapter(adapter) { _, which ->
             eventListener?.onSelectTheme(themeList[which])
         }
         return builder.create()

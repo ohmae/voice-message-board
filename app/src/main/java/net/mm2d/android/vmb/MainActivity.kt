@@ -16,9 +16,12 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import net.mm2d.android.vmb.dialog.EditStringDialog
-import net.mm2d.android.vmb.dialog.SelectStringDialog
+import net.mm2d.android.vmb.R.*
+import net.mm2d.android.vmb.Settings.*
+import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
+import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
+import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
 import java.util.*
 
 /**
@@ -27,9 +30,7 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainActivity : AppCompatActivity(),
-        SelectThemeDialog.SelectThemeListener,
-        SelectStringDialog.SelectStringListener,
-        EditStringDialog.ConfirmStringListener {
+        SelectThemeListener, SelectStringListener, ConfirmStringListener {
     private val themes: ArrayList<Theme> = ArrayList()
 
     /**
@@ -47,14 +48,14 @@ class MainActivity : AppCompatActivity(),
      */
     private val mainFragment: MainFragment?
         get() {
-            val fragment = supportFragmentManager.findFragmentById(R.id.fragment)
+            val fragment = supportFragmentManager.findFragmentById(id.fragment)
             return fragment as? MainFragment
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setContentView(layout.activity_main)
+        setSupportActionBar(findViewById(id.toolbar))
         supportActionBar?.title = null
         initPreferences()
         makeThemes()
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun getOrientation(): Int {
-        val value = defaultSharedPreferences.getString(Settings.SCREEN_ORIENTATION.name, null)
+        val value = defaultSharedPreferences.getString(SCREEN_ORIENTATION.name, null)
         if (value != null) {
             try {
                 return Integer.parseInt(value)
@@ -81,17 +82,17 @@ class MainActivity : AppCompatActivity(),
      * テーマの選択肢を作成。
      */
     private fun makeThemes() {
-        themes.add(Theme(getString(R.string.theme_white_black), Color.WHITE, Color.BLACK))
-        themes.add(Theme(getString(R.string.theme_black_white), Color.BLACK, Color.WHITE))
-        themes.add(Theme(getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW))
-        themes.add(Theme(getString(R.string.theme_black_green), Color.BLACK, Color.GREEN))
+        themes.add(Theme(getString(string.theme_white_black), Color.WHITE, Color.BLACK))
+        themes.add(Theme(getString(string.theme_black_white), Color.BLACK, Color.WHITE))
+        themes.add(Theme(getString(string.theme_black_yellow), Color.BLACK, Color.YELLOW))
+        themes.add(Theme(getString(string.theme_black_green), Color.BLACK, Color.GREEN))
     }
 
     /**
      * アプリ設定の初期化。
      */
     private fun initPreferences() {
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, true)
+        PreferenceManager.setDefaultValues(this, xml.preferences, true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -123,16 +124,15 @@ class MainActivity : AppCompatActivity(),
     override fun onSelectTheme(theme: Theme) {
         // 設定を保存する。
         defaultSharedPreferences.edit()
-                .putInt(Settings.KEY_BACKGROUND.name, theme.backgroundColor)
-                .putInt(Settings.KEY_FOREGROUND.name, theme.foregroundColor)
+                .putInt(KEY_BACKGROUND.name, theme.backgroundColor)
+                .putInt(KEY_FOREGROUND.name, theme.foregroundColor)
                 .apply()
         mainFragment?.applyTheme()
     }
 
     override fun onSelectString(string: String) {
         mainFragment?.setText(string)
-        // 継続して
-        if (defaultSharedPreferences.getBoolean(Settings.LIST_EDIT.name, false)) {
+        if (defaultSharedPreferences.getBoolean(LIST_EDIT.name, false)) {
             mainFragment?.startEdit()
         }
     }

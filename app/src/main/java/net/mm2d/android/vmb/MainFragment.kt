@@ -32,6 +32,7 @@ import android.widget.Toast
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
+import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import java.util.*
 
@@ -40,7 +41,7 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
+class MainFragment : Fragment(), RecognizeListener {
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
     private var fontSize: Float = 0.0f

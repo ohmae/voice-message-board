@@ -8,20 +8,18 @@
 package net.mm2d.android.vmb
 
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.support.annotation.LayoutRes
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatDelegate
-import android.support.v7.widget.Toolbar
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 
 /**
- * A [PreferenceActivity] which implements and proxies the necessary calls
+ * A [android.preference.PreferenceActivity] which implements and proxies the necessary calls
  * to be used with AppCompat.
  *
  * 自動的に作成されたクラス。
@@ -43,10 +41,6 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         delegate.onPostCreate(savedInstanceState)
-    }
-
-    fun setSupportActionBar(toolbar: Toolbar?) {
-        delegate.setSupportActionBar(toolbar)
     }
 
     override fun getMenuInflater(): MenuInflater {
@@ -96,18 +90,6 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
 
     override fun invalidateOptionsMenu() {
         delegate.invalidateOptionsMenu()
-    }
-
-    override fun onBackPressed() {
-        try {
-            super.onBackPressed()
-        } catch (ignored: IllegalStateException) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                finishAfterTransition()
-            } else {
-                finish()
-            }
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
