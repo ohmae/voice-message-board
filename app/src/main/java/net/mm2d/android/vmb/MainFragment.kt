@@ -12,11 +12,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
 import android.support.v4.app.ActivityCompat
@@ -34,6 +32,7 @@ import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog
+import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
 /**
@@ -42,23 +41,19 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainFragment : Fragment(), RecognizeListener {
-    private var fontSizeMin: Float = 0.0f
-    private var fontSizeMax: Float = 0.0f
-    private var fontSize: Float = 0.0f
+    private val settings by lazy {
+        Settings(activity)
+    }
+
     private lateinit var rootView: View
     private lateinit var textView: TextView
     private lateinit var toolbar: Toolbar
     private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
-
-    /**
-     * DefaultSharedPreferencesを返す。
-     *
-     * @return DefaultSharedPreferences
-     */
-    private val defaultSharedPreferences: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(activity)
+    private var fontSizeMin: Float = 0.0f
+    private var fontSizeMax: Float = 0.0f
+    private var fontSize: Float = 0.0f
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -125,7 +120,7 @@ class MainFragment : Fragment(), RecognizeListener {
      * 音声入力開始。
      */
     private fun startVoiceInput() {
-        if (defaultSharedPreferences.getBoolean(Key.SPEECH_RECOGNIZER.name, true)) {
+        if (settings.shouldUseSpeechRecognizer()) {
             startRecognizerDialogWithPermission()
         } else {
             startRecognizerActivity()
@@ -184,7 +179,7 @@ class MainFragment : Fragment(), RecognizeListener {
         if (results.isEmpty()) {
             return
         }
-        if (results.size > 1 && defaultSharedPreferences.getBoolean(Key.CANDIDATE_LIST.name, false)) {
+        if (results.size > 1 && settings.shouldShowCandidateList()) {
             SelectStringDialog.newInstance(results).show(fragmentManager, "")
         } else {
             setText(results[0])
@@ -224,10 +219,7 @@ class MainFragment : Fragment(), RecognizeListener {
      * Preferenceを読みだして、テーマを設定する。
      */
     fun applyTheme() {
-        val pref = defaultSharedPreferences
-        val bg = pref.getInt(Key.KEY_BACKGROUND.name, Color.WHITE)
-        val fg = pref.getInt(Key.KEY_FOREGROUND.name, Color.BLACK)
-        setTheme(bg, fg)
+        setTheme(settings.backgroundColor, settings.foregroundColor)
     }
 
     /**
@@ -277,7 +269,7 @@ class MainFragment : Fragment(), RecognizeListener {
         }
 
         override fun onLongPress(e: MotionEvent) {
-            if (defaultSharedPreferences.getBoolean(Key.LONG_TAP_EDIT.name, false)) {
+            if (settings.shouldShowEditorWhenLongTap()) {
                 rootView.performLongClick()
             }
         }

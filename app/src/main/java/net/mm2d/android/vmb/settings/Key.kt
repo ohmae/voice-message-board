@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.settings
 
 /**
  * 設定値。

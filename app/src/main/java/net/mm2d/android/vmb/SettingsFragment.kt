@@ -15,6 +15,7 @@ import android.preference.ListPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceManager
+import net.mm2d.android.vmb.settings.Key
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)

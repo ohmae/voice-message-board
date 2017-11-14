@@ -9,7 +9,6 @@ package net.mm2d.android.vmb
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -17,11 +16,11 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import net.mm2d.android.vmb.R.*
-import net.mm2d.android.vmb.Key.*
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
+import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
 /**
@@ -32,6 +31,9 @@ import java.util.*
 class MainActivity : AppCompatActivity(),
         SelectThemeListener, SelectStringListener, ConfirmStringListener {
     private val themes: ArrayList<Theme> = ArrayList()
+    private val settings by lazy {
+        Settings(this)
+    }
 
     /**
      * DefaultSharedPreferencesを返す。
@@ -63,19 +65,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        requestedOrientation = getOrientation()
-    }
-
-    private fun getOrientation(): Int {
-        val value = defaultSharedPreferences.getString(SCREEN_ORIENTATION.name, null)
-        if (value != null) {
-            try {
-                return Integer.parseInt(value)
-            } catch (e: NumberFormatException) {
-                e.printStackTrace()
-            }
-        }
-        return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = settings.screenOrientation
     }
 
     /**
@@ -122,17 +112,14 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onSelectTheme(theme: Theme) {
-        // 設定を保存する。
-        defaultSharedPreferences.edit()
-                .putInt(KEY_BACKGROUND.name, theme.backgroundColor)
-                .putInt(KEY_FOREGROUND.name, theme.foregroundColor)
-                .apply()
+        settings.backgroundColor = theme.backgroundColor
+        settings.foregroundColor = theme.foregroundColor
         mainFragment?.applyTheme()
     }
 
     override fun onSelectString(string: String) {
         mainFragment?.setText(string)
-        if (defaultSharedPreferences.getBoolean(LIST_EDIT.name, false)) {
+        if (settings.shouldShowEditorAfterSelect()) {
             mainFragment?.startEdit()
         }
     }
