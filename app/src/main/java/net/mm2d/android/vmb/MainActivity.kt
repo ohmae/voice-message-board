@@ -16,6 +16,9 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import net.mm2d.android.vmb.dialog.EditStringDialog
+import net.mm2d.android.vmb.dialog.SelectStringDialog
+import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import java.util.*
 
 /**

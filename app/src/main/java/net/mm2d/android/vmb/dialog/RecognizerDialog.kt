@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -20,6 +20,7 @@ import android.support.v7.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.effect.BeatingView
 import net.mm2d.android.vmb.effect.WaveView
 import java.util.*

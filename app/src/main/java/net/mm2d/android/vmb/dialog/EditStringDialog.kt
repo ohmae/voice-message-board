@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
 import android.content.Context
@@ -16,6 +16,7 @@ import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import net.mm2d.android.vmb.R
 
 /**
  * 文字列編集を行うダイアログ。

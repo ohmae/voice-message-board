@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
 import android.content.Context
@@ -15,6 +15,9 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import net.mm2d.android.vmb.BaseListAdapter
+import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.Theme
 import java.util.*
 
 /**

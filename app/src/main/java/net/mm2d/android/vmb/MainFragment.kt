@@ -29,6 +29,10 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import net.mm2d.android.vmb.dialog.EditStringDialog
+import net.mm2d.android.vmb.dialog.PermissionDialog
+import net.mm2d.android.vmb.dialog.RecognizerDialog
+import net.mm2d.android.vmb.dialog.SelectStringDialog
 import java.util.*
 
 /**
