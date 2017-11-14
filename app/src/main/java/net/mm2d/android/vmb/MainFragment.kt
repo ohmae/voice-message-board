@@ -125,7 +125,7 @@ class MainFragment : Fragment(), RecognizeListener {
      * 音声入力開始。
      */
     private fun startVoiceInput() {
-        if (defaultSharedPreferences.getBoolean(Settings.SPEECH_RECOGNIZER.name, true)) {
+        if (defaultSharedPreferences.getBoolean(Key.SPEECH_RECOGNIZER.name, true)) {
             startRecognizerDialogWithPermission()
         } else {
             startRecognizerActivity()
@@ -184,7 +184,7 @@ class MainFragment : Fragment(), RecognizeListener {
         if (results.isEmpty()) {
             return
         }
-        if (results.size > 1 && defaultSharedPreferences.getBoolean(Settings.CANDIDATE_LIST.name, false)) {
+        if (results.size > 1 && defaultSharedPreferences.getBoolean(Key.CANDIDATE_LIST.name, false)) {
             SelectStringDialog.newInstance(results).show(fragmentManager, "")
         } else {
             setText(results[0])
@@ -225,8 +225,8 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     fun applyTheme() {
         val pref = defaultSharedPreferences
-        val bg = pref.getInt(Settings.KEY_BACKGROUND.name, Color.WHITE)
-        val fg = pref.getInt(Settings.KEY_FOREGROUND.name, Color.BLACK)
+        val bg = pref.getInt(Key.KEY_BACKGROUND.name, Color.WHITE)
+        val fg = pref.getInt(Key.KEY_FOREGROUND.name, Color.BLACK)
         setTheme(bg, fg)
     }
 
@@ -277,7 +277,7 @@ class MainFragment : Fragment(), RecognizeListener {
         }
 
         override fun onLongPress(e: MotionEvent) {
-            if (defaultSharedPreferences.getBoolean(Settings.LONG_TAP_EDIT.name, false)) {
+            if (defaultSharedPreferences.getBoolean(Key.LONG_TAP_EDIT.name, false)) {
                 rootView.performLongClick()
             }
         }

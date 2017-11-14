@@ -23,26 +23,26 @@ class SettingsFragment : PreferenceFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
-        bindPreference(findPreference(Settings.SCREEN_ORIENTATION))
-        findPreference(Settings.PLAY_STORE).setOnPreferenceClickListener {
+        bindPreference(findPreference(Key.SCREEN_ORIENTATION))
+        findPreference(Key.PLAY_STORE).setOnPreferenceClickListener {
             openUrl(MARKET_URL)
         }
-        findPreference(Settings.PRIVACY_POLICY).setOnPreferenceClickListener {
+        findPreference(Key.PRIVACY_POLICY).setOnPreferenceClickListener {
             openUrl(PRIVACY_POLICY_URL)
         }
-        findPreference(Settings.SOURCE_CODE).setOnPreferenceClickListener {
+        findPreference(Key.SOURCE_CODE).setOnPreferenceClickListener {
             openUrl(SOURCE_CODE_URL)
         }
-        findPreference(Settings.LICENSE).setOnPreferenceClickListener {
+        findPreference(Key.LICENSE).setOnPreferenceClickListener {
             val intent = Intent(activity, LicenseActivity::class.java)
             startActivity(intent)
             true
         }
-        findPreference(Settings.VERSION_NUMBER).summary = BuildConfig.VERSION_NAME
+        findPreference(Key.VERSION_NUMBER).summary = BuildConfig.VERSION_NAME
     }
 
-    private fun findPreference(settings: Settings): Preference {
-        return super.findPreference(settings.name)
+    private fun findPreference(key: Key): Preference {
+        return super.findPreference(key.name)
     }
 
     /**

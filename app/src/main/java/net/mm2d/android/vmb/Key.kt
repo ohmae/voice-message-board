@@ -12,7 +12,7 @@ package net.mm2d.android.vmb
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-enum class Settings {
+enum class Key {
     KEY_BACKGROUND,
     KEY_FOREGROUND,
     SPEECH_RECOGNIZER,

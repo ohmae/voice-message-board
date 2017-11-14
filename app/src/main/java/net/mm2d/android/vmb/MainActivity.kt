@@ -17,7 +17,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import net.mm2d.android.vmb.R.*
-import net.mm2d.android.vmb.Settings.*
+import net.mm2d.android.vmb.Key.*
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
