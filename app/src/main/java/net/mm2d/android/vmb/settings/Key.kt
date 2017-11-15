@@ -15,6 +15,7 @@ package net.mm2d.android.vmb.settings
 enum class Key {
     KEY_BACKGROUND,
     KEY_FOREGROUND,
+    HISTORY,
     SPEECH_RECOGNIZER,
     CANDIDATE_LIST,
     LIST_EDIT,

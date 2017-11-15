@@ -17,6 +17,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -46,9 +47,11 @@ class MainFragment : Fragment(), RecognizeListener {
         Settings(activity)
     }
 
+    private lateinit var history: LinkedList<String>
     private lateinit var rootView: View
     private lateinit var textView: TextView
     private lateinit var toolbar: Toolbar
+    private lateinit var historyFab: FloatingActionButton
     private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
@@ -59,7 +62,8 @@ class MainFragment : Fragment(), RecognizeListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
-        view.findViewById<View>(R.id.fab).setOnClickListener { _ -> startEdit() }
+        view.findViewById<View>(R.id.edit_fab)
+                .setOnClickListener { startEdit() }
         toolbar = view.findViewById(R.id.toolbar)
         textView = view.findViewById(R.id.textView)
         rootView = view.findViewById(R.id.root)
@@ -79,6 +83,12 @@ class MainFragment : Fragment(), RecognizeListener {
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         applyTheme()
+        historyFab = view.findViewById(R.id.history_fab)
+        historyFab.setOnClickListener { showHistoryDialog() }
+        history = LinkedList(settings.history)
+        if (history.isEmpty()) {
+            historyFab.hide()
+        }
         onRestoreInstanceState(savedInstanceState)
         return view
     }
@@ -181,7 +191,8 @@ class MainFragment : Fragment(), RecognizeListener {
             return
         }
         if (results.size > 1 && settings.shouldShowCandidateList()) {
-            SelectStringDialog.newInstance(results).show(fragmentManager, "")
+            SelectStringDialog.newInstance(R.string.dialog_title_select, results)
+                    .show(fragmentManager, "")
         } else {
             setText(results[0])
         }
@@ -204,6 +215,24 @@ class MainFragment : Fragment(), RecognizeListener {
         EditStringDialog.newInstance(string).show(fragmentManager, "")
     }
 
+    fun showHistoryDialog() {
+        if (history.isEmpty()) {
+            return
+        }
+        SelectStringDialog.newInstance(R.string.dialog_title_history, ArrayList(history))
+                .show(fragmentManager, "")
+    }
+
+    fun clearHistory() {
+        history.clear()
+        settings.history = HashSet(history)
+        historyFab.hide()
+    }
+
+    fun hasHistory(): Boolean {
+        return !history.isEmpty()
+    }
+
     /**
      * 文字列を設定する。
      *
@@ -214,6 +243,13 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     fun setText(string: String) {
         textView.text = string
+        history.remove(string)
+        history.addFirst(string)
+        while (history.size > MAX_HISTORY) {
+            history.removeLast()
+        }
+        settings.history = HashSet(history)
+        historyFab.show()
     }
 
     /**
@@ -289,6 +325,7 @@ class MainFragment : Fragment(), RecognizeListener {
     }
 
     companion object {
+        private const val MAX_HISTORY = 30
         private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private const val TAG_TEXT = "TAG_TEXT"
         private const val RECOGNIZER_REQUEST_CODE = 1

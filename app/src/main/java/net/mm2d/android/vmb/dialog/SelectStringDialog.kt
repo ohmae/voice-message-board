@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.View
@@ -51,8 +52,8 @@ class SelectStringDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle(activity.getString(R.string.string_select))
         val args = arguments
+        builder.setTitle(args.getInt(KEY_TITLE))
         val stringList = args.getStringArrayList(KEY_STRING_LIST)
         if (stringList == null) {
             dismiss()
@@ -76,11 +77,8 @@ class SelectStringDialog : DialogFragment() {
     }
 
     companion object {
-
-        /**
-         * 選択文字列のkey
-         */
-        private val KEY_STRING_LIST = "KEY_STRING_LIST"
+        private const val KEY_TITLE = "KEY_TITLE"
+        private const val KEY_STRING_LIST = "KEY_STRING_LIST"
 
         /**
          * Dialogのインスタンスを作成。
@@ -92,9 +90,10 @@ class SelectStringDialog : DialogFragment() {
          * @param strings 選択肢
          * @return 新規インスタンス
          */
-        fun newInstance(strings: ArrayList<String>): SelectStringDialog {
+        fun newInstance(@StringRes title: Int, strings: ArrayList<String>): SelectStringDialog {
             val instance = SelectStringDialog()
             val args = Bundle()
+            args.putInt(KEY_TITLE, title)
             args.putStringArrayList(KEY_STRING_LIST, strings)
             instance.arguments = args
             return instance

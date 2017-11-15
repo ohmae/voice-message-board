@@ -3,7 +3,7 @@
     <dimen name="layout_margin">7dp</dimen>
     <dimen name="font_size_min">10dp</dimen>
     <dimen name="font_size_max">500dp</dimen>
-    <dimen name="font_size">50dp</dimen>
+    <dimen name="font_size">50sp</dimen>
     <dimen name="edit_font_size">30sp</dimen>
     <dimen name="theme_font_size">24sp</dimen>
     <dimen name="theme_title_font_size">18sp</dimen>

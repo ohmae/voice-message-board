@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -77,8 +78,24 @@ class MainActivity : AppCompatActivity(),
         PreferenceManager.setDefaultValues(this, xml.preferences, true)
     }
 
+    private lateinit var showHistoryMenu: MenuItem
+    private lateinit var clearHistoryMenu: MenuItem
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
+        showHistoryMenu = menu.findItem(R.id.action_show_history)
+        clearHistoryMenu = menu.findItem(R.id.action_clear_history)
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (mainFragment?.hasHistory() == true) {
+            showHistoryMenu.isEnabled = true
+            clearHistoryMenu.isEnabled = true
+        } else {
+            showHistoryMenu.isEnabled = false
+            clearHistoryMenu.isEnabled = false
+        }
         return true
     }
 
@@ -89,6 +106,15 @@ class MainActivity : AppCompatActivity(),
                 startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_theme ->
                 showThemeDialog()
+            R.id.action_show_history ->
+                mainFragment?.showHistoryDialog()
+            R.id.action_clear_history ->
+                AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_title_clear_history)
+                        .setMessage(R.string.dialog_message_clear_history)
+                        .setPositiveButton(R.string.ok) { _, _ -> mainFragment?.clearHistory() }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
             else ->
                 return super.onOptionsItemSelected(item)
         }

@@ -111,6 +111,29 @@ internal class SettingsStorage(context: Context) {
         return preferences.getString(key.name, defaultValue)
     }
 
+    /**
+     * StringSet値を書き込む。
+     *
+     * @param key   Key
+     * @param value 書き込む値
+     */
+    fun writeStringSet(key: Key, value: Set<String>) {
+        preferences.edit()
+                .putStringSet(key.name, value)
+                .apply()
+    }
+
+    /**
+     * StringSet値を読み出す。
+     *
+     * @param key          Key
+     * @param defaultValue デフォルト値
+     * @return 読み出したString値
+     */
+    fun readStringSet(key: Key, defaultValue: Set<String>?): Set<String>? {
+        return preferences.getStringSet(key.name, defaultValue)
+    }
+
     private object PreferencesHolder {
         private var sharedPreferences: SharedPreferences? = null
 

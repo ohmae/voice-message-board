@@ -54,7 +54,7 @@ class EditStringDialog : DialogFragment() {
         if (string == null) {
             dismiss()
             return AlertDialog.Builder(activity)
-                    .setTitle(activity.getString(R.string.string_edit))
+                    .setTitle(activity.getString(R.string.dialog_title_edit))
                     .create()
         }
         val inflater = activity.layoutInflater
@@ -74,7 +74,7 @@ class EditStringDialog : DialogFragment() {
             }
         }
         return AlertDialog.Builder(activity)
-                .setTitle(activity.getString(R.string.string_edit))
+                .setTitle(activity.getString(R.string.dialog_title_edit))
                 .setView(editText)
                 .setPositiveButton(R.string.ok) { _, _ -> inputText() }
                 .create()
