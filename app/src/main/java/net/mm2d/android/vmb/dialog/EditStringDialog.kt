@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
 import android.content.Context
@@ -16,6 +16,7 @@ import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import net.mm2d.android.vmb.R
 
 /**
  * 文字列編集を行うダイアログ。
@@ -53,7 +54,7 @@ class EditStringDialog : DialogFragment() {
         if (string == null) {
             dismiss()
             return AlertDialog.Builder(activity)
-                    .setTitle(activity.getString(R.string.string_edit))
+                    .setTitle(activity.getString(R.string.dialog_title_edit))
                     .create()
         }
         val inflater = activity.layoutInflater
@@ -73,7 +74,7 @@ class EditStringDialog : DialogFragment() {
             }
         }
         return AlertDialog.Builder(activity)
-                .setTitle(activity.getString(R.string.string_edit))
+                .setTitle(activity.getString(R.string.dialog_title_edit))
                 .setView(editText)
                 .setPositiveButton(R.string.ok) { _, _ -> inputText() }
                 .create()

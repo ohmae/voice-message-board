@@ -5,16 +5,17 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.settings
 
 /**
  * 設定値。
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-enum class Settings {
+enum class Key {
     KEY_BACKGROUND,
     KEY_FOREGROUND,
+    HISTORY,
     SPEECH_RECOGNIZER,
     CANDIDATE_LIST,
     LIST_EDIT,

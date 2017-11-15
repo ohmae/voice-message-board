@@ -5,9 +5,12 @@
     <string name="cancel">キャンセル</string>
     <string name="action_settings">設定</string>
     <string name="action_theme">テーマを変更</string>
+    <string name="action_show_history">履歴から選択</string>
+    <string name="action_clear_history">履歴をクリア</string>
     <string name="initial_string">ここをタップ！</string>
-    <string name="string_edit">編集</string>
-    <string name="string_select">選択</string>
+    <string name="dialog_title_edit">編集</string>
+    <string name="dialog_title_select">選択</string>
+    <string name="dialog_title_history">履歴</string>
     <string name="theme_select">テーマを選択</string>
     <string name="theme_sample">テーマ</string>
     <string name="theme_white_black">白地に黒文字</string>
@@ -19,6 +22,8 @@
     <string name="toast_should_allow_permission">音声認識を利用するには権限を許可してください</string>
     <string name="dialog_permission_title">権限の許可が必要</string>
     <string name="dialog_permission_message">マイクへのアクセス権がありません。\n音声認識を利用するには「アプリ情報」から許可してください</string>
+    <string name="dialog_title_clear_history">確認</string>
+    <string name="dialog_message_clear_history">履歴をクリアします。よろしいですか？</string>
     <string name="app_info">アプリ情報</string>
     <string name="recognizer_title">声で入力します</string>
 </resources>

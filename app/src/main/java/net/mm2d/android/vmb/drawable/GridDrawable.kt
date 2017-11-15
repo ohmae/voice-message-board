@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.drawable
 
 import android.content.Context
 import android.graphics.*
@@ -26,18 +26,6 @@ class GridDrawable(context: Context) : Drawable() {
 
     init {
         gridSize = GRID_SIZE * context.resources.displayMetrics.density
-    }
-
-    /**
-     * 描画色を設定する
-     *
-     * @param background 背景
-     * @param grid       グリッド
-     */
-    fun setColor(background: Int, grid: Int) {
-        backgroundColor = background
-        gridColor = grid
-        paint.color = gridColor
     }
 
     /**

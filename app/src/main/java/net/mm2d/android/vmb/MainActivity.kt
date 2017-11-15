@@ -8,14 +8,20 @@
 package net.mm2d.android.vmb
 
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import net.mm2d.android.vmb.R.*
+import net.mm2d.android.vmb.data.Theme
+import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
+import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
+import net.mm2d.android.vmb.dialog.SelectThemeDialog
+import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
+import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
 /**
@@ -24,18 +30,11 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainActivity : AppCompatActivity(),
-        SelectThemeDialog.SelectThemeListener,
-        SelectStringDialog.SelectStringListener,
-        EditStringDialog.ConfirmStringListener {
+        SelectThemeListener, SelectStringListener, ConfirmStringListener {
     private val themes: ArrayList<Theme> = ArrayList()
-
-    /**
-     * DefaultSharedPreferencesを返す。
-     *
-     * @return DefaultSharedPreferences
-     */
-    private val defaultSharedPreferences: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(this)
+    private val settings by lazy {
+        Settings(this)
+    }
 
     /**
      * MainFragmentを返す。
@@ -44,14 +43,14 @@ class MainActivity : AppCompatActivity(),
      */
     private val mainFragment: MainFragment?
         get() {
-            val fragment = supportFragmentManager.findFragmentById(R.id.fragment)
+            val fragment = supportFragmentManager.findFragmentById(id.fragment)
             return fragment as? MainFragment
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setContentView(layout.activity_main)
+        setSupportActionBar(findViewById(id.toolbar))
         supportActionBar?.title = null
         initPreferences()
         makeThemes()
@@ -59,40 +58,44 @@ class MainActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        requestedOrientation = getOrientation()
-    }
-
-    private fun getOrientation(): Int {
-        val value = defaultSharedPreferences.getString(Settings.SCREEN_ORIENTATION.name, null)
-        if (value != null) {
-            try {
-                return Integer.parseInt(value)
-            } catch (e: NumberFormatException) {
-                e.printStackTrace()
-            }
-        }
-        return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = settings.screenOrientation
     }
 
     /**
      * テーマの選択肢を作成。
      */
     private fun makeThemes() {
-        themes.add(Theme(getString(R.string.theme_white_black), Color.WHITE, Color.BLACK))
-        themes.add(Theme(getString(R.string.theme_black_white), Color.BLACK, Color.WHITE))
-        themes.add(Theme(getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW))
-        themes.add(Theme(getString(R.string.theme_black_green), Color.BLACK, Color.GREEN))
+        themes.add(Theme(getString(string.theme_white_black), Color.WHITE, Color.BLACK))
+        themes.add(Theme(getString(string.theme_black_white), Color.BLACK, Color.WHITE))
+        themes.add(Theme(getString(string.theme_black_yellow), Color.BLACK, Color.YELLOW))
+        themes.add(Theme(getString(string.theme_black_green), Color.BLACK, Color.GREEN))
     }
 
     /**
      * アプリ設定の初期化。
      */
     private fun initPreferences() {
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, true)
+        PreferenceManager.setDefaultValues(this, xml.preferences, true)
     }
+
+    private lateinit var showHistoryMenu: MenuItem
+    private lateinit var clearHistoryMenu: MenuItem
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
+        showHistoryMenu = menu.findItem(R.id.action_show_history)
+        clearHistoryMenu = menu.findItem(R.id.action_clear_history)
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (mainFragment?.hasHistory() == true) {
+            showHistoryMenu.isEnabled = true
+            clearHistoryMenu.isEnabled = true
+        } else {
+            showHistoryMenu.isEnabled = false
+            clearHistoryMenu.isEnabled = false
+        }
         return true
     }
 
@@ -103,6 +106,15 @@ class MainActivity : AppCompatActivity(),
                 startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_theme ->
                 showThemeDialog()
+            R.id.action_show_history ->
+                mainFragment?.showHistoryDialog()
+            R.id.action_clear_history ->
+                AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_title_clear_history)
+                        .setMessage(R.string.dialog_message_clear_history)
+                        .setPositiveButton(R.string.ok) { _, _ -> mainFragment?.clearHistory() }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
             else ->
                 return super.onOptionsItemSelected(item)
         }
@@ -118,18 +130,14 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onSelectTheme(theme: Theme) {
-        // 設定を保存する。
-        defaultSharedPreferences.edit()
-                .putInt(Settings.KEY_BACKGROUND.name, theme.backgroundColor)
-                .putInt(Settings.KEY_FOREGROUND.name, theme.foregroundColor)
-                .apply()
+        settings.backgroundColor = theme.backgroundColor
+        settings.foregroundColor = theme.foregroundColor
         mainFragment?.applyTheme()
     }
 
     override fun onSelectString(string: String) {
         mainFragment?.setText(string)
-        // 継続して
-        if (defaultSharedPreferences.getBoolean(Settings.LIST_EDIT.name, false)) {
+        if (settings.shouldShowEditorAfterSelect()) {
             mainFragment?.startEdit()
         }
     }

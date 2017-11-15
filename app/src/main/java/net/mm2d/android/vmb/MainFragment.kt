@@ -12,13 +12,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -29,6 +28,13 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import net.mm2d.android.vmb.dialog.EditStringDialog
+import net.mm2d.android.vmb.dialog.PermissionDialog
+import net.mm2d.android.vmb.dialog.RecognizerDialog
+import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
+import net.mm2d.android.vmb.dialog.SelectStringDialog
+import net.mm2d.android.vmb.drawable.GridDrawable
+import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
 /**
@@ -36,29 +42,28 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
-    private var fontSizeMin: Float = 0.0f
-    private var fontSizeMax: Float = 0.0f
-    private var fontSize: Float = 0.0f
+class MainFragment : Fragment(), RecognizeListener {
+    private val settings by lazy {
+        Settings(activity)
+    }
+
+    private lateinit var history: LinkedList<String>
     private lateinit var rootView: View
     private lateinit var textView: TextView
     private lateinit var toolbar: Toolbar
+    private lateinit var historyFab: FloatingActionButton
     private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
-
-    /**
-     * DefaultSharedPreferencesを返す。
-     *
-     * @return DefaultSharedPreferences
-     */
-    private val defaultSharedPreferences: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(activity)
+    private var fontSizeMin: Float = 0.0f
+    private var fontSizeMax: Float = 0.0f
+    private var fontSize: Float = 0.0f
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
-        view.findViewById<View>(R.id.fab).setOnClickListener { _ -> startEdit() }
+        view.findViewById<View>(R.id.edit_fab)
+                .setOnClickListener { startEdit() }
         toolbar = view.findViewById(R.id.toolbar)
         textView = view.findViewById(R.id.textView)
         rootView = view.findViewById(R.id.root)
@@ -78,6 +83,12 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         applyTheme()
+        historyFab = view.findViewById(R.id.history_fab)
+        historyFab.setOnClickListener { showHistoryDialog() }
+        history = LinkedList(settings.history)
+        if (history.isEmpty()) {
+            historyFab.hide()
+        }
         onRestoreInstanceState(savedInstanceState)
         return view
     }
@@ -120,7 +131,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
      * 音声入力開始。
      */
     private fun startVoiceInput() {
-        if (defaultSharedPreferences.getBoolean(Settings.SPEECH_RECOGNIZER.name, true)) {
+        if (settings.shouldUseSpeechRecognizer()) {
             startRecognizerDialogWithPermission()
         } else {
             startRecognizerActivity()
@@ -179,8 +190,9 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         if (results.isEmpty()) {
             return
         }
-        if (results.size > 1 && defaultSharedPreferences.getBoolean(Settings.CANDIDATE_LIST.name, false)) {
-            SelectStringDialog.newInstance(results).show(fragmentManager, "")
+        if (results.size > 1 && settings.shouldShowCandidateList()) {
+            SelectStringDialog.newInstance(R.string.dialog_title_select, results)
+                    .show(fragmentManager, "")
         } else {
             setText(results[0])
         }
@@ -203,6 +215,24 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         EditStringDialog.newInstance(string).show(fragmentManager, "")
     }
 
+    fun showHistoryDialog() {
+        if (history.isEmpty()) {
+            return
+        }
+        SelectStringDialog.newInstance(R.string.dialog_title_history, ArrayList(history))
+                .show(fragmentManager, "")
+    }
+
+    fun clearHistory() {
+        history.clear()
+        settings.history = HashSet(history)
+        historyFab.hide()
+    }
+
+    fun hasHistory(): Boolean {
+        return !history.isEmpty()
+    }
+
     /**
      * 文字列を設定する。
      *
@@ -213,16 +243,20 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
      */
     fun setText(string: String) {
         textView.text = string
+        history.remove(string)
+        history.addFirst(string)
+        while (history.size > MAX_HISTORY) {
+            history.removeLast()
+        }
+        settings.history = HashSet(history)
+        historyFab.show()
     }
 
     /**
      * Preferenceを読みだして、テーマを設定する。
      */
     fun applyTheme() {
-        val pref = defaultSharedPreferences
-        val bg = pref.getInt(Settings.KEY_BACKGROUND.name, Color.WHITE)
-        val fg = pref.getInt(Settings.KEY_FOREGROUND.name, Color.BLACK)
-        setTheme(bg, fg)
+        setTheme(settings.backgroundColor, settings.foregroundColor)
     }
 
     /**
@@ -272,7 +306,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         }
 
         override fun onLongPress(e: MotionEvent) {
-            if (defaultSharedPreferences.getBoolean(Settings.LONG_TAP_EDIT.name, false)) {
+            if (settings.shouldShowEditorWhenLongTap()) {
                 rootView.performLongClick()
             }
         }
@@ -291,6 +325,7 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
     }
 
     companion object {
+        private const val MAX_HISTORY = 30
         private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private const val TAG_TEXT = "TAG_TEXT"
         private const val RECOGNIZER_REQUEST_CODE = 1
@@ -319,6 +354,5 @@ class MainFragment : Fragment(), RecognizerDialog.RecognizeListener {
         private fun clamp(value: Float, min: Float, max: Float): Float {
             return Math.min(Math.max(value, min), max)
         }
-
     }
 }

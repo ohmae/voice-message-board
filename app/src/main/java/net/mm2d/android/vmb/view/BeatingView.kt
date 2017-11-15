@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb.effect
+package net.mm2d.android.vmb.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -47,8 +47,8 @@ class BeatingView
         radius = radiusMin
     }
 
-    fun onRmsChanged(rmsdB: Float) {
-        val target = radiusMin + (radiusMax - radiusMin) * (rmsdB - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)
+    fun onRmsChanged(rms: Float) {
+        val target = radiusMin + (radiusMax - radiusMin) * (rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)
         if (target == targetRadius) {
             return
         }
