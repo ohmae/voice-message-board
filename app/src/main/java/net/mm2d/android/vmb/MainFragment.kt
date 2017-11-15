@@ -32,6 +32,7 @@ import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog
+import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
@@ -316,6 +317,5 @@ class MainFragment : Fragment(), RecognizeListener {
         private fun clamp(value: Float, min: Float, max: Float): Float {
             return Math.min(Math.max(value, min), max)
         }
-
     }
 }

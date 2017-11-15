@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.view.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

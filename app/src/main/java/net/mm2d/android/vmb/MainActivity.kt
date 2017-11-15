@@ -8,7 +8,6 @@
 package net.mm2d.android.vmb
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -16,6 +15,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import net.mm2d.android.vmb.R.*
+import net.mm2d.android.vmb.data.Theme
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
@@ -34,14 +34,6 @@ class MainActivity : AppCompatActivity(),
     private val settings by lazy {
         Settings(this)
     }
-
-    /**
-     * DefaultSharedPreferencesを返す。
-     *
-     * @return DefaultSharedPreferences
-     */
-    private val defaultSharedPreferences: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(this)
 
     /**
      * MainFragmentを返す。

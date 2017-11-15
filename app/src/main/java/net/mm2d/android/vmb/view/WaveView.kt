@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb.effect
+package net.mm2d.android.vmb.view
 
 import android.animation.Animator
 import android.animation.ValueAnimator
@@ -55,9 +55,9 @@ class WaveView
         wave2Scale = density * 1.7f
     }
 
-    fun onRmsChanged(rmsdB: Float) {
-        if (rmsdB > amplitude) {
-            amplitude = rmsdB
+    fun onRmsChanged(rms: Float) {
+        if (rms > amplitude) {
+            amplitude = rms
         }
     }
 
@@ -133,7 +133,7 @@ class WaveView
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        startAnimation();
+        startAnimation()
     }
 
     override fun onDetachedFromWindow() {

@@ -21,8 +21,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.effect.BeatingView
-import net.mm2d.android.vmb.effect.WaveView
+import net.mm2d.android.vmb.view.BeatingView
+import net.mm2d.android.vmb.view.WaveView
 import java.util.*
 
 /**
@@ -75,9 +75,9 @@ class RecognizerDialog : DialogFragment() {
             override fun onEvent(eventType: Int, params: Bundle?) {
             }
 
-            override fun onRmsChanged(rmsdB: Float) {
-                beatingView.onRmsChanged(rmsdB)
-                waveView.onRmsChanged(rmsdB)
+            override fun onRmsChanged(rms: Float) {
+                beatingView.onRmsChanged(rms)
+                waveView.onRmsChanged(rms)
             }
 
             override fun onError(error: Int) {
