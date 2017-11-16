@@ -47,19 +47,12 @@ abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
      * @param parent      親要素
      * @return レイアウトが作成されたView
      */
-    protected fun inflateView(layout: Int, convertView: View?, parent: ViewGroup): View {
-        return convertView ?: inflater.inflate(layout, parent, false)
-    }
+    protected fun inflateView(layout: Int, convertView: View?, parent: ViewGroup): View =
+            convertView ?: inflater.inflate(layout, parent, false)
 
-    override fun getCount(): Int {
-        return list.size
-    }
+    override fun getCount(): Int = list.size
 
-    override fun getItem(position: Int): T {
-        return list[position]
-    }
+    override fun getItem(position: Int): T = list[position]
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
 }

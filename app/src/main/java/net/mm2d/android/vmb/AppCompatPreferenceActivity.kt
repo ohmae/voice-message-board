@@ -43,9 +43,7 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate.onPostCreate(savedInstanceState)
     }
 
-    override fun getMenuInflater(): MenuInflater {
-        return delegate.menuInflater
-    }
+    override fun getMenuInflater(): MenuInflater = delegate.menuInflater
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         delegate.setContentView(layoutResID)

@@ -42,9 +42,7 @@ class SettingsFragment : PreferenceFragment() {
         findPreference(Key.VERSION_NUMBER).summary = BuildConfig.VERSION_NAME
     }
 
-    private fun findPreference(key: Key): Preference {
-        return super.findPreference(key.name)
-    }
+    private fun findPreference(key: Key): Preference = super.findPreference(key.name)
 
     /**
      * 設定結果を反映させるListenerとの接続。

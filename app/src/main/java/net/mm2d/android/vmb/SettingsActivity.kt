@@ -21,11 +21,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 .commit()
     }
 
-    override fun onIsMultiPane(): Boolean {
-        return false
-    }
+    override fun onIsMultiPane(): Boolean = false
 
-    override fun isValidFragment(fragmentName: String): Boolean {
-        return true
-    }
+    override fun isValidFragment(fragmentName: String): Boolean = true
 }

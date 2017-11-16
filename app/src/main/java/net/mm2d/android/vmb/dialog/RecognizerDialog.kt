@@ -19,8 +19,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.view.BeatingView
 import net.mm2d.android.vmb.view.WaveView
 import java.util.*
@@ -29,7 +29,7 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class RecognizerDialog : DialogFragment() {
-    private lateinit var recognizer: SpeechRecognizer
+    private var recognizer: SpeechRecognizer? = null
     private lateinit var textView: TextView
     private lateinit var beatingView: BeatingView
     private lateinit var waveView: WaveView
@@ -39,14 +39,7 @@ class RecognizerDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        recognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)
-        recognizer.setRecognitionListener(createRecognitionListener())
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-        recognizer.startListening(intent)
+        startListening()
         val inflater = activity.layoutInflater
         val decorView = activity.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
@@ -56,6 +49,27 @@ class RecognizerDialog : DialogFragment() {
         return AlertDialog.Builder(context)
                 .setView(view)
                 .create()
+    }
+
+    private fun startListening() {
+        try {
+            recognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)
+            recognizer?.setRecognitionListener(createRecognitionListener())
+            recognizer?.startListening(createRecognizerIntent())
+        } catch (e: RuntimeException) {
+            recognizer = null
+            Toaster.show(context, R.string.toast_fail_to_start_voice_input)
+            dismiss()
+        }
+    }
+
+    private fun createRecognizerIntent(): Intent {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+        return intent
     }
 
     private fun createRecognitionListener(): RecognitionListener {
@@ -81,31 +95,29 @@ class RecognizerDialog : DialogFragment() {
             }
 
             override fun onError(error: Int) {
-                Toast.makeText(context, R.string.toast_voice_input_fail, Toast.LENGTH_LONG).show()
+                Toaster.show(context, R.string.toast_voice_input_fail)
                 dismiss()
             }
 
-            override fun onPartialResults(partialResults: Bundle?) {
-                val list = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?: Collections.emptyList<String>()
+            override fun onPartialResults(results: Bundle?) {
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
                 if (list.size > 0 && !list[0].isEmpty()) {
                     textView.text = list[0]
                 }
             }
 
             override fun onResults(results: Bundle?) {
-                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (list != null) {
-                    (targetFragment as? RecognizeListener)?.onRecognize(list)
-                }
                 dismiss()
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
+                (targetFragment as? RecognizeListener)?.onRecognize(list)
             }
         }
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        recognizer.destroy()
+        recognizer?.destroy()
+        recognizer = null
     }
 
     fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
@@ -115,8 +127,6 @@ class RecognizerDialog : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(): RecognizerDialog {
-            return RecognizerDialog()
-        }
+        fun newInstance(): RecognizerDialog = RecognizerDialog()
     }
 }

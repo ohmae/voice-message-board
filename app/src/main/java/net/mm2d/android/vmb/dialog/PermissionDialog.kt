@@ -45,8 +45,6 @@ class PermissionDialog : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(): PermissionDialog {
-            return PermissionDialog()
-        }
+        fun newInstance(): PermissionDialog = PermissionDialog()
     }
 }

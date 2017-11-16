@@ -60,7 +60,6 @@ internal object Maintainer {
      * @param pref SharedPreferences
      * @return バージョン
      */
-    private fun getSettingsVersion(pref: SharedPreferences): Int {
-        return pref.getInt(Key.SETTINGS_VERSION.name, -1)
-    }
+    private fun getSettingsVersion(pref: SharedPreferences): Int =
+            pref.getInt(Key.SETTINGS_VERSION.name, -1)
 }

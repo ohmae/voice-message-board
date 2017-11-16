@@ -44,21 +44,17 @@ class Settings(context: Context) {
             return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
-    fun shouldUseSpeechRecognizer(): Boolean {
-        return mStorage.readBoolean(Key.SPEECH_RECOGNIZER, true)
-    }
+    fun shouldUseSpeechRecognizer(): Boolean =
+            mStorage.readBoolean(Key.SPEECH_RECOGNIZER, true)
 
-    fun shouldShowCandidateList(): Boolean {
-        return mStorage.readBoolean(Key.CANDIDATE_LIST, false)
-    }
+    fun shouldShowCandidateList(): Boolean =
+            mStorage.readBoolean(Key.CANDIDATE_LIST, false)
 
-    fun shouldShowEditorWhenLongTap(): Boolean {
-        return mStorage.readBoolean(Key.LONG_TAP_EDIT, false)
-    }
+    fun shouldShowEditorWhenLongTap(): Boolean =
+            mStorage.readBoolean(Key.LONG_TAP_EDIT, false)
 
-    fun shouldShowEditorAfterSelect(): Boolean {
-        return mStorage.readBoolean(Key.LIST_EDIT, false)
-    }
+    fun shouldShowEditorAfterSelect(): Boolean =
+            mStorage.readBoolean(Key.LIST_EDIT, false)
 
     var history: Set<String>
         get() = mStorage.readStringSet(Key.HISTORY, null) ?: Collections.emptySet()

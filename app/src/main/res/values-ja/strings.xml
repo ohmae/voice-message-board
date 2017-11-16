@@ -19,6 +19,7 @@
     <string name="theme_black_green">黒地に緑文字</string>
     <string name="toast_can_not_use_voice_input">音声入力が起動できません</string>
     <string name="toast_voice_input_fail">音声認識に失敗しました</string>
+    <string name="toast_fail_to_start_voice_input">音声認識サービスとの接続に失敗しました</string>
     <string name="toast_should_allow_permission">音声認識を利用するには権限を許可してください</string>
     <string name="dialog_permission_title">権限の許可が必要</string>
     <string name="dialog_permission_message">マイクへのアクセス権がありません。\n音声認識を利用するには「アプリ情報」から許可してください</string>

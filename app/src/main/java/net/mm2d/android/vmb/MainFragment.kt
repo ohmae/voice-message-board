@@ -27,7 +27,6 @@ import android.support.v7.widget.Toolbar
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
-import android.widget.Toast
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -35,6 +34,7 @@ import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.util.Toaster
 import java.util.*
 
 /**
@@ -104,10 +104,8 @@ class MainFragment : Fragment(), RecognizeListener {
             val width = resources.displayMetrics.widthPixels
             val initialText = textView.text.toString()
             fontSize = if (initialText[0] <= '\u007e') {
-                // 半角
                 width.toFloat() / initialText.length * 2
             } else {
-                // 全角
                 width.toFloat() / initialText.length
             }
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
@@ -160,7 +158,7 @@ class MainFragment : Fragment(), RecognizeListener {
             return
         }
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECORD_AUDIO)) {
-            Toast.makeText(context, R.string.toast_should_allow_permission, Toast.LENGTH_LONG).show()
+            Toaster.show(context, R.string.toast_should_allow_permission)
         } else {
             PermissionDialog.newInstance().showAllowingStateLoss(fragmentManager, "")
         }
@@ -182,12 +180,12 @@ class MainFragment : Fragment(), RecognizeListener {
         try {
             startActivityForResult(intent, RECOGNIZER_REQUEST_CODE)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(activity, R.string.toast_can_not_use_voice_input, Toast.LENGTH_LONG).show()
+            Toaster.show(context, R.string.toast_can_not_use_voice_input)
         }
     }
 
     override fun onRecognize(results: ArrayList<String>) {
-        if (results.isEmpty()) {
+        if (activity == null || results.isEmpty()) {
             return
         }
         if (results.size > 1 && settings.shouldShowCandidateList()) {
@@ -229,9 +227,7 @@ class MainFragment : Fragment(), RecognizeListener {
         historyFab.hide()
     }
 
-    fun hasHistory(): Boolean {
-        return !history.isEmpty()
-    }
+    fun hasHistory(): Boolean = !history.isEmpty()
 
     /**
      * 文字列を設定する。
@@ -272,26 +268,19 @@ class MainFragment : Fragment(), RecognizeListener {
         ViewCompat.setBackground(rootView, gridDrawable)
         rootView.invalidate()
         textView.setTextColor(foreground)
-        val icon = toolbar.overflowIcon
-        if (icon != null) {
-            DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background))
-        }
+        val icon = toolbar.overflowIcon ?: return
+        DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background))
     }
 
     @ColorInt
-    private fun getIconColor(@ColorInt background: Int): Int {
-        return if (getBrightness(background) < 128) {
-            Color.WHITE
-        } else Color.BLACK
-    }
+    private fun getIconColor(@ColorInt background: Int): Int =
+            if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
 
-    private fun getBrightness(@ColorInt color: Int): Int {
-        return getBrightness(Color.red(color), Color.green(color), Color.blue(color))
-    }
+    private fun getBrightness(@ColorInt color: Int): Int =
+            getBrightness(Color.red(color), Color.green(color), Color.blue(color))
 
-    private fun getBrightness(r: Int, g: Int, b: Int): Int {
-        return clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
-    }
+    private fun getBrightness(r: Int, g: Int, b: Int): Int =
+            clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
 
     /**
      * タッチイベントをClickとLongClickに振り分ける。
@@ -339,9 +328,8 @@ class MainFragment : Fragment(), RecognizeListener {
          * @param max   最大値
          * @return 飽和させた値
          */
-        private fun clamp(value: Int, min: Int, max: Int): Int {
-            return Math.min(Math.max(value, min), max)
-        }
+        private fun clamp(value: Int, min: Int, max: Int): Int =
+                Math.min(Math.max(value, min), max)
 
         /**
          * min以下はmin、max以上はmaxに飽和させる
@@ -351,8 +339,7 @@ class MainFragment : Fragment(), RecognizeListener {
          * @param max   最大値
          * @return 飽和させた値
          */
-        private fun clamp(value: Float, min: Float, max: Float): Float {
-            return Math.min(Math.max(value, min), max)
-        }
+        private fun clamp(value: Float, min: Float, max: Float): Float =
+                Math.min(Math.max(value, min), max)
     }
 }
