@@ -44,6 +44,7 @@ class RecognizerDialog : DialogFragment() {
         val decorView = activity.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
         beatingView = view.findViewById(R.id.beating_view)
+        beatingView.setOnClickListener { recognizer?.stopListening() }
         waveView = view.findViewById(R.id.wave_view)
         textView = view.findViewById(R.id.text)
         return AlertDialog.Builder(context)
