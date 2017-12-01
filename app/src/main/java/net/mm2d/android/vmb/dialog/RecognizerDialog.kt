@@ -91,8 +91,9 @@ class RecognizerDialog : DialogFragment() {
             }
 
             override fun onRmsChanged(rms: Float) {
-                beatingView.onRmsChanged(rms)
-                waveView.onRmsChanged(rms)
+                val volume = normalize(rms)
+                beatingView.onVolumeChanged(volume)
+                waveView.onVolumeChanged(volume)
             }
 
             override fun onError(error: Int) {
@@ -128,6 +129,9 @@ class RecognizerDialog : DialogFragment() {
     }
 
     companion object {
+        private const val RMS_DB_MAX = 10.0f
+        private const val RMS_DB_MIN = -2.12f
+        fun normalize(rms: Float): Float = Math.min(Math.max((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN), 0f), 1f)
         fun newInstance(): RecognizerDialog = RecognizerDialog()
     }
 }

@@ -9,6 +9,8 @@ package net.mm2d.android.vmb
 
 import android.app.Application
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.log.AndroidLogInitializer
+import net.mm2d.log.Log
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
@@ -16,6 +18,8 @@ import net.mm2d.android.vmb.settings.Settings
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        Log.setInitializer(AndroidLogInitializer.get())
+        Log.initialize(BuildConfig.DEBUG, true)
         Settings.initialize(this)
     }
 }

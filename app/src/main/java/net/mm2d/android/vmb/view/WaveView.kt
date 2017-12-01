@@ -51,13 +51,13 @@ class WaveView
         wave1CenterFromBottom = resources.getDimension(R.dimen.wave1_center)
         wave2CenterFromBottom = resources.getDimension(R.dimen.wave2_center)
         val density: Float = context.resources.displayMetrics.density
-        wave1Scale = density * 1.3f
-        wave2Scale = density * 1.7f
+        wave1Scale = density * 13f
+        wave2Scale = density * 17f
     }
 
-    fun onRmsChanged(rms: Float) {
-        if (rms > amplitude) {
-            amplitude = rms
+    fun onVolumeChanged(volume: Float) {
+        if (volume > amplitude) {
+            amplitude = volume
         }
     }
 
@@ -116,7 +116,7 @@ class WaveView
             if (value < offset) {
                 sign *= -1
                 queue.removeFirst()
-                queue.addLast(Math.min(amplitude, MAX_AMPLITUDE) * sign)
+                queue.addLast(amplitude * sign)
                 amplitude = 0f
             }
             offset = animation.animatedValue as Float
@@ -143,6 +143,5 @@ class WaveView
 
     companion object {
         private const val DIVISION = 5
-        private const val MAX_AMPLITUDE = 10f
     }
 }

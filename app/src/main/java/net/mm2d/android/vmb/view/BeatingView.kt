@@ -47,8 +47,8 @@ class BeatingView
         radius = radiusMin
     }
 
-    fun onRmsChanged(rms: Float) {
-        val target = radiusMin + (radiusMax - radiusMin) * (rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)
+    fun onVolumeChanged(volume: Float) {
+        val target = radiusMin + (radiusMax - radiusMin) * volume
         if (target == targetRadius) {
             return
         }
@@ -87,10 +87,5 @@ class BeatingView
         val cy = canvas.height / 2f
         canvas.drawCircle(cx, cy, radius, paint)
         super.dispatchDraw(canvas)
-    }
-
-    companion object {
-        private const val RMS_DB_MAX = 10.0f
-        private const val RMS_DB_MIN = -2.12f
     }
 }
