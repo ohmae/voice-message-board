@@ -66,7 +66,7 @@ class WaveView
         val height = canvas.height.toFloat()
         val waveLength = width / (DIVISION - 3)
         val handleLength = waveLength / 3
-        var xp = offset
+        var xp = -offset * waveLength
         var yp = queue[0] * scale + cy
         path.reset()
         path.moveTo(xp, yp)
@@ -89,13 +89,11 @@ class WaveView
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        val width = canvas.width
         val height = canvas.height
-        val length = (width / (DIVISION - 3)).toFloat()
         paint.color = wave1Color
-        drawWave(canvas, height - wave1CenterFromBottom, -length * offset, wave1Scale)
+        drawWave(canvas, height - wave1CenterFromBottom, offset, wave1Scale)
         paint.color = wave2Color
-        drawWave(canvas, height - wave2CenterFromBottom, -length * (offset + 0.5f), wave2Scale)
+        drawWave(canvas, height - wave2CenterFromBottom, offset + 0.5f, wave2Scale)
         super.dispatchDraw(canvas)
     }
 
@@ -119,7 +117,7 @@ class WaveView
                 queue.addLast(amplitude * sign)
                 amplitude = 0f
             }
-            offset = animation.animatedValue as Float
+            offset = value
             invalidate()
         }
         animator.start()
