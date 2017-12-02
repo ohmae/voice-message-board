@@ -4,7 +4,8 @@
     <color name="primaryDark">#000000</color>
     <color name="accent">#2962FF</color>
     <color name="beating">#402962FF</color>
-    <color name="wave1">#80448AFF</color>
-    <color name="wave2">#ff448AFF</color>
+    <color name="wave1">#FF448AFF</color>
+    <color name="wave2">#80448AFF</color>
+    <color name="wave3">#40448AFF</color>
     <color name="primaryText">#000000</color>
 </resources>

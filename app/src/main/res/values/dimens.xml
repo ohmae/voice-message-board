@@ -12,6 +12,7 @@
     <dimen name="recognizer_icon_circle_size">72dp</dimen>
     <dimen name="recognizer_dialog_margin">16dp</dimen>
     <dimen name="recognizer_dialog_title_margin">8dp</dimen>
-    <dimen name="wave1_center">70dp</dimen>
-    <dimen name="wave2_center">50dp</dimen>
+    <dimen name="wave1_center">50dp</dimen>
+    <dimen name="wave2_center">60dp</dimen>
+    <dimen name="wave3_center">70dp</dimen>
 </resources>
