@@ -98,7 +98,7 @@ class RecognizerDialog : DialogFragment() {
 
             override fun onError(error: Int) {
                 Toaster.show(context, R.string.toast_voice_input_fail)
-                dismiss()
+                dismissAllowingStateLoss()
             }
 
             override fun onPartialResults(results: Bundle?) {
@@ -109,7 +109,7 @@ class RecognizerDialog : DialogFragment() {
             }
 
             override fun onResults(results: Bundle?) {
-                dismiss()
+                dismissAllowingStateLoss()
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
                 (targetFragment as? RecognizeListener)?.onRecognize(list)
             }
