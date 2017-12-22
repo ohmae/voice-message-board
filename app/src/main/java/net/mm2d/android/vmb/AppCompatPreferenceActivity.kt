@@ -17,6 +17,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 
 /**
  * A [android.preference.PreferenceActivity] which implements and proxies the necessary calls
@@ -88,6 +89,14 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
 
     override fun invalidateOptionsMenu() {
         delegate.invalidateOptionsMenu()
+    }
+
+    protected fun findRootContainer(): LinearLayout? {
+        val content = findViewById<View>(android.R.id.content)
+        if (content !is ViewGroup || content.childCount < 1) {
+            return null
+        }
+        return content.getChildAt(0) as? LinearLayout
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

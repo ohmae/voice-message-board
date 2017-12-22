@@ -45,7 +45,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     private val wave3Scale: Float
 
     private var waveAnimator: Animator? = null
-    private var offset: Float = 0f
+    private var phase: Float = 0f
     private var sign = 1
     private var amplitude: Float = 0f
 
@@ -59,9 +59,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         wave2CenterFromBottom = resources.getDimension(R.dimen.wave2_center)
         wave3CenterFromBottom = resources.getDimension(R.dimen.wave3_center)
         val density: Float = context.resources.displayMetrics.density
-        wave1Scale = density * 17f
-        wave2Scale = density * 13f
-        wave3Scale = density * 10f
+        wave1Scale = 20.0f * density
+        wave2Scale = 17.5f * density
+        wave3Scale = 15.0f * density
     }
 
     fun onVolumeChanged(volume: Float) {
@@ -70,12 +70,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         }
     }
 
-    private fun drawWave(canvas: Canvas, cy: Float, offset: Float, startOffset: Float, scale: Float) {
+    private fun drawWave(canvas: Canvas, cy: Float, offset: Float, scale: Float) {
         val width = canvas.width.toFloat()
         val height = canvas.height.toFloat()
-        val waveLength = width / (2f + startOffset * 3f)
+        val waveLength = width / (2f + offset * 2f)
         val handleLength = waveLength / 3
-        var xp = width + (1.0f - offset + startOffset) * waveLength
+        var xp = width + (1.0f - phase + offset) * waveLength
         var yp = queue[0] * scale + cy
         path.reset()
         path.moveTo(xp, yp)
@@ -100,11 +100,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     private fun drawWaveEffect(canvas: Canvas) {
         val height = canvas.height
         paint.color = wave3Color
-        drawWave(canvas, height - wave3CenterFromBottom, offset, 1.0f, wave3Scale)
+        drawWave(canvas, height - wave3CenterFromBottom, 1.0f, wave3Scale)
         paint.color = wave2Color
-        drawWave(canvas, height - wave2CenterFromBottom, offset, 0.5f, wave2Scale)
+        drawWave(canvas, height - wave2CenterFromBottom, 0.5f, wave2Scale)
         paint.color = wave1Color
-        drawWave(canvas, height - wave1CenterFromBottom, offset, 0.0f, wave1Scale)
+        drawWave(canvas, height - wave1CenterFromBottom, 0.0f, wave1Scale)
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -119,20 +119,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             queue.addLast(0f)
         }
         sign = 1
-        offset = 0f
+        phase = 0f
         val animator = ValueAnimator.ofFloat(0f, 1f)
         animator.duration = 200L
         animator.interpolator = LinearInterpolator()
         animator.repeatCount = ValueAnimator.INFINITE
         animator.addUpdateListener { animation ->
             val value = animation.animatedValue as Float
-            if (value < offset) {
+            if (value < phase) {
                 sign *= -1
                 queue.removeLast()
                 queue.addFirst(amplitude * sign)
                 amplitude = 0f
             }
-            offset = value
+            phase = value
             invalidate()
         }
         animator.start()
