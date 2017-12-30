@@ -15,14 +15,13 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import net.mm2d.android.vmb.R.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import net.mm2d.android.vmb.data.Theme
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
 import net.mm2d.android.vmb.settings.Settings
-import java.util.*
 
 /**
  * 起動後から表示されるActivity。
@@ -31,7 +30,14 @@ import java.util.*
  */
 class MainActivity : AppCompatActivity(),
         SelectThemeListener, SelectStringListener, ConfirmStringListener {
-    private val themes: ArrayList<Theme> = ArrayList()
+    private val themes by lazy {
+        ArrayList<Theme>().apply {
+            add(Theme(getString(R.string.theme_white_black), Color.WHITE, Color.BLACK))
+            add(Theme(getString(R.string.theme_black_white), Color.BLACK, Color.WHITE))
+            add(Theme(getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW))
+            add(Theme(getString(R.string.theme_black_green), Color.BLACK, Color.GREEN))
+        }
+    }
     private val settings by lazy {
         Settings(this)
     }
@@ -43,17 +49,16 @@ class MainActivity : AppCompatActivity(),
      */
     private val mainFragment: MainFragment?
         get() {
-            val fragment = supportFragmentManager.findFragmentById(id.fragment)
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragment)
             return fragment as? MainFragment
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(layout.activity_main)
-        setSupportActionBar(findViewById(id.toolbar))
+        setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
         supportActionBar?.title = null
         initPreferences()
-        makeThemes()
     }
 
     override fun onResume() {
@@ -62,20 +67,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * テーマの選択肢を作成。
-     */
-    private fun makeThemes() {
-        themes.add(Theme(getString(string.theme_white_black), Color.WHITE, Color.BLACK))
-        themes.add(Theme(getString(string.theme_black_white), Color.BLACK, Color.WHITE))
-        themes.add(Theme(getString(string.theme_black_yellow), Color.BLACK, Color.YELLOW))
-        themes.add(Theme(getString(string.theme_black_green), Color.BLACK, Color.GREEN))
-    }
-
-    /**
      * アプリ設定の初期化。
      */
     private fun initPreferences() {
-        PreferenceManager.setDefaultValues(this, xml.preferences, true)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
     }
 
     private lateinit var showHistoryMenu: MenuItem

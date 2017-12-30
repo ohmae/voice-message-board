@@ -17,16 +17,16 @@ import android.graphics.Color
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.support.v4.math.MathUtils.clamp
 import android.support.v4.view.ViewCompat
-import android.support.v7.widget.Toolbar
 import android.util.TypedValue
 import android.view.*
-import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_main.*
+import net.mm2d.android.vmb.R.layout
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -48,10 +48,6 @@ class MainFragment : Fragment(), RecognizeListener {
     }
 
     private lateinit var history: LinkedList<String>
-    private lateinit var rootView: View
-    private lateinit var textView: TextView
-    private lateinit var toolbar: Toolbar
-    private lateinit var historyFab: FloatingActionButton
     private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
@@ -61,36 +57,35 @@ class MainFragment : Fragment(), RecognizeListener {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-        view.findViewById<View>(R.id.edit_fab)
-                .setOnClickListener { startEdit() }
-        toolbar = view.findViewById(R.id.toolbar)
-        textView = view.findViewById(R.id.textView)
-        rootView = view.findViewById(R.id.root)
-        rootView.setOnClickListener { startVoiceInput() }
-        rootView.setOnLongClickListener {
-            startEdit()
-            true
-        }
-        rootView.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            scaleDetector.onTouchEvent(event)
-            true
-        }
+        return inflater.inflate(layout.fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         gridDrawable = GridDrawable(activity)
         scaleDetector = ScaleGestureDetector(activity, ScaleListener())
         gestureDetector = GestureDetector(activity, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
-        applyTheme()
-        historyFab = view.findViewById(R.id.history_fab)
+        editFab.setOnClickListener { startEdit() }
+        root.apply {
+            setOnClickListener { startVoiceInput() }
+            setOnLongClickListener {
+                startEdit()
+                true
+            }
+            setOnTouchListener { _, event ->
+                gestureDetector.onTouchEvent(event)
+                scaleDetector.onTouchEvent(event)
+                true
+            }
+        }
         historyFab.setOnClickListener { showHistoryDialog() }
+        applyTheme()
         history = LinkedList(settings.history)
         if (history.isEmpty()) {
             historyFab.hide()
         }
         onRestoreInstanceState(savedInstanceState)
-        return view
     }
 
     /**
@@ -125,9 +120,6 @@ class MainFragment : Fragment(), RecognizeListener {
         outState.putString(TAG_TEXT, textView.text.toString())
     }
 
-    /**
-     * 音声入力開始。
-     */
     private fun startVoiceInput() {
         if (settings.shouldUseSpeechRecognizer()) {
             startRecognizerDialogWithPermission()
@@ -160,26 +152,29 @@ class MainFragment : Fragment(), RecognizeListener {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECORD_AUDIO)) {
             Toaster.show(context, R.string.toast_should_allow_permission)
         } else {
-            PermissionDialog.newInstance().showAllowingStateLoss(fragmentManager, "")
+            PermissionDialog.newInstance()
+                    .showAllowingStateLoss(fragmentManager, "")
         }
     }
 
     private fun startRecognizerDialog() {
-        val dialog = RecognizerDialog.newInstance()
-        dialog.setTargetFragment(this, 0)
-        dialog.showAllowingStateLoss(fragmentManager, "")
+        RecognizerDialog.newInstance().let {
+            it.setTargetFragment(this, 0)
+            it.showAllowingStateLoss(fragmentManager, "")
+        }
     }
 
     private fun startRecognizerActivity() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+            putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
+        }
         try {
             startActivityForResult(intent, RECOGNIZER_REQUEST_CODE)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             Toaster.show(context, R.string.toast_can_not_use_voice_input)
         }
     }
@@ -210,7 +205,8 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     fun startEdit() {
         val string = textView.text.toString()
-        EditStringDialog.newInstance(string).show(fragmentManager, "")
+        EditStringDialog.newInstance(string)
+                .show(fragmentManager, "")
     }
 
     fun showHistoryDialog() {
@@ -265,8 +261,8 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     private fun setTheme(background: Int, foreground: Int) {
         gridDrawable.setColor(background)
-        ViewCompat.setBackground(rootView, gridDrawable)
-        rootView.invalidate()
+        ViewCompat.setBackground(root, gridDrawable)
+        root.invalidate()
         textView.setTextColor(foreground)
         val icon = toolbar.overflowIcon ?: return
         DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background))
@@ -290,13 +286,13 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            rootView.performClick()
+            root.performClick()
             return true
         }
 
         override fun onLongPress(e: MotionEvent) {
             if (settings.shouldShowEditorWhenLongTap()) {
-                rootView.performLongClick()
+                root.performLongClick()
             }
         }
     }
@@ -319,27 +315,5 @@ class MainFragment : Fragment(), RecognizeListener {
         private const val TAG_TEXT = "TAG_TEXT"
         private const val RECOGNIZER_REQUEST_CODE = 1
         private const val PERMISSION_REQUEST_CODE = 2
-
-        /**
-         * min以下はmin、max以上はmaxに飽和させる
-         *
-         * @param value 値
-         * @param min   最小値
-         * @param max   最大値
-         * @return 飽和させた値
-         */
-        private fun clamp(value: Int, min: Int, max: Int): Int =
-                Math.min(Math.max(value, min), max)
-
-        /**
-         * min以下はmin、max以上はmaxに飽和させる
-         *
-         * @param value 値
-         * @param min   最小値
-         * @param max   最大値
-         * @return 飽和させた値
-         */
-        private fun clamp(value: Float, min: Float, max: Float): Float =
-                Math.min(Math.max(value, min), max)
     }
 }

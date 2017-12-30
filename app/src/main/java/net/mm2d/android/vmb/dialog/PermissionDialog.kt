@@ -32,16 +32,18 @@ class PermissionDialog : DialogFragment() {
     }
 
     private fun startAppInfo() {
-        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        intent.data = Uri.parse("package:" + context.packageName)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.parse("package:" + context.packageName)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(intent)
     }
 
     fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        val ft = manager.beginTransaction()
-        ft.add(this, tag)
-        ft.commitAllowingStateLoss()
+        manager.beginTransaction().let {
+            it.add(this, tag)
+            it.commitAllowingStateLoss()
+        }
     }
 
     companion object {

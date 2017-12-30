@@ -15,9 +15,9 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.data.Theme
+import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
 /**
@@ -52,13 +52,12 @@ class SelectThemeDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val themeList = arguments.getParcelableArrayList<Theme>(KEY_THEME_LIST)
-        val builder = AlertDialog.Builder(activity)
-        builder.setTitle(activity.getString(R.string.theme_select))
-        val adapter = ThemeListAdapter(activity, themeList!!)
-        builder.setAdapter(adapter) { _, which ->
-            eventListener?.onSelectTheme(themeList[which])
-        }
-        return builder.create()
+        return AlertDialog.Builder(activity)
+                .setTitle(activity.getString(R.string.theme_select))
+                .setAdapter(ThemeListAdapter(activity, themeList!!)) { _, which ->
+                    eventListener?.onSelectTheme(themeList[which])
+                }
+                .create()
     }
 
     private class ThemeListAdapter internal constructor(context: Context, collection: Collection<Theme>)
@@ -93,11 +92,11 @@ class SelectThemeDialog : DialogFragment() {
          * @return 新規インスタンス
          */
         fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog {
-            val args = Bundle()
-            args.putParcelableArrayList(KEY_THEME_LIST, themes)
-            val instance = SelectThemeDialog()
-            instance.arguments = args
-            return instance
+            return SelectThemeDialog().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList(KEY_THEME_LIST, themes)
+                }
+            }
         }
     }
 }

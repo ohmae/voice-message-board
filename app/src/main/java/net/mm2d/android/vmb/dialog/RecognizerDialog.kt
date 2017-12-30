@@ -54,10 +54,11 @@ class RecognizerDialog : DialogFragment() {
 
     private fun startListening() {
         try {
-            recognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)
-            recognizer?.setRecognitionListener(createRecognitionListener())
-            recognizer?.startListening(createRecognizerIntent())
-        } catch (e: RuntimeException) {
+            recognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)?.apply {
+                setRecognitionListener(createRecognitionListener())
+                startListening(createRecognizerIntent())
+            }
+        } catch (_: RuntimeException) {
             recognizer = null
             Toaster.show(context, R.string.toast_fail_to_start_voice_input)
             dismiss()
@@ -65,12 +66,12 @@ class RecognizerDialog : DialogFragment() {
     }
 
     private fun createRecognizerIntent(): Intent {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-        return intent
+        return Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+        }
     }
 
     private fun createRecognitionListener(): RecognitionListener {
@@ -123,9 +124,10 @@ class RecognizerDialog : DialogFragment() {
     }
 
     fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        val ft = manager.beginTransaction()
-        ft.add(this, tag)
-        ft.commitAllowingStateLoss()
+        manager.beginTransaction().let {
+            it.add(this, tag)
+            it.commitAllowingStateLoss()
+        }
     }
 
     companion object {

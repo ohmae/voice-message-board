@@ -120,23 +120,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         }
         sign = 1
         phase = 0f
-        val animator = ValueAnimator.ofFloat(0f, 1f)
-        animator.duration = 200L
-        animator.interpolator = LinearInterpolator()
-        animator.repeatCount = ValueAnimator.INFINITE
-        animator.addUpdateListener { animation ->
-            val value = animation.animatedValue as Float
-            if (value < phase) {
-                sign *= -1
-                queue.removeLast()
-                queue.addFirst(amplitude * sign)
-                amplitude = 0f
+        waveAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 200L
+            interpolator = LinearInterpolator()
+            repeatCount = ValueAnimator.INFINITE
+            addUpdateListener { animation ->
+                val value = animation.animatedValue as Float
+                if (value < phase) {
+                    sign *= -1
+                    queue.removeLast()
+                    queue.addFirst(amplitude * sign)
+                    amplitude = 0f
+                }
+                phase = value
+                invalidate()
             }
-            phase = value
-            invalidate()
+            start()
         }
-        animator.start()
-        waveAnimator = animator
     }
 
     private fun stopAnimation() {

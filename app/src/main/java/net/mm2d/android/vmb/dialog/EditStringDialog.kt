@@ -60,22 +60,23 @@ class EditStringDialog : DialogFragment() {
         val inflater = activity.layoutInflater
         val decorView = activity.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
-        editText = view.findViewById(R.id.editText)
-        editText.setText(string)
-        editText.setSelection(string.length)
-        editText.setOnEditorActionListener { _, actionId, event ->
-            val keyCode = event?.keyCode ?: -1
-            if (actionId == EditorInfo.IME_ACTION_DONE || keyCode == KeyEvent.KEYCODE_ENTER) {
-                inputText()
-                dismiss()
-                true
-            } else {
-                false
+        editText = view.findViewById<EditText>(R.id.editText).apply {
+            setText(string)
+            setSelection(string.length)
+            setOnEditorActionListener { _, actionId, event ->
+                val keyCode = event?.keyCode ?: -1
+                if (actionId == EditorInfo.IME_ACTION_DONE || keyCode == KeyEvent.KEYCODE_ENTER) {
+                    inputText()
+                    dismiss()
+                    true
+                } else {
+                    false
+                }
             }
         }
         return AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.dialog_title_edit))
-                .setView(editText)
+                .setView(view)
                 .setPositiveButton(R.string.ok) { _, _ -> inputText() }
                 .create()
     }
@@ -108,11 +109,11 @@ class EditStringDialog : DialogFragment() {
          * @return 新規インスタンス
          */
         fun newInstance(editString: String): EditStringDialog {
-            val args = Bundle()
-            args.putString(KEY_STRING, editString)
-            val instance = EditStringDialog()
-            instance.arguments = args
-            return instance
+            return EditStringDialog().apply {
+                arguments = Bundle().apply {
+                    putString(KEY_STRING, editString)
+                }
+            }
         }
     }
 }

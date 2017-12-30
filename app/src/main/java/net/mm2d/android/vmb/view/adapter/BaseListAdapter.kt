@@ -22,7 +22,7 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private val inflater = LayoutInflater.from(context)
     private val list: MutableList<T> = ArrayList()
 
     /**
