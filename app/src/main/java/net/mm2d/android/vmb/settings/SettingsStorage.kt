@@ -11,8 +11,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 
-
-
 /**
  * SharedPreferencesへのアクセスをカプセル化するクラス。
  *
@@ -152,7 +150,8 @@ internal class SettingsStorage(context: Context) {
     private object PreferencesHolder {
         private var sharedPreferences: SharedPreferences? = null
 
-        @Synchronized internal operator fun get(context: Context): SharedPreferences {
+        @Synchronized
+        internal operator fun get(context: Context): SharedPreferences {
             if (sharedPreferences == null) {
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             }

@@ -14,8 +14,6 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.TextView
@@ -28,7 +26,7 @@ import java.util.*
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class RecognizerDialog : DialogFragment() {
+class RecognizerDialog : DialogFragmentBase() {
     private var recognizer: SpeechRecognizer? = null
     private lateinit var textView: TextView
     private lateinit var beatingView: BeatingView
@@ -105,7 +103,8 @@ class RecognizerDialog : DialogFragment() {
             }
 
             override fun onPartialResults(results: Bundle?) {
-                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        ?: return
                 if (list.size > 0 && !list[0].isEmpty()) {
                     textView.text = list[0]
                 }
@@ -113,7 +112,8 @@ class RecognizerDialog : DialogFragment() {
 
             override fun onResults(results: Bundle?) {
                 dismissAllowingStateLoss()
-                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        ?: return
                 (targetFragment as? RecognizeListener)?.onRecognize(list)
             }
         }
@@ -121,15 +121,11 @@ class RecognizerDialog : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        recognizer?.destroy()
-        recognizer = null
-    }
-
-    fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        manager.beginTransaction().let {
-            it.add(this, tag)
-            it.commitAllowingStateLoss()
+        try {
+            recognizer?.destroy()
+        } catch (_: RuntimeException) {
         }
+        recognizer = null
     }
 
     companion object {

@@ -12,15 +12,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import net.mm2d.android.vmb.R
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class PermissionDialog : DialogFragment() {
+class PermissionDialog : DialogFragmentBase() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val ctx = context!!
         return AlertDialog.Builder(ctx)
@@ -39,13 +37,6 @@ class PermissionDialog : DialogFragment() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)
-    }
-
-    fun showAllowingStateLoss(manager: FragmentManager, tag: String) {
-        manager.beginTransaction().let {
-            it.add(this, tag)
-            it.commitAllowingStateLoss()
-        }
     }
 
     companion object {

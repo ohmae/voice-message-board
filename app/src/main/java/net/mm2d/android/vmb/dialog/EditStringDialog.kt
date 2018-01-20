@@ -10,7 +10,6 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ import net.mm2d.android.vmb.R
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class EditStringDialog : DialogFragment() {
+class EditStringDialog : DialogFragmentBase() {
 
     private lateinit var editText: EditText
     private var eventListener: ConfirmStringListener? = null

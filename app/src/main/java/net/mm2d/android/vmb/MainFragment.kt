@@ -190,7 +190,7 @@ class MainFragment : Fragment(), RecognizeListener {
         }
         if (results.size > 1 && settings.shouldShowCandidateList()) {
             SelectStringDialog.newInstance(R.string.dialog_title_select, results)
-                    .show(fragmentManager, "")
+                    .showAllowingStateLoss(fragmentManager, "")
         } else {
             setText(results[0])
         }
@@ -211,7 +211,7 @@ class MainFragment : Fragment(), RecognizeListener {
     fun startEdit() {
         val string = textView.text.toString()
         EditStringDialog.newInstance(string)
-                .show(fragmentManager, "")
+                .showAllowingStateLoss(fragmentManager, "")
     }
 
     fun showHistoryDialog() {
@@ -219,7 +219,7 @@ class MainFragment : Fragment(), RecognizeListener {
             return
         }
         SelectStringDialog.newInstance(R.string.dialog_title_history, ArrayList(history))
-                .show(fragmentManager, "")
+                .showAllowingStateLoss(fragmentManager, "")
     }
 
     fun clearHistory() {

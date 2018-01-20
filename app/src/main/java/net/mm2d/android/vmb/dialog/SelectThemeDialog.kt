@@ -10,7 +10,6 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,7 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SelectThemeDialog : DialogFragment() {
+class SelectThemeDialog : DialogFragmentBase() {
 
     private var eventListener: SelectThemeListener? = null
 
