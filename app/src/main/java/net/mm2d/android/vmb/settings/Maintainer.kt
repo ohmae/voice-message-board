@@ -8,9 +8,7 @@
 package net.mm2d.android.vmb.settings
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
-
 import net.mm2d.android.vmb.R
 
 /**
@@ -35,31 +33,29 @@ internal object Maintainer {
      * <tr><td>0</td><td>1.2.4-</td></tr>
      * </table>
      */
-    private val SETTINGS_VERSION = 0
+    private const val SETTINGS_VERSION = 0
 
     /**
      * 起動時に一度だけ呼び出され、SharedPreferencesのメンテナンスを行う。
      *
      * @param context Context
-     * @param pref    SharedPreferences
+     * @param storage SettingsStorage
      */
-    fun maintain(context: Context, pref: SharedPreferences) {
-        val currentVersion = getSettingsVersion(pref)
+    fun maintain(context: Context, storage: SettingsStorage) {
+        val currentVersion = getSettingsVersion(storage)
         if (currentVersion == SETTINGS_VERSION) {
             return
         }
-        pref.edit()
-                .putInt(Key.SETTINGS_VERSION.name, SETTINGS_VERSION)
-                .apply()
+        storage.writeInt(Key.SETTINGS_VERSION, SETTINGS_VERSION)
         PreferenceManager.setDefaultValues(context, R.xml.preferences, true)
     }
 
     /**
      * SharedPreferencesのバージョンを取得する。
      *
-     * @param pref SharedPreferences
+     * @param storage SettingsStorage
      * @return バージョン
      */
-    private fun getSettingsVersion(pref: SharedPreferences): Int =
-            pref.getInt(Key.SETTINGS_VERSION.name, -1)
+    private fun getSettingsVersion(storage: SettingsStorage): Int =
+            storage.readInt(Key.SETTINGS_VERSION, -1)
 }

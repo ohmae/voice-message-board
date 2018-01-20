@@ -11,6 +11,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 
+
+
 /**
  * SharedPreferencesへのアクセスをカプセル化するクラス。
  *
@@ -18,6 +20,15 @@ import android.preference.PreferenceManager
  */
 internal class SettingsStorage(context: Context) {
     private val preferences: SharedPreferences = PreferencesHolder.get(context)
+
+    /**
+     * 書き込まれている内容を消去する。
+     */
+    fun clear() {
+        preferences.edit()
+                .clear()
+                .apply()
+    }
 
     /**
      * Keyの設定値が含まれるか否かを返す。
@@ -157,7 +168,7 @@ internal class SettingsStorage(context: Context) {
          */
         @JvmStatic
         fun initialize(context: Context) {
-            Maintainer.maintain(context, PreferencesHolder.get(context))
+            Maintainer.maintain(context, SettingsStorage(context))
         }
     }
 }
