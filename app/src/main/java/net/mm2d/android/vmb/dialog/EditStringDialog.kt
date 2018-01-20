@@ -50,15 +50,13 @@ class EditStringDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val string = arguments.getString(KEY_STRING)
-        if (string == null) {
+        val act = activity!!
+        val string = arguments?.getString(KEY_STRING) ?: return act.let {
             dismiss()
-            return AlertDialog.Builder(activity)
-                    .setTitle(activity.getString(R.string.dialog_title_edit))
-                    .create()
+            AlertDialog.Builder(it).create()
         }
-        val inflater = activity.layoutInflater
-        val decorView = activity.window.decorView as ViewGroup
+        val inflater = act.layoutInflater
+        val decorView = act.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
         editText = view.findViewById<EditText>(R.id.editText).apply {
             setText(string)
@@ -74,8 +72,8 @@ class EditStringDialog : DialogFragment() {
                 }
             }
         }
-        return AlertDialog.Builder(activity)
-                .setTitle(activity.getString(R.string.dialog_title_edit))
+        return AlertDialog.Builder(act)
+                .setTitle(act.getString(R.string.dialog_title_edit))
                 .setView(view)
                 .setPositiveButton(R.string.ok) { _, _ -> inputText() }
                 .create()
@@ -88,7 +86,7 @@ class EditStringDialog : DialogFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // 編集中の文字列を保存
-        arguments.putString(KEY_STRING, editText.text.toString())
+        arguments?.putString(KEY_STRING, editText.text.toString())
     }
 
     companion object {

@@ -39,22 +39,24 @@ class RecognizerDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val act = activity!!
         startListening()
-        val inflater = activity.layoutInflater
-        val decorView = activity.window.decorView as ViewGroup
+        val inflater = act.layoutInflater
+        val decorView = act.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
         beatingView = view.findViewById(R.id.beating_view)
         beatingView.setOnClickListener { recognizer?.stopListening() }
         waveView = view.findViewById(R.id.wave_view)
         textView = view.findViewById(R.id.text)
-        return AlertDialog.Builder(context)
+        return AlertDialog.Builder(act)
                 .setView(view)
                 .create()
     }
 
     private fun startListening() {
+        val applicationContext = context?.applicationContext ?: return
         try {
-            recognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)?.apply {
+            recognizer = SpeechRecognizer.createSpeechRecognizer(applicationContext)?.apply {
                 setRecognitionListener(createRecognitionListener())
                 startListening(createRecognizerIntent())
             }
@@ -70,7 +72,7 @@ class RecognizerDialog : DialogFragment() {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context?.packageName)
         }
     }
 

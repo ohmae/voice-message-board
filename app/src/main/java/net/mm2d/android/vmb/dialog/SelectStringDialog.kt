@@ -51,14 +51,15 @@ class SelectStringDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val stringList = arguments.getStringArrayList(KEY_STRING_LIST)
-        if (stringList == null) {
+        val act = activity!!
+        val arg = arguments!!
+        val stringList = arg.getStringArrayList(KEY_STRING_LIST) ?: return act.let {
             dismiss()
-            return AlertDialog.Builder(activity).create()
+            AlertDialog.Builder(it).create()
         }
-        return AlertDialog.Builder(activity)
-                .setTitle(arguments.getInt(KEY_TITLE))
-                .setAdapter(StringListAdapter(activity, stringList)) { _, which ->
+        return AlertDialog.Builder(act)
+                .setTitle(arg.getInt(KEY_TITLE))
+                .setAdapter(StringListAdapter(act, stringList)) { _, which ->
                     eventListener?.onSelectString(stringList[which])
                 }
                 .create()

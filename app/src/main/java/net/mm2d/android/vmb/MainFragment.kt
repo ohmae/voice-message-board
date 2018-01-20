@@ -43,10 +43,7 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainFragment : Fragment(), RecognizeListener {
-    private val settings by lazy {
-        Settings(activity)
-    }
-
+    private lateinit var settings: Settings
     private lateinit var history: LinkedList<String>
     private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
@@ -60,10 +57,12 @@ class MainFragment : Fragment(), RecognizeListener {
         return inflater.inflate(layout.fragment_main, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        gridDrawable = GridDrawable(activity)
-        scaleDetector = ScaleGestureDetector(activity, ScaleListener())
-        gestureDetector = GestureDetector(activity, GestureListener())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val ctx = context!!
+        settings = Settings(ctx)
+        gridDrawable = GridDrawable(ctx)
+        scaleDetector = ScaleGestureDetector(ctx, ScaleListener())
+        gestureDetector = GestureDetector(ctx, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         editFab.setOnClickListener { startEdit() }
@@ -129,7 +128,8 @@ class MainFragment : Fragment(), RecognizeListener {
     }
 
     private fun startRecognizerDialogWithPermission() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+        val ctx = context ?: return
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSION_REQUEST_CODE)
             return
@@ -138,6 +138,7 @@ class MainFragment : Fragment(), RecognizeListener {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        val act = activity ?: return
         if (requestCode != PERMISSION_REQUEST_CODE || permissions.isEmpty()) {
             return
         }
@@ -149,27 +150,31 @@ class MainFragment : Fragment(), RecognizeListener {
             startRecognizerDialog()
             return
         }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECORD_AUDIO)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(act, Manifest.permission.RECORD_AUDIO)) {
             Toaster.show(context, R.string.toast_should_allow_permission)
         } else {
-            PermissionDialog.newInstance()
-                    .showAllowingStateLoss(fragmentManager, "")
+            fragmentManager?.let {
+                PermissionDialog.newInstance()
+                        .showAllowingStateLoss(it, "")
+            }
         }
     }
 
     private fun startRecognizerDialog() {
-        RecognizerDialog.newInstance().let {
-            it.setTargetFragment(this, 0)
-            it.showAllowingStateLoss(fragmentManager, "")
+        fragmentManager?.let {
+            val dialog = RecognizerDialog.newInstance()
+            dialog.setTargetFragment(this, 0)
+            dialog.showAllowingStateLoss(it, "")
         }
     }
 
     private fun startRecognizerActivity() {
+        val ctx = context ?: return
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, ctx.packageName)
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
         }
         try {

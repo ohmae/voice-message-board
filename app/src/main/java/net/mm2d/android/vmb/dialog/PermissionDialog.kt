@@ -8,6 +8,7 @@
 package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -21,17 +22,18 @@ import net.mm2d.android.vmb.R
  */
 class PermissionDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(context)
+        val ctx = context!!
+        return AlertDialog.Builder(ctx)
                 .setTitle(R.string.dialog_permission_title)
                 .setMessage(R.string.dialog_permission_message)
                 .setPositiveButton(R.string.app_info) { _, _ ->
-                    startAppInfo()
+                    startAppInfo(ctx)
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .create()
     }
 
-    private fun startAppInfo() {
+    private fun startAppInfo(context: Context) {
         val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
             data = Uri.parse("package:" + context.packageName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
