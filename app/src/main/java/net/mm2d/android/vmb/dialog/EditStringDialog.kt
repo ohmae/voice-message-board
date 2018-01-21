@@ -10,7 +10,6 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ import net.mm2d.android.vmb.R
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class EditStringDialog : DialogFragment() {
+class EditStringDialog : DialogFragmentBase() {
 
     private lateinit var editText: EditText
     private var eventListener: ConfirmStringListener? = null
@@ -50,32 +49,31 @@ class EditStringDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val string = arguments.getString(KEY_STRING)
-        if (string == null) {
+        val act = activity!!
+        val string = arguments?.getString(KEY_STRING) ?: return act.let {
             dismiss()
-            return AlertDialog.Builder(activity)
-                    .setTitle(activity.getString(R.string.dialog_title_edit))
-                    .create()
+            AlertDialog.Builder(it).create()
         }
-        val inflater = activity.layoutInflater
-        val decorView = activity.window.decorView as ViewGroup
+        val inflater = act.layoutInflater
+        val decorView = act.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
-        editText = view.findViewById(R.id.editText)
-        editText.setText(string)
-        editText.setSelection(string.length)
-        editText.setOnEditorActionListener { _, actionId, event ->
-            val keyCode = event?.keyCode ?: -1
-            if (actionId == EditorInfo.IME_ACTION_DONE || keyCode == KeyEvent.KEYCODE_ENTER) {
-                inputText()
-                dismiss()
-                true
-            } else {
-                false
+        editText = view.findViewById<EditText>(R.id.editText).apply {
+            setText(string)
+            setSelection(string.length)
+            setOnEditorActionListener { _, actionId, event ->
+                val keyCode = event?.keyCode ?: -1
+                if (actionId == EditorInfo.IME_ACTION_DONE || keyCode == KeyEvent.KEYCODE_ENTER) {
+                    inputText()
+                    dismiss()
+                    true
+                } else {
+                    false
+                }
             }
         }
-        return AlertDialog.Builder(activity)
-                .setTitle(activity.getString(R.string.dialog_title_edit))
-                .setView(editText)
+        return AlertDialog.Builder(act)
+                .setTitle(act.getString(R.string.dialog_title_edit))
+                .setView(view)
                 .setPositiveButton(R.string.ok) { _, _ -> inputText() }
                 .create()
     }
@@ -87,7 +85,7 @@ class EditStringDialog : DialogFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // 編集中の文字列を保存
-        arguments.putString(KEY_STRING, editText.text.toString())
+        arguments?.putString(KEY_STRING, editText.text.toString())
     }
 
     companion object {
@@ -108,11 +106,11 @@ class EditStringDialog : DialogFragment() {
          * @return 新規インスタンス
          */
         fun newInstance(editString: String): EditStringDialog {
-            val args = Bundle()
-            args.putString(KEY_STRING, editString)
-            val instance = EditStringDialog()
-            instance.arguments = args
-            return instance
+            return EditStringDialog().apply {
+                arguments = Bundle().apply {
+                    putString(KEY_STRING, editString)
+                }
+            }
         }
     }
 }

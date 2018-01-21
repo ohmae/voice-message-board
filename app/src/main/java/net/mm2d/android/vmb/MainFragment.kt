@@ -17,17 +17,16 @@ import android.graphics.Color
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.support.v4.math.MathUtils.clamp
 import android.support.v4.view.ViewCompat
-import android.support.v7.widget.Toolbar
 import android.util.TypedValue
 import android.view.*
-import android.widget.TextView
-import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_main.*
+import net.mm2d.android.vmb.R.layout
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -35,6 +34,7 @@ import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.util.Toaster
 import java.util.*
 
 /**
@@ -43,15 +43,8 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainFragment : Fragment(), RecognizeListener {
-    private val settings by lazy {
-        Settings(activity)
-    }
-
+    private lateinit var settings: Settings
     private lateinit var history: LinkedList<String>
-    private lateinit var rootView: View
-    private lateinit var textView: TextView
-    private lateinit var toolbar: Toolbar
-    private lateinit var historyFab: FloatingActionButton
     private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
@@ -61,36 +54,37 @@ class MainFragment : Fragment(), RecognizeListener {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-        view.findViewById<View>(R.id.edit_fab)
-                .setOnClickListener { startEdit() }
-        toolbar = view.findViewById(R.id.toolbar)
-        textView = view.findViewById(R.id.textView)
-        rootView = view.findViewById(R.id.root)
-        rootView.setOnClickListener { startVoiceInput() }
-        rootView.setOnLongClickListener {
-            startEdit()
-            true
-        }
-        rootView.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            scaleDetector.onTouchEvent(event)
-            true
-        }
-        gridDrawable = GridDrawable(activity)
-        scaleDetector = ScaleGestureDetector(activity, ScaleListener())
-        gestureDetector = GestureDetector(activity, GestureListener())
+        return inflater.inflate(layout.fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val ctx = context!!
+        settings = Settings(ctx)
+        gridDrawable = GridDrawable(ctx)
+        scaleDetector = ScaleGestureDetector(ctx, ScaleListener())
+        gestureDetector = GestureDetector(ctx, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
-        applyTheme()
-        historyFab = view.findViewById(R.id.history_fab)
+        editFab.setOnClickListener { startEdit() }
+        root.apply {
+            setOnClickListener { startVoiceInput() }
+            setOnLongClickListener {
+                startEdit()
+                true
+            }
+            setOnTouchListener { _, event ->
+                gestureDetector.onTouchEvent(event)
+                scaleDetector.onTouchEvent(event)
+                true
+            }
+        }
         historyFab.setOnClickListener { showHistoryDialog() }
+        applyTheme()
         history = LinkedList(settings.history)
         if (history.isEmpty()) {
             historyFab.hide()
         }
         onRestoreInstanceState(savedInstanceState)
-        return view
     }
 
     /**
@@ -104,10 +98,8 @@ class MainFragment : Fragment(), RecognizeListener {
             val width = resources.displayMetrics.widthPixels
             val initialText = textView.text.toString()
             fontSize = if (initialText[0] <= '\u007e') {
-                // 半角
                 width.toFloat() / initialText.length * 2
             } else {
-                // 全角
                 width.toFloat() / initialText.length
             }
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
@@ -127,9 +119,6 @@ class MainFragment : Fragment(), RecognizeListener {
         outState.putString(TAG_TEXT, textView.text.toString())
     }
 
-    /**
-     * 音声入力開始。
-     */
     private fun startVoiceInput() {
         if (settings.shouldUseSpeechRecognizer()) {
             startRecognizerDialogWithPermission()
@@ -139,7 +128,8 @@ class MainFragment : Fragment(), RecognizeListener {
     }
 
     private fun startRecognizerDialogWithPermission() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+        val ctx = context ?: return
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSION_REQUEST_CODE)
             return
@@ -148,6 +138,7 @@ class MainFragment : Fragment(), RecognizeListener {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        val act = activity ?: return
         if (requestCode != PERMISSION_REQUEST_CODE || permissions.isEmpty()) {
             return
         }
@@ -159,40 +150,47 @@ class MainFragment : Fragment(), RecognizeListener {
             startRecognizerDialog()
             return
         }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECORD_AUDIO)) {
-            Toast.makeText(context, R.string.toast_should_allow_permission, Toast.LENGTH_LONG).show()
+        if (ActivityCompat.shouldShowRequestPermissionRationale(act, Manifest.permission.RECORD_AUDIO)) {
+            Toaster.show(context, R.string.toast_should_allow_permission)
         } else {
-            PermissionDialog.newInstance().showAllowingStateLoss(fragmentManager, "")
+            fragmentManager?.let {
+                PermissionDialog.newInstance()
+                        .showAllowingStateLoss(it, "")
+            }
         }
     }
 
     private fun startRecognizerDialog() {
-        val dialog = RecognizerDialog.newInstance()
-        dialog.setTargetFragment(this, 0)
-        dialog.showAllowingStateLoss(fragmentManager, "")
+        fragmentManager?.let {
+            val dialog = RecognizerDialog.newInstance()
+            dialog.setTargetFragment(this, 0)
+            dialog.showAllowingStateLoss(it, "")
+        }
     }
 
     private fun startRecognizerActivity() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
+        val ctx = context ?: return
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, ctx.packageName)
+            putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
+        }
         try {
             startActivityForResult(intent, RECOGNIZER_REQUEST_CODE)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(activity, R.string.toast_can_not_use_voice_input, Toast.LENGTH_LONG).show()
+        } catch (_: ActivityNotFoundException) {
+            Toaster.show(context, R.string.toast_can_not_use_voice_input)
         }
     }
 
     override fun onRecognize(results: ArrayList<String>) {
-        if (results.isEmpty()) {
+        if (activity == null || results.isEmpty()) {
             return
         }
         if (results.size > 1 && settings.shouldShowCandidateList()) {
             SelectStringDialog.newInstance(R.string.dialog_title_select, results)
-                    .show(fragmentManager, "")
+                    .showAllowingStateLoss(fragmentManager, "")
         } else {
             setText(results[0])
         }
@@ -212,7 +210,8 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     fun startEdit() {
         val string = textView.text.toString()
-        EditStringDialog.newInstance(string).show(fragmentManager, "")
+        EditStringDialog.newInstance(string)
+                .showAllowingStateLoss(fragmentManager, "")
     }
 
     fun showHistoryDialog() {
@@ -220,7 +219,7 @@ class MainFragment : Fragment(), RecognizeListener {
             return
         }
         SelectStringDialog.newInstance(R.string.dialog_title_history, ArrayList(history))
-                .show(fragmentManager, "")
+                .showAllowingStateLoss(fragmentManager, "")
     }
 
     fun clearHistory() {
@@ -229,9 +228,7 @@ class MainFragment : Fragment(), RecognizeListener {
         historyFab.hide()
     }
 
-    fun hasHistory(): Boolean {
-        return !history.isEmpty()
-    }
+    fun hasHistory(): Boolean = !history.isEmpty()
 
     /**
      * 文字列を設定する。
@@ -269,29 +266,22 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     private fun setTheme(background: Int, foreground: Int) {
         gridDrawable.setColor(background)
-        ViewCompat.setBackground(rootView, gridDrawable)
-        rootView.invalidate()
+        ViewCompat.setBackground(root, gridDrawable)
+        root.invalidate()
         textView.setTextColor(foreground)
-        val icon = toolbar.overflowIcon
-        if (icon != null) {
-            DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background))
-        }
+        val icon = toolbar.overflowIcon ?: return
+        DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background))
     }
 
     @ColorInt
-    private fun getIconColor(@ColorInt background: Int): Int {
-        return if (getBrightness(background) < 128) {
-            Color.WHITE
-        } else Color.BLACK
-    }
+    private fun getIconColor(@ColorInt background: Int): Int =
+            if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
 
-    private fun getBrightness(@ColorInt color: Int): Int {
-        return getBrightness(Color.red(color), Color.green(color), Color.blue(color))
-    }
+    private fun getBrightness(@ColorInt color: Int): Int =
+            getBrightness(Color.red(color), Color.green(color), Color.blue(color))
 
-    private fun getBrightness(r: Int, g: Int, b: Int): Int {
-        return clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
-    }
+    private fun getBrightness(r: Int, g: Int, b: Int): Int =
+            clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
 
     /**
      * タッチイベントをClickとLongClickに振り分ける。
@@ -301,13 +291,13 @@ class MainFragment : Fragment(), RecognizeListener {
      */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            rootView.performClick()
+            root.performClick()
             return true
         }
 
         override fun onLongPress(e: MotionEvent) {
             if (settings.shouldShowEditorWhenLongTap()) {
-                rootView.performLongClick()
+                root.performLongClick()
             }
         }
     }
@@ -330,29 +320,5 @@ class MainFragment : Fragment(), RecognizeListener {
         private const val TAG_TEXT = "TAG_TEXT"
         private const val RECOGNIZER_REQUEST_CODE = 1
         private const val PERMISSION_REQUEST_CODE = 2
-
-        /**
-         * min以下はmin、max以上はmaxに飽和させる
-         *
-         * @param value 値
-         * @param min   最小値
-         * @param max   最大値
-         * @return 飽和させた値
-         */
-        private fun clamp(value: Int, min: Int, max: Int): Int {
-            return Math.min(Math.max(value, min), max)
-        }
-
-        /**
-         * min以下はmin、max以上はmaxに飽和させる
-         *
-         * @param value 値
-         * @param min   最小値
-         * @param max   最大値
-         * @return 飽和させた値
-         */
-        private fun clamp(value: Float, min: Float, max: Float): Float {
-            return Math.min(Math.max(value, min), max)
-        }
     }
 }

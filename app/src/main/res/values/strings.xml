@@ -19,6 +19,7 @@
     <string name="theme_black_green">Black background / Green text</string>
     <string name="toast_can_not_use_voice_input">Can\'t launch Voice Input</string>
     <string name="toast_voice_input_fail">Speech recognition failed</string>
+    <string name="toast_fail_to_start_voice_input">Fail to start speech recognizer</string>
     <string name="toast_should_allow_permission">Please allow permission to use speech recognition</string>
     <string name="dialog_permission_title">Please allow permission</string>
     <string name="dialog_permission_message">Couldn\'t access to the microphone.\nPlease allow permission from \"App Info\", to use speech recognition</string>

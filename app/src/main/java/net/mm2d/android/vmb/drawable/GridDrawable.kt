@@ -72,9 +72,7 @@ class GridDrawable(context: Context) : Drawable() {
         paint.colorFilter = cf
     }
 
-    override fun getOpacity(): Int {
-        return PixelFormat.OPAQUE
-    }
+    override fun getOpacity(): Int = PixelFormat.OPAQUE
 
     companion object {
         private const val GRID_SIZE = 10

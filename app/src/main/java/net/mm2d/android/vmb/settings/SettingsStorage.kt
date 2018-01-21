@@ -20,6 +20,24 @@ internal class SettingsStorage(context: Context) {
     private val preferences: SharedPreferences = PreferencesHolder.get(context)
 
     /**
+     * 書き込まれている内容を消去する。
+     */
+    fun clear() {
+        preferences.edit()
+                .clear()
+                .apply()
+    }
+
+    /**
+     * Keyの設定値が含まれるか否かを返す。
+     *
+     * @param key Key
+     * @return keyが含まれている場合true
+     */
+    fun contains(key: Key): Boolean =
+            preferences.contains(key.name)
+
+    /**
      * boolean値を書き込む。
      *
      * @param key   Key
@@ -38,9 +56,8 @@ internal class SettingsStorage(context: Context) {
      * @param defaultValue デフォルト値
      * @return 読み出したboolean値
      */
-    fun readBoolean(key: Key, defaultValue: Boolean): Boolean {
-        return preferences.getBoolean(key.name, defaultValue)
-    }
+    fun readBoolean(key: Key, defaultValue: Boolean): Boolean =
+            preferences.getBoolean(key.name, defaultValue)
 
     /**
      * int値を書き込む。
@@ -61,9 +78,8 @@ internal class SettingsStorage(context: Context) {
      * @param defaultValue デフォルト値
      * @return 読み出したint値
      */
-    fun readInt(key: Key, defaultValue: Int): Int {
-        return preferences.getInt(key.name, defaultValue)
-    }
+    fun readInt(key: Key, defaultValue: Int): Int =
+            preferences.getInt(key.name, defaultValue)
 
     /**
      * long値を書き込む。
@@ -84,9 +100,8 @@ internal class SettingsStorage(context: Context) {
      * @param defaultValue デフォルト値
      * @return 読み出したlong値
      */
-    fun readLong(key: Key, defaultValue: Long): Long {
-        return preferences.getLong(key.name, defaultValue)
-    }
+    fun readLong(key: Key, defaultValue: Long): Long =
+            preferences.getLong(key.name, defaultValue)
 
     /**
      * String値を書き込む。
@@ -107,9 +122,8 @@ internal class SettingsStorage(context: Context) {
      * @param defaultValue デフォルト値
      * @return 読み出したString値
      */
-    fun readString(key: Key, defaultValue: String?): String? {
-        return preferences.getString(key.name, defaultValue)
-    }
+    fun readString(key: Key, defaultValue: String?): String? =
+            preferences.getString(key.name, defaultValue)
 
     /**
      * StringSet値を書き込む。
@@ -130,14 +144,14 @@ internal class SettingsStorage(context: Context) {
      * @param defaultValue デフォルト値
      * @return 読み出したString値
      */
-    fun readStringSet(key: Key, defaultValue: Set<String>?): Set<String>? {
-        return preferences.getStringSet(key.name, defaultValue)
-    }
+    fun readStringSet(key: Key, defaultValue: Set<String>?): Set<String>? =
+            preferences.getStringSet(key.name, defaultValue)
 
     private object PreferencesHolder {
         private var sharedPreferences: SharedPreferences? = null
 
-        @Synchronized internal operator fun get(context: Context): SharedPreferences {
+        @Synchronized
+        internal operator fun get(context: Context): SharedPreferences {
             if (sharedPreferences == null) {
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             }
@@ -153,7 +167,7 @@ internal class SettingsStorage(context: Context) {
          */
         @JvmStatic
         fun initialize(context: Context) {
-            Maintainer.maintain(context, PreferencesHolder.get(context))
+            Maintainer.maintain(context, SettingsStorage(context))
         }
     }
 }

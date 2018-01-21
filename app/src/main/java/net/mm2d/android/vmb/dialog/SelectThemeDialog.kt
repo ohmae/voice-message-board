@@ -10,14 +10,13 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.data.Theme
+import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
 /**
@@ -25,7 +24,7 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SelectThemeDialog : DialogFragment() {
+class SelectThemeDialog : DialogFragmentBase() {
 
     private var eventListener: SelectThemeListener? = null
 
@@ -51,14 +50,15 @@ class SelectThemeDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val themeList = arguments.getParcelableArrayList<Theme>(KEY_THEME_LIST)
-        val builder = AlertDialog.Builder(activity)
-        builder.setTitle(activity.getString(R.string.theme_select))
-        val adapter = ThemeListAdapter(activity, themeList!!)
-        builder.setAdapter(adapter) { _, which ->
-            eventListener?.onSelectTheme(themeList[which])
-        }
-        return builder.create()
+        val act = activity!!
+        val arg = arguments!!
+        val themeList = arg.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
+        return AlertDialog.Builder(act)
+                .setTitle(act.getString(R.string.theme_select))
+                .setAdapter(ThemeListAdapter(act, themeList)) { _, which ->
+                    eventListener?.onSelectTheme(themeList[which])
+                }
+                .create()
     }
 
     private class ThemeListAdapter internal constructor(context: Context, collection: Collection<Theme>)
@@ -93,11 +93,11 @@ class SelectThemeDialog : DialogFragment() {
          * @return 新規インスタンス
          */
         fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog {
-            val args = Bundle()
-            args.putParcelableArrayList(KEY_THEME_LIST, themes)
-            val instance = SelectThemeDialog()
-            instance.arguments = args
-            return instance
+            return SelectThemeDialog().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList(KEY_THEME_LIST, themes)
+                }
+            }
         }
     }
 }

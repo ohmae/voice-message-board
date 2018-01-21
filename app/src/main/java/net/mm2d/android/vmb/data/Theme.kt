@@ -50,9 +50,7 @@ class Theme : Parcelable {
         this.foregroundColor = foregroundColor
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeString(name)
@@ -69,13 +67,9 @@ class Theme : Parcelable {
     companion object {
         @JvmField
         val CREATOR: Parcelable.Creator<Theme> = object : Parcelable.Creator<Theme> {
-            override fun createFromParcel(source: Parcel): Theme {
-                return Theme(source)
-            }
+            override fun createFromParcel(source: Parcel): Theme = Theme(source)
 
-            override fun newArray(size: Int): Array<Theme?> {
-                return arrayOfNulls(size)
-            }
+            override fun newArray(size: Int): Array<Theme?> = arrayOfNulls(size)
         }
     }
 }

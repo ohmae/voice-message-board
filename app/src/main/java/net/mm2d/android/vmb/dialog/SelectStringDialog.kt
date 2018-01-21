@@ -11,7 +11,6 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,7 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SelectStringDialog : DialogFragment() {
+class SelectStringDialog : DialogFragmentBase() {
 
     private var eventListener: SelectStringListener? = null
 
@@ -51,19 +50,18 @@ class SelectStringDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity)
-        val args = arguments
-        builder.setTitle(args.getInt(KEY_TITLE))
-        val stringList = args.getStringArrayList(KEY_STRING_LIST)
-        if (stringList == null) {
+        val act = activity!!
+        val arg = arguments!!
+        val stringList = arg.getStringArrayList(KEY_STRING_LIST) ?: return act.let {
             dismiss()
-            return builder.create()
+            AlertDialog.Builder(it).create()
         }
-        val adapter = StringListAdapter(activity, stringList)
-        builder.setAdapter(adapter) { _, which ->
-            eventListener?.onSelectString(stringList[which])
-        }
-        return builder.create()
+        return AlertDialog.Builder(act)
+                .setTitle(arg.getInt(KEY_TITLE))
+                .setAdapter(StringListAdapter(act, stringList)) { _, which ->
+                    eventListener?.onSelectString(stringList[which])
+                }
+                .create()
     }
 
     class StringListAdapter(context: Context, collection: Collection<String>)

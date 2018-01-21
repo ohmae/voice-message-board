@@ -29,7 +29,7 @@ class BeatingView
     private val radiusMin: Float
     @Dimension
     private val radiusMax: Float
-    private val paint: Paint = Paint()
+    private val paint = Paint()
     @Dimension
     private var radius = 0f
     @Dimension
@@ -47,8 +47,8 @@ class BeatingView
         radius = radiusMin
     }
 
-    fun onRmsChanged(rms: Float) {
-        val target = radiusMin + (radiusMax - radiusMin) * (rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)
+    fun onVolumeChanged(volume: Float) {
+        val target = radiusMin + (radiusMax - radiusMin) * volume
         if (target == targetRadius) {
             return
         }
@@ -58,28 +58,28 @@ class BeatingView
         }
         startRadius = radius
         targetRadius = target
-        val animator = ValueAnimator.ofFloat(startRadius, targetRadius)
-        animator.duration = 150L
-        animator.setInterpolator { Math.pow(it.toDouble(), 0.33).toFloat() }
-        animator.addUpdateListener {
-            radius = it.animatedValue as Float
-            invalidate()
-        }
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                radiusAnimator = null
+        radiusAnimator = ValueAnimator.ofFloat(startRadius, targetRadius).apply {
+            duration = 150L
+            setInterpolator { Math.pow(it.toDouble(), 0.33).toFloat() }
+            addUpdateListener {
+                radius = it.animatedValue as Float
+                invalidate()
             }
-        })
-        animator.start()
-        radiusAnimator = animator
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    radiusAnimator = null
+                }
+            })
+            start()
+        }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         if (radiusAnimator?.isRunning == true) {
             radiusAnimator?.cancel()
-            radiusAnimator = null
         }
+        radiusAnimator = null
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -87,10 +87,5 @@ class BeatingView
         val cy = canvas.height / 2f
         canvas.drawCircle(cx, cy, radius, paint)
         super.dispatchDraw(canvas)
-    }
-
-    companion object {
-        private const val RMS_DB_MAX = 10.0f
-        private const val RMS_DB_MIN = -2.12f
     }
 }
