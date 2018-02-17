@@ -3,6 +3,7 @@
     <string name="app_name">Voice Message Board</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="title_file_chooser">Select font file</string>
     <string name="action_settings">Settings</string>
     <string name="action_theme">Change theme</string>
     <string name="action_show_history">Select from history</string>
@@ -20,9 +21,14 @@
     <string name="toast_can_not_use_voice_input">Can\'t launch Voice Input</string>
     <string name="toast_voice_input_fail">Speech recognition failed</string>
     <string name="toast_fail_to_start_voice_input">Fail to start speech recognizer</string>
-    <string name="toast_should_allow_permission">Please allow permission to use speech recognition</string>
+    <string name="toast_should_allow_microphone_permission">Please allow permission to use speech recognition</string>
+    <string name="toast_should_allow_storage_permission">Please allow permission to use local storage</string>
+    <string name="toast_can_not_read_file_or_directory">Can\'t read this file or directory</string>
+    <string name="toast_not_a_valid_font">This is not a valid font file</string>
+    <string name="toast_failed_to_load_font">Failed to load font. Please reconfigure</string>
     <string name="dialog_permission_title">Please allow permission</string>
-    <string name="dialog_permission_message">Couldn\'t access to the microphone.\nPlease allow permission from \"App Info\", to use speech recognition</string>
+    <string name="dialog_microphone_permission_message">Couldn\'t access to the microphone.\nPlease allow permission from \"App Info\", to use speech recognition</string>
+    <string name="dialog_storage_permission_message">Couldn\'t access to the storage.\nPlease allow permission from \"App Info\", to use local storage</string>
     <string name="dialog_title_clear_history">Confirmation</string>
     <string name="dialog_message_clear_history">Clear history. Is it OK?</string>
     <string name="app_info">App info</string>

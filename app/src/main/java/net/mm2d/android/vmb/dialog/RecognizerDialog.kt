@@ -26,7 +26,7 @@ import java.util.*
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class RecognizerDialog : DialogFragmentBase() {
+class RecognizerDialog : BaseDialogFragment() {
     private var recognizer: SpeechRecognizer? = null
     private lateinit var textView: TextView
     private lateinit var beatingView: BeatingView

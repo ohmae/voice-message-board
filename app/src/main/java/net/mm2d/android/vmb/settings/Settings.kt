@@ -44,6 +44,14 @@ class Settings(context: Context) {
             return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
+    var useFont: Boolean
+        get() = mStorage.readBoolean(Key.USE_FONT, false)
+        set(value) = mStorage.writeBoolean(Key.USE_FONT, value)
+
+    var fontPath: String
+        get() = mStorage.readString(Key.FONT_PATH, "")!!
+        set(value) = mStorage.writeString(Key.FONT_PATH, value)
+
     fun shouldUseSpeechRecognizer(): Boolean =
             mStorage.readBoolean(Key.SPEECH_RECOGNIZER, true)
 

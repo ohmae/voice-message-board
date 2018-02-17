@@ -22,7 +22,7 @@ import net.mm2d.android.vmb.R
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class EditStringDialog : DialogFragmentBase() {
+class EditStringDialog : BaseDialogFragment() {
 
     private lateinit var editText: EditText
     private var eventListener: ConfirmStringListener? = null

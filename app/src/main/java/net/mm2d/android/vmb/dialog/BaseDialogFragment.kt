@@ -13,7 +13,7 @@ import android.support.v4.app.FragmentManager
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-open class DialogFragmentBase : DialogFragment() {
+open class BaseDialogFragment : DialogFragment() {
     fun showAllowingStateLoss(manager: FragmentManager?, tag: String) {
         manager?.beginTransaction()?.let {
             it.add(this, tag)

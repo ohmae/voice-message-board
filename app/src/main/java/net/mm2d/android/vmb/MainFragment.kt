@@ -1,5 +1,5 @@
 /*
- * Copyright(C) 2014 大前良介(OHMAE Ryosuke)
+ * Copyright (c) 2014 大前良介(OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -14,6 +14,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.support.annotation.ColorInt
@@ -26,7 +27,6 @@ import android.support.v4.view.ViewCompat
 import android.util.TypedValue
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import net.mm2d.android.vmb.R.layout
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -54,7 +54,7 @@ class MainFragment : Fragment(), RecognizeListener {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,6 +119,30 @@ class MainFragment : Fragment(), RecognizeListener {
         outState.putString(TAG_TEXT, textView.text.toString())
     }
 
+    override fun onStart() {
+        super.onStart()
+        setFont()
+    }
+
+    private fun setFont() {
+        if (!settings.useFont || settings.fontPath.isEmpty()) {
+            textView.typeface = Typeface.DEFAULT
+            return
+        }
+        try {
+            val typeFace = Typeface.createFromFile(settings.fontPath)
+            if (typeFace != null) {
+                textView.typeface = typeFace
+                return
+            }
+        } catch (e: Exception) {
+        }
+        settings.useFont = false
+        settings.fontPath = ""
+        textView.typeface = Typeface.DEFAULT
+        Toaster.show(activity, R.string.toast_failed_to_load_font)
+    }
+
     private fun startVoiceInput() {
         if (settings.shouldUseSpeechRecognizer()) {
             startRecognizerDialogWithPermission()
@@ -151,10 +175,10 @@ class MainFragment : Fragment(), RecognizeListener {
             return
         }
         if (ActivityCompat.shouldShowRequestPermissionRationale(act, Manifest.permission.RECORD_AUDIO)) {
-            Toaster.show(context, R.string.toast_should_allow_permission)
+            Toaster.show(context, R.string.toast_should_allow_microphone_permission)
         } else {
             fragmentManager?.let {
-                PermissionDialog.newInstance()
+                PermissionDialog.newInstance(R.string.dialog_microphone_permission_message)
                         .showAllowingStateLoss(it, "")
             }
         }
