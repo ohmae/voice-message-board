@@ -10,6 +10,7 @@ package net.mm2d.android.vmb
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -60,7 +61,16 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
         setContentView(R.layout.activity_file_chooser)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.title_file_chooser)
+        setInitialPath()
         initRecyclerView()
+    }
+
+    private fun setInitialPath() {
+        val path = intent?.getStringExtra(EXTRA_INITIAL_PAHT) ?: return
+        File(path).let {
+            if (it.exists() && it.canRead()) currentPath = if (it.isFile) it.parentFile else it
+        }
+        intent = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -114,7 +124,7 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
         Single.fromCallable { file.listFiles().apply { sortWith(comparator) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer{
+                .subscribe(Consumer {
                     adapter.setFiles(it)
                     adapter.notifyDataSetChanged()
                     progressBar.visibility = View.INVISIBLE
@@ -215,5 +225,14 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     companion object {
         private const val PERMISSION_REQUEST_CODE = 1
         private const val CURRENT_PATH_KEY = "CURRENT_PATH_KEY"
+        private const val EXTRA_INITIAL_PAHT = "EXTRA_INITIAL_PAHT"
+        fun startActivityForResult(activity: Activity, path: String, requestCode: Int) {
+            val intent = Intent(activity, FontFileChooserActivity::class.java)
+            intent.putExtra(EXTRA_INITIAL_PAHT, path)
+            try {
+                activity.startActivityForResult(intent, requestCode)
+            } catch (e: ActivityNotFoundException) {
+            }
+        }
     }
 }

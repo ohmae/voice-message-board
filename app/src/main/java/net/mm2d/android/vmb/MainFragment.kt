@@ -27,7 +27,6 @@ import android.support.v4.view.ViewCompat
 import android.util.TypedValue
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import net.mm2d.android.vmb.R.layout
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -55,7 +54,7 @@ class MainFragment : Fragment(), RecognizeListener {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

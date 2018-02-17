@@ -52,12 +52,9 @@ class SettingsFragment : PreferenceFragment() {
     private fun setUpFontSetting() {
         fontPathPreference = findPreference(Key.FONT_PATH)!!
         fontPathPreference.setOnPreferenceClickListener {
-                try {
-                    startActivityForResult(Intent(activity, FontFileChooserActivity::class.java), FONT_REQUEST_CODE)
-                } catch (e: ActivityNotFoundException) {
-                }
-                true
-            }
+            FontFileChooserActivity.startActivityForResult(activity, settings.fontPath, FONT_REQUEST_CODE)
+            true
+        }
         setFontPath()
     }
 
