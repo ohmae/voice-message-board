@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="16dp"
+        android:contentDescription="@null"
         app:srcCompat="@drawable/ic_file"
         />
 
