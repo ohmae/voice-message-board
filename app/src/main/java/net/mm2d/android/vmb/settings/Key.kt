@@ -21,6 +21,8 @@ enum class Key {
     LIST_EDIT,
     LONG_TAP_EDIT,
     SCREEN_ORIENTATION,
+    USE_FONT,
+    FONT_PATH,
     PLAY_STORE,
     PRIVACY_POLICY,
     COPYRIGHT,

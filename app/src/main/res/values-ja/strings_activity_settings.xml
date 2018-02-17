@@ -25,6 +25,12 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+    <string name="pref_header_display">表示</string>
+    <string name="pref_title_use_font">カスタムフォント</string>
+    <string name="pref_description_use_font_off">標準フォントを使用します</string>
+    <string name="pref_description_use_font_on">カスタムフォントを使用します</string>
+    <string name="pref_title_font_path">フォントパス</string>
+    <string name="pref_description_font_path">未設定</string>
     <string name="pref_header_information">情報</string>
     <string name="pref_title_play_store">Playストア</string>
     <string name="pref_description_play_store">評価、ご意見、ご要望をお待ちしております</string>

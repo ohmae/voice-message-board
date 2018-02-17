@@ -1,5 +1,5 @@
 /*
- * Copyright(C) 2017 大前良介(OHMAE Ryosuke)
+ * Copyright (c) 2017 大前良介(OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -7,6 +7,7 @@
 
 package net.mm2d.android.vmb
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -16,40 +17,73 @@ import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceManager
 import net.mm2d.android.vmb.settings.Key
+import net.mm2d.android.vmb.settings.Settings
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class SettingsFragment : PreferenceFragment() {
+    private lateinit var settings: Settings
+    private lateinit var fontPathPreference: Preference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        settings = Settings(activity)
         addPreferencesFromResource(R.xml.preferences)
         bindPreference(findPreference(Key.SCREEN_ORIENTATION))
-        findPreference(Key.PLAY_STORE).setOnPreferenceClickListener {
+        findPreference(Key.PLAY_STORE)?.setOnPreferenceClickListener {
             openUrl(MARKET_URL)
         }
-        findPreference(Key.PRIVACY_POLICY).setOnPreferenceClickListener {
+        findPreference(Key.PRIVACY_POLICY)?.setOnPreferenceClickListener {
             openUrl(PRIVACY_POLICY_URL)
         }
-        findPreference(Key.SOURCE_CODE).setOnPreferenceClickListener {
+        findPreference(Key.SOURCE_CODE)?.setOnPreferenceClickListener {
             openUrl(SOURCE_CODE_URL)
         }
-        findPreference(Key.LICENSE).setOnPreferenceClickListener {
+        findPreference(Key.LICENSE)?.setOnPreferenceClickListener {
             val intent = Intent(activity, LicenseActivity::class.java)
             startActivity(intent)
             true
         }
-        findPreference(Key.VERSION_NUMBER).summary = BuildConfig.VERSION_NAME
+        findPreference(Key.VERSION_NUMBER)?.summary = BuildConfig.VERSION_NAME
+        setUpFontSetting()
     }
 
-    private fun findPreference(key: Key): Preference = super.findPreference(key.name)
+    private fun setUpFontSetting() {
+        fontPathPreference = findPreference(Key.FONT_PATH)!!
+        fontPathPreference.setOnPreferenceClickListener {
+                try {
+                    startActivityForResult(Intent(activity, FontFileChooserActivity::class.java), FONT_REQUEST_CODE)
+                } catch (e: ActivityNotFoundException) {
+                }
+                true
+            }
+        setFontPath()
+    }
+
+    private fun setFontPath() {
+        val path = settings.fontPath
+        if (path.isEmpty()) fontPathPreference.setSummary(R.string.pref_description_font_path)
+        else fontPathPreference.summary = path
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode != FONT_REQUEST_CODE || resultCode != Activity.RESULT_OK) {
+            return
+        }
+        settings.fontPath = data?.data?.path ?: ""
+        setFontPath()
+    }
+
+    private fun findPreference(key: Key): Preference? = super.findPreference(key.name)
 
     /**
      * 設定結果を反映させるListenerとの接続。
      *
      * @param preference Preference
      */
-    private fun bindPreference(preference: Preference) {
+    private fun bindPreference(preference: Preference?) {
+        preference ?: return
         preference.setOnPreferenceChangeListener(this::bindPreference)
         val sp = PreferenceManager.getDefaultSharedPreferences(preference.context)
         val value = sp.getString(preference.key, "")
@@ -82,5 +116,6 @@ class SettingsFragment : PreferenceFragment() {
         private const val MARKET_URL = "market://details?id=net.mm2d.android.vmb"
         private const val SOURCE_CODE_URL = "https://github.com/ohmae/VoiceMessageBoard"
         private const val PRIVACY_POLICY_URL = "https://github.com/ohmae/VoiceMessageBoard/blob/develop/PRIVACY-POLICY.md"
+        private const val FONT_REQUEST_CODE = 1
     }
 }
