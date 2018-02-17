@@ -24,7 +24,7 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SelectStringDialog : DialogFragmentBase() {
+class SelectStringDialog : BaseDialogFragment() {
 
     private var eventListener: SelectStringListener? = null
 
