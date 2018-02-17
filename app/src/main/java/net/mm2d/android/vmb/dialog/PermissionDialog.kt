@@ -9,6 +9,7 @@ package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -46,8 +47,12 @@ class PermissionDialog : BaseDialogFragment() {
                 .setPositiveButton(R.string.app_info) { _, _ ->
                     startAppInfo(ctx)
                 }
-                .setNegativeButton(R.string.cancel, { _, _ -> onCancelListener?.onCancel() })
+                .setNegativeButton(R.string.cancel, { dialog, _ -> dialog.cancel() })
                 .create()
+    }
+
+    override fun onCancel(dialog: DialogInterface?) {
+        onCancelListener?.onCancel()
     }
 
     private fun startAppInfo(context: Context) {

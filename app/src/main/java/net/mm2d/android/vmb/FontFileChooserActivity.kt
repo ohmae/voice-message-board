@@ -62,6 +62,14 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
         supportActionBar?.setTitle(R.string.title_file_chooser)
         setInitialPath()
         initRecyclerView()
+        if (savedInstanceState == null) {
+            checkPermission()
+        } else {
+            savedInstanceState.getString(CURRENT_PATH_KEY)?.let {
+                currentPath = File(it)
+            }
+            setUpDirectory(currentPath)
+        }
     }
 
     private fun setInitialPath() {
@@ -75,17 +83,6 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(CURRENT_PATH_KEY, currentPath.absolutePath)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val path = savedInstanceState.getString(CURRENT_PATH_KEY) ?: return
-        currentPath = File(path)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkPermission()
     }
 
     private fun initRecyclerView() {
@@ -172,7 +169,7 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
             return
         }
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Toaster.show(this, R.string.toast_should_allow_microphone_permission)
+            Toaster.show(this, R.string.toast_should_allow_storage_permission)
             finish()
         } else {
             supportFragmentManager?.let {
@@ -183,7 +180,7 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     }
 
     override fun onCancel() {
-        Toaster.show(this, R.string.toast_should_allow_microphone_permission)
+        Toaster.show(this, R.string.toast_should_allow_storage_permission)
         finish()
     }
 
