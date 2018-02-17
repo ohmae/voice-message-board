@@ -10,7 +10,6 @@ package net.mm2d.android.vmb
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -66,7 +65,7 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     }
 
     private fun setInitialPath() {
-        val path = intent?.getStringExtra(EXTRA_INITIAL_PAHT) ?: return
+        val path = intent?.getStringExtra(EXTRA_INITIAL_PATH) ?: return
         File(path).let {
             if (it.exists() && it.canRead()) currentPath = if (it.isFile) it.parentFile else it
         }
@@ -225,13 +224,11 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     companion object {
         private const val PERMISSION_REQUEST_CODE = 1
         private const val CURRENT_PATH_KEY = "CURRENT_PATH_KEY"
-        private const val EXTRA_INITIAL_PAHT = "EXTRA_INITIAL_PAHT"
-        fun startActivityForResult(activity: Activity, path: String, requestCode: Int) {
-            val intent = Intent(activity, FontFileChooserActivity::class.java)
-            intent.putExtra(EXTRA_INITIAL_PAHT, path)
-            try {
-                activity.startActivityForResult(intent, requestCode)
-            } catch (e: ActivityNotFoundException) {
+        private const val EXTRA_INITIAL_PATH = "EXTRA_INITIAL_PATH"
+
+        fun makeIntent(context: Context, path: String): Intent {
+            return Intent(context, FontFileChooserActivity::class.java).apply {
+                putExtra(EXTRA_INITIAL_PATH, path)
             }
         }
     }
