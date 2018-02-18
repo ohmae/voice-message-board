@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(),
         try {
             val typeFace = Typeface.createFromFile(settings.fontPath)
             if (typeFace != null) {
-                textView.typeface = typeFace
+                textView.setTypeface(typeFace, Typeface.NORMAL)
                 return
             }
         } catch (e: Exception) {

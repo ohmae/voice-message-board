@@ -114,7 +114,7 @@ class RecognizerDialog : BaseDialogFragment() {
                 dismissAllowingStateLoss()
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         ?: return
-                (targetFragment as? RecognizeListener)?.onRecognize(list)
+                (activity as? RecognizeListener)?.onRecognize(list)
             }
         }
     }
