@@ -7,14 +7,9 @@
 
 package net.mm2d.android.vmb
 
-import android.Manifest
-import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.speech.RecognizerIntent
 import android.support.v4.math.MathUtils
 import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
@@ -22,17 +17,14 @@ import android.view.*
 import kotlinx.android.synthetic.main.activity_main.*
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
-import net.mm2d.android.vmb.dialog.PermissionDialog
-import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
-import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
-import net.mm2d.android.vmb.history.HistoryHelper
-import net.mm2d.android.vmb.permission.PermissionHelper
+import net.mm2d.android.vmb.history.HistoryDelegate
+import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.Theme
-import net.mm2d.android.vmb.theme.ThemeHelper
+import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.util.Toaster
 import java.util.*
 
@@ -46,21 +38,22 @@ class MainActivity : AppCompatActivity(),
     private val settings by lazy {
         Settings(this)
     }
+    private lateinit var themeDelegate: ThemeDelegate
+    private lateinit var historyDelegate: HistoryDelegate
+    private lateinit var voiceInputDelegate: VoiceInputDelegate
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
+    private lateinit var showHistoryMenu: MenuItem
+    private lateinit var clearHistoryMenu: MenuItem
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
     private var fontSize: Float = 0.0f
-    private lateinit var themeHelper: ThemeHelper
-    private lateinit var historyHelper: HistoryHelper
-    private lateinit var permissionHelper: PermissionHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         supportActionBar?.title = null
-        initPreferences()
         scaleDetector = ScaleGestureDetector(this, ScaleListener())
         gestureDetector = GestureDetector(this, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
@@ -73,10 +66,12 @@ class MainActivity : AppCompatActivity(),
                 true
             }
         }
-        themeHelper = ThemeHelper(this, root, textView, toolbar?.overflowIcon)
-        themeHelper.apply()
-        historyHelper = HistoryHelper(this, historyFab)
-        permissionHelper = PermissionHelper(this, Manifest.permission.RECORD_AUDIO, PERMISSION_REQUEST_CODE)
+        themeDelegate = ThemeDelegate(this, root, textView, toolbar?.overflowIcon)
+        themeDelegate.apply()
+        historyDelegate = HistoryDelegate(this, historyFab)
+        voiceInputDelegate = VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
+            setText(it)
+        }
         restoreInstanceState(savedInstanceState)
     }
 
@@ -141,69 +136,16 @@ class MainActivity : AppCompatActivity(),
         requestedOrientation = settings.screenOrientation
     }
 
-    private fun startVoiceInput() {
-        if (settings.shouldUseSpeechRecognizer()) {
-            startRecognizerDialogWithPermission()
-        } else {
-            startRecognizerActivity()
-        }
-    }
-
-    private fun startRecognizerDialogWithPermission() {
-        if (!permissionHelper.requestPermissionIfNeed()) {
-            startRecognizerDialog()
-        }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            PermissionHelper.Result.OTHER -> return
-            PermissionHelper.Result.GRANTED ->
-                startRecognizerDialog()
-            PermissionHelper.Result.DENIED ->
-                Toaster.show(this, R.string.toast_should_allow_microphone_permission)
-            PermissionHelper.Result.DENIED_ALWAYS ->
-                PermissionDialog.show(this, R.string.dialog_microphone_permission_message)
-        }
-    }
-
-    private fun startRecognizerDialog() {
-        RecognizerDialog.show(this)
-    }
-
-    private fun startRecognizerActivity() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
-            putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.recognizer_title))
-        }
-        try {
-            startActivityForResult(intent, RECOGNIZER_REQUEST_CODE)
-        } catch (_: ActivityNotFoundException) {
-            Toaster.show(this, R.string.toast_can_not_use_voice_input)
-        }
+        voiceInputDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onRecognize(results: ArrayList<String>) {
-        if (results.isEmpty()) {
-            return
-        }
-        if (results.size > 1 && settings.shouldShowCandidateList()) {
-            SelectStringDialog.show(this, R.string.dialog_title_select, results)
-        } else {
-            setText(results[0])
-        }
+        voiceInputDelegate.onRecognize(results)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != RECOGNIZER_REQUEST_CODE || resultCode != Activity.RESULT_OK) {
-            return
-        }
-        // 音声入力の結果を反映
-        val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) ?: return
-        onRecognize(results)
+        voiceInputDelegate.onActivityResult(requestCode, resultCode, data)
     }
 
     /**
@@ -224,18 +166,8 @@ class MainActivity : AppCompatActivity(),
      */
     private fun setText(string: String) {
         textView.text = string
-        historyHelper.put(string)
+        historyDelegate.put(string)
     }
-
-    /**
-     * アプリ設定の初期化。
-     */
-    private fun initPreferences() {
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
-    }
-
-    private lateinit var showHistoryMenu: MenuItem
-    private lateinit var clearHistoryMenu: MenuItem
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -245,7 +177,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (historyHelper.exist()) {
+        if (historyDelegate.exist()) {
             showHistoryMenu.isEnabled = true
             clearHistoryMenu.isEnabled = true
         } else {
@@ -261,11 +193,11 @@ class MainActivity : AppCompatActivity(),
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_theme ->
-                themeHelper.showDialog()
+                themeDelegate.showDialog()
             R.id.action_show_history ->
-                historyHelper.showSelectDialog()
+                historyDelegate.showSelectDialog()
             R.id.action_clear_history ->
-                historyHelper.showClearDialog()
+                historyDelegate.showClearDialog()
             else ->
                 return super.onOptionsItemSelected(item)
         }
@@ -273,7 +205,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onSelectTheme(theme: Theme) {
-        themeHelper.select(theme)
+        themeDelegate.select(theme)
     }
 
     override fun onSelectString(string: String) {
@@ -295,7 +227,7 @@ class MainActivity : AppCompatActivity(),
      */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            startVoiceInput()
+            voiceInputDelegate.start()
             return true
         }
 

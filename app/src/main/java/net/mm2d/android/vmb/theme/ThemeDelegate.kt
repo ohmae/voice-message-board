@@ -26,7 +26,7 @@ import java.util.*
  * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
  */
 
-class ThemeHelper(
+class ThemeDelegate(
         private val activity: FragmentActivity,
         private val root: View,
         private val textView: TextView,

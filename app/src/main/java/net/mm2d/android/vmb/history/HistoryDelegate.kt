@@ -18,7 +18,7 @@ import java.util.*
 /**
  * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
  */
-class HistoryHelper(
+class HistoryDelegate(
         private val activity: FragmentActivity,
         private val historyFab: FloatingActionButton
 ) {
