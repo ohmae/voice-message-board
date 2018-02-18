@@ -10,10 +10,10 @@ package net.mm2d.android.vmb.theme
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
+import android.support.v4.app.FragmentActivity
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.math.MathUtils
 import android.support.v4.view.ViewCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import net.mm2d.android.vmb.R
@@ -27,7 +27,7 @@ import java.util.*
  */
 
 class ThemeHelper(
-        private val activity: AppCompatActivity,
+        private val activity: FragmentActivity,
         private val root: View,
         private val textView: TextView,
         private val icon: Drawable?) {
