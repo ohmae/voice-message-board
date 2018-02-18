@@ -5,45 +5,40 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb
+package net.mm2d.android.vmb.font
 
 import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_file_chooser.*
-import net.mm2d.android.vmb.FontFileChooserActivity.FileAdapter.ViewHolder
+import net.mm2d.android.vmb.R.layout
+import net.mm2d.android.vmb.R.string
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog.OnCancelListener
+import net.mm2d.android.vmb.dialog.PermissionDialog.OnPositiveClickListener
 import net.mm2d.android.vmb.permission.PermissionHelper
 import net.mm2d.android.vmb.util.Toaster
-import net.mm2d.log.Log
 import java.io.File
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
+class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiveClickListener {
     private val defaultPath = Environment.getExternalStorageDirectory()
     private var currentPath = defaultPath
-    private lateinit var adapter: FileAdapter
+    private lateinit var fileAdapter: FileAdapter
     private lateinit var permissionHelper: PermissionHelper
     private val comparator = Comparator<File> { o1, o2 ->
         if (o1.isDirectory != o2.isDirectory) {
@@ -55,9 +50,9 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_file_chooser)
+        setContentView(layout.activity_file_chooser)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setTitle(R.string.title_file_chooser)
+        supportActionBar?.setTitle(string.title_file_chooser)
         permissionHelper = PermissionHelper(this, Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CODE)
         setInitialPath()
         initRecyclerView()
@@ -85,43 +80,33 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     }
 
     private fun initRecyclerView() {
-        adapter = FileAdapter(this) {
+        fileAdapter = FileAdapter(this) {
             if (!it.canRead()) {
-                Toaster.show(this, R.string.toast_can_not_read_file_or_directory)
+                Toaster.show(this, string.toast_can_not_read_file_or_directory)
             } else if (it.isDirectory) {
                 setUpDirectory(it)
-            } else if (isValidFontFile(it)) {
+            } else if (FontUtils.isValidFontFile(it)) {
                 setResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(it)))
                 finish()
             } else {
-                Toaster.showShort(this, R.string.toast_not_a_valid_font)
+                Toaster.showShort(this, string.toast_not_a_valid_font)
             }
         }
-        recyclerView.adapter = adapter
+        recyclerView.adapter = fileAdapter
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-    }
-
-    private fun isValidFontFile(file: File): Boolean {
-        try {
-            Typeface.createFromFile(file)
-            return true
-        } catch (e: Exception) {
-            Log.w(e)
-        }
-        return false
     }
 
     private fun setUpDirectory(file: File) {
         currentPath = file
         supportActionBar?.subtitle = currentPath.absolutePath
-        adapter.setFiles(emptyArray())
+        fileAdapter.setFiles(emptyArray())
         progressBar.visibility = View.VISIBLE
         Single.fromCallable { file.listFiles().apply { sortWith(comparator) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(Consumer {
-                    adapter.setFiles(it)
-                    adapter.notifyDataSetChanged()
+                    fileAdapter.setFiles(it)
+                    fileAdapter.notifyDataSetChanged()
                     progressBar.visibility = View.INVISIBLE
                 })
     }
@@ -155,51 +140,21 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
             PermissionHelper.Result.OTHER -> return
             PermissionHelper.Result.GRANTED -> setUpDirectory(currentPath)
             PermissionHelper.Result.DENIED -> {
-                Toaster.show(this, R.string.toast_should_allow_storage_permission)
+                Toaster.show(this, string.toast_should_allow_storage_permission)
                 finish()
             }
             PermissionHelper.Result.DENIED_ALWAYS ->
-                PermissionDialog.show(this, R.string.dialog_storage_permission_message)
+                PermissionDialog.show(this, string.dialog_storage_permission_message)
         }
     }
 
     override fun onCancel() {
-        Toaster.show(this, R.string.toast_should_allow_storage_permission)
+        Toaster.show(this, string.toast_should_allow_storage_permission)
         finish()
     }
 
-    private class FileAdapter(context: Context, private val onClick: (file: File) -> Unit) : RecyclerView.Adapter<ViewHolder>() {
-        private var files: Array<File> = emptyArray()
-        private val inflater = LayoutInflater.from(context)
-
-        fun setFiles(files: Array<File>) {
-            this.files = files
-            notifyDataSetChanged()
-        }
-
-        override fun getItemCount(): Int {
-            return files.size
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-            holder?.bind(files[position], onClick)
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-            val view = inflater.inflate(R.layout.list_item_file_chooser, parent, false)
-            return ViewHolder(view)
-        }
-
-        private class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val text = itemView.findViewById<TextView>(R.id.text)!!
-            val icon = itemView.findViewById<ImageView>(R.id.icon)!!
-
-            fun bind(file: File, onClick: (file: File) -> Unit) {
-                itemView.setOnClickListener { onClick.invoke(file) }
-                icon.setImageResource(if (file.isDirectory) R.drawable.ic_folder else R.drawable.ic_file)
-                text.text = file.name
-            }
-        }
+    override fun onPositiveClick() {
+        finish()
     }
 
     companion object {

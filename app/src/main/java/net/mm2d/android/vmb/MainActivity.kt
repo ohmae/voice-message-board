@@ -8,7 +8,6 @@
 package net.mm2d.android.vmb
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.math.MathUtils
 import android.support.v7.app.AppCompatActivity
@@ -20,12 +19,12 @@ import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
+import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.history.HistoryDelegate
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.theme.ThemeDelegate
-import net.mm2d.android.vmb.util.Toaster
 import java.util.*
 
 /**
@@ -109,26 +108,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStart() {
         super.onStart()
-        setFont()
-    }
-
-    private fun setFont() {
-        if (!settings.useFont || settings.fontPath.isEmpty()) {
-            textView.typeface = Typeface.DEFAULT
-            return
-        }
-        try {
-            val typeFace = Typeface.createFromFile(settings.fontPath)
-            if (typeFace != null) {
-                textView.setTypeface(typeFace, Typeface.NORMAL)
-                return
-            }
-        } catch (e: Exception) {
-        }
-        settings.useFont = false
-        settings.fontPath = ""
-        textView.typeface = Typeface.DEFAULT
-        Toaster.show(this, R.string.toast_failed_to_load_font)
+        FontUtils.setFont(textView, settings)
     }
 
     override fun onResume() {

@@ -16,6 +16,7 @@ import android.preference.ListPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceManager
+import net.mm2d.android.vmb.font.FontFileChooserActivity
 import net.mm2d.android.vmb.settings.Key
 import net.mm2d.android.vmb.settings.Settings
 
@@ -58,18 +59,15 @@ class SettingsFragment : PreferenceFragment() {
         setFontPath()
     }
 
-    private fun startFontChooser() {
-        val intent = FontFileChooserActivity.makeIntent(activity, settings.fontPath)
-        try {
-            startActivityForResult(intent, FONT_REQUEST_CODE)
-        } catch (e: ActivityNotFoundException) {
-        }
-    }
-
     private fun setFontPath() {
         val path = settings.fontPath
         if (path.isEmpty()) fontPathPreference.setSummary(R.string.pref_description_font_path)
         else fontPathPreference.summary = path
+    }
+
+    private fun startFontChooser() {
+        val intent = FontFileChooserActivity.makeIntent(activity, settings.fontPath)
+        startActivityForResult(intent, FONT_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

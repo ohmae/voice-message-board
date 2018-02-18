@@ -37,7 +37,7 @@
             android:name=".LicenseActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
-        <activity android:name=".FontFileChooserActivity"
+        <activity android:name=".font.FontFileChooserActivity"
             />
     </application>
 

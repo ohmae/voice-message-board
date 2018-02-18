@@ -52,6 +52,9 @@ class Settings(context: Context) {
         get() = mStorage.readString(Key.FONT_PATH, "")!!
         set(value) = mStorage.writeString(Key.FONT_PATH, value)
 
+    val fontPathToUse: String
+        get() = if (useFont) fontPath else ""
+
     fun shouldUseSpeechRecognizer(): Boolean =
             mStorage.readBoolean(Key.SPEECH_RECOGNIZER, true)
 

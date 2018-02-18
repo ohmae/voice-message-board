@@ -26,18 +26,8 @@ class PermissionDialog : BaseDialogFragment() {
         fun onCancel()
     }
 
-    private var onCancelListener: OnCancelListener? = null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnCancelListener) {
-            onCancelListener = context
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        onCancelListener = null
+    interface OnPositiveClickListener {
+        fun onPositiveClick()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -47,13 +37,14 @@ class PermissionDialog : BaseDialogFragment() {
                 .setMessage(R.string.dialog_microphone_permission_message)
                 .setPositiveButton(R.string.app_info) { _, _ ->
                     startAppInfo(ctx)
+                    (ctx as? OnPositiveClickListener)?.onPositiveClick()
                 }
                 .setNegativeButton(R.string.cancel, { dialog, _ -> dialog.cancel() })
                 .create()
     }
 
     override fun onCancel(dialog: DialogInterface?) {
-        onCancelListener?.onCancel()
+        (context as? OnCancelListener)?.onCancel()
     }
 
     private fun startAppInfo(context: Context) {
