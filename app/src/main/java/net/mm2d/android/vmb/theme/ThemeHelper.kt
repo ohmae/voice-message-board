@@ -76,8 +76,7 @@ class ThemeHelper(
      * テーマ設定のダイアログを起動。
      */
     fun showDialog() {
-        SelectThemeDialog.newInstance(themes)
-                .show(activity.supportFragmentManager, "")
+        SelectThemeDialog.show(activity, themes)
     }
 
     companion object {

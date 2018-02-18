@@ -156,22 +156,19 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            PermissionHelper.Result.OTHER -> {}
-            PermissionHelper.Result.GRANTED -> startRecognizerDialog()
-            PermissionHelper.Result.DENIED -> Toaster.show(this, R.string.toast_should_allow_microphone_permission)
-            PermissionHelper.Result.DENIED_ALWAYS -> supportFragmentManager?.let {
-                PermissionDialog.newInstance(R.string.dialog_microphone_permission_message)
-                        .showAllowingStateLoss(it, "")
-            }
+        when (permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            PermissionHelper.Result.OTHER -> return
+            PermissionHelper.Result.GRANTED ->
+                startRecognizerDialog()
+            PermissionHelper.Result.DENIED ->
+                Toaster.show(this, R.string.toast_should_allow_microphone_permission)
+            PermissionHelper.Result.DENIED_ALWAYS ->
+                PermissionDialog.show(this, R.string.dialog_microphone_permission_message)
         }
     }
 
     private fun startRecognizerDialog() {
-        supportFragmentManager?.let {
-            RecognizerDialog.newInstance()
-                    .showAllowingStateLoss(it, "")
-        }
+        RecognizerDialog.show(this)
     }
 
     private fun startRecognizerActivity() {
@@ -194,10 +191,7 @@ class MainActivity : AppCompatActivity(),
             return
         }
         if (results.size > 1 && settings.shouldShowCandidateList()) {
-            supportFragmentManager?.let {
-                SelectStringDialog.newInstance(R.string.dialog_title_select, results)
-                        .showAllowingStateLoss(it, "")
-            }
+            SelectStringDialog.show(this, R.string.dialog_title_select, results)
         } else {
             setText(results[0])
         }
@@ -217,10 +211,7 @@ class MainActivity : AppCompatActivity(),
      */
     private fun startEdit() {
         val string = textView.text.toString()
-        supportFragmentManager?.let {
-            EditStringDialog.newInstance(string)
-                    .showAllowingStateLoss(it, "")
-        }
+        EditStringDialog.show(this, string)
     }
 
     /**

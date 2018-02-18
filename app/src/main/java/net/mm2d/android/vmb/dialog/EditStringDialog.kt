@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -105,12 +106,16 @@ class EditStringDialog : BaseDialogFragment() {
          * @param editString 編集する元の文字列
          * @return 新規インスタンス
          */
-        fun newInstance(editString: String): EditStringDialog {
+        private fun newInstance(editString: String): EditStringDialog {
             return EditStringDialog().apply {
                 arguments = Bundle().apply {
                     putString(KEY_STRING, editString)
                 }
             }
+        }
+
+        fun show(activity: FragmentActivity, editString: String) {
+            newInstance(editString).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }
 }

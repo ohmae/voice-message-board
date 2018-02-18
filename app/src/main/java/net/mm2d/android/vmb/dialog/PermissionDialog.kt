@@ -14,6 +14,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import net.mm2d.android.vmb.R
 
@@ -65,8 +66,12 @@ class PermissionDialog : BaseDialogFragment() {
 
     companion object {
         private const val TITLE = "TITLE"
-        fun newInstance(@StringRes message: Int): PermissionDialog = PermissionDialog().apply {
+        private fun newInstance(@StringRes message: Int): PermissionDialog = PermissionDialog().apply {
             arguments = Bundle().apply { putInt(TITLE, message) }
+        }
+
+        fun show(activity: FragmentActivity, @StringRes message: Int) {
+            newInstance(message).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }
 }

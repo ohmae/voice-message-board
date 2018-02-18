@@ -151,19 +151,15 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            PermissionHelper.Result.OTHER -> {}
-            PermissionHelper.Result.GRANTED -> {
-                setUpDirectory(currentPath)
-            }
+        when (permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            PermissionHelper.Result.OTHER -> return
+            PermissionHelper.Result.GRANTED -> setUpDirectory(currentPath)
             PermissionHelper.Result.DENIED -> {
                 Toaster.show(this, R.string.toast_should_allow_storage_permission)
                 finish()
             }
-            PermissionHelper.Result.DENIED_ALWAYS -> supportFragmentManager?.let {
-                PermissionDialog.newInstance(R.string.dialog_storage_permission_message)
-                        .showAllowingStateLoss(it, "")
-            }
+            PermissionHelper.Result.DENIED_ALWAYS ->
+                PermissionDialog.show(this, R.string.dialog_storage_permission_message)
         }
     }
 

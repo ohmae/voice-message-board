@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
@@ -92,12 +93,16 @@ class SelectThemeDialog : BaseDialogFragment() {
          * @param themes テーマリスト
          * @return 新規インスタンス
          */
-        fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog {
+        private fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog {
             return SelectThemeDialog().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList(KEY_THEME_LIST, themes)
                 }
             }
+        }
+
+        fun show(activity: FragmentActivity, themes: ArrayList<Theme>) {
+            newInstance(themes).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }
 }

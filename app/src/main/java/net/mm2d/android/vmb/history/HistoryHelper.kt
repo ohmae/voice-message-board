@@ -24,6 +24,7 @@ class HistoryHelper(
 ) {
     private val settings = Settings(activity)
     private val history = LinkedList(settings.history)
+
     init {
         if (history.isEmpty()) {
             historyFab.hide()
@@ -37,10 +38,7 @@ class HistoryHelper(
         if (history.isEmpty()) {
             return
         }
-        activity.supportFragmentManager?.let {
-            SelectStringDialog.newInstance(R.string.dialog_title_history, ArrayList(history))
-                    .showAllowingStateLoss(it, "")
-        }
+        SelectStringDialog.show(activity, R.string.dialog_title_history, ArrayList(history))
     }
 
     fun showClearDialog() {
