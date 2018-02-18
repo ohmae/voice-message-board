@@ -19,7 +19,6 @@ import android.speech.RecognizerIntent
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.math.MathUtils
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
 import android.view.*
@@ -32,6 +31,7 @@ import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
+import net.mm2d.android.vmb.history.HistoryHelper
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.theme.ThemeHelper
@@ -48,13 +48,13 @@ class MainActivity : AppCompatActivity(),
     private val settings by lazy {
         Settings(this)
     }
-    private lateinit var history: LinkedList<String>
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
     private var fontSize: Float = 0.0f
     private lateinit var themeHelper: ThemeHelper
+    private lateinit var historyHelper: HistoryHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,13 +74,9 @@ class MainActivity : AppCompatActivity(),
                 true
             }
         }
-        historyFab.setOnClickListener { showHistoryDialog() }
         themeHelper = ThemeHelper(this, root, textView, toolbar?.overflowIcon)
         themeHelper.apply()
-        history = LinkedList(settings.history)
-        if (history.isEmpty()) {
-            historyFab.hide()
-        }
+        historyHelper = HistoryHelper(this, historyFab)
         restoreInstanceState(savedInstanceState)
     }
 
@@ -239,24 +235,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun showHistoryDialog() {
-        if (history.isEmpty()) {
-            return
-        }
-        supportFragmentManager?.let {
-            SelectStringDialog.newInstance(R.string.dialog_title_history, ArrayList(history))
-                    .showAllowingStateLoss(it, "")
-        }
-    }
-
-    private fun clearHistory() {
-        history.clear()
-        settings.history = HashSet(history)
-        historyFab.hide()
-    }
-
-    private fun hasHistory(): Boolean = !history.isEmpty()
-
     /**
      * 文字列を設定する。
      *
@@ -267,13 +245,7 @@ class MainActivity : AppCompatActivity(),
      */
     private fun setText(string: String) {
         textView.text = string
-        history.remove(string)
-        history.addFirst(string)
-        while (history.size > MAX_HISTORY) {
-            history.removeLast()
-        }
-        settings.history = HashSet(history)
-        historyFab.show()
+        historyHelper.put(string)
     }
 
     /**
@@ -294,7 +266,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (hasHistory()) {
+        if (historyHelper.exist()) {
             showHistoryMenu.isEnabled = true
             clearHistoryMenu.isEnabled = true
         } else {
@@ -312,14 +284,9 @@ class MainActivity : AppCompatActivity(),
             R.id.action_theme ->
                 themeHelper.showDialog()
             R.id.action_show_history ->
-                showHistoryDialog()
+                historyHelper.showSelectDialog()
             R.id.action_clear_history ->
-                AlertDialog.Builder(this)
-                        .setTitle(R.string.dialog_title_clear_history)
-                        .setMessage(R.string.dialog_message_clear_history)
-                        .setPositiveButton(R.string.ok) { _, _ -> clearHistory() }
-                        .setNegativeButton(R.string.cancel, null)
-                        .show()
+                historyHelper.showClearDialog()
             else ->
                 return super.onOptionsItemSelected(item)
         }
@@ -373,7 +340,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     companion object {
-        private const val MAX_HISTORY = 30
         private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private const val TAG_TEXT = "TAG_TEXT"
         private const val RECOGNIZER_REQUEST_CODE = 1
