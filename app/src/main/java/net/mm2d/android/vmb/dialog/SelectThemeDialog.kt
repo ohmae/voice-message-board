@@ -15,7 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.data.Theme
+import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 

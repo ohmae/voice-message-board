@@ -12,30 +12,29 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.speech.RecognizerIntent
-import android.support.annotation.ColorInt
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.math.MathUtils
-import android.support.v4.view.ViewCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
 import android.view.*
 import kotlinx.android.synthetic.main.activity_main.*
-import net.mm2d.android.vmb.data.Theme
-import net.mm2d.android.vmb.dialog.*
+import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
+import net.mm2d.android.vmb.dialog.PermissionDialog
+import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
+import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
-import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.theme.Theme
+import net.mm2d.android.vmb.theme.ThemeHelper
 import net.mm2d.android.vmb.util.Toaster
 import java.util.*
 
@@ -46,24 +45,16 @@ import java.util.*
  */
 class MainActivity : AppCompatActivity(),
         SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {
-    private val themes by lazy {
-        ArrayList<Theme>().apply {
-            add(Theme(getString(R.string.theme_white_black), Color.WHITE, Color.BLACK))
-            add(Theme(getString(R.string.theme_black_white), Color.BLACK, Color.WHITE))
-            add(Theme(getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW))
-            add(Theme(getString(R.string.theme_black_green), Color.BLACK, Color.GREEN))
-        }
-    }
     private val settings by lazy {
         Settings(this)
     }
     private lateinit var history: LinkedList<String>
-    private lateinit var gridDrawable: GridDrawable
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleDetector: ScaleGestureDetector
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
     private var fontSize: Float = 0.0f
+    private lateinit var themeHelper: ThemeHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,18 +62,12 @@ class MainActivity : AppCompatActivity(),
         setSupportActionBar(toolbar)
         supportActionBar?.title = null
         initPreferences()
-        gridDrawable = GridDrawable(this)
         scaleDetector = ScaleGestureDetector(this, ScaleListener())
         gestureDetector = GestureDetector(this, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         editFab.setOnClickListener { startEdit() }
         root.apply {
-            setOnClickListener { startVoiceInput() }
-            setOnLongClickListener {
-                startEdit()
-                true
-            }
             setOnTouchListener { _, event ->
                 gestureDetector.onTouchEvent(event)
                 scaleDetector.onTouchEvent(event)
@@ -90,7 +75,8 @@ class MainActivity : AppCompatActivity(),
             }
         }
         historyFab.setOnClickListener { showHistoryDialog() }
-        applyTheme()
+        themeHelper = ThemeHelper(this, root, textView, toolbar?.overflowIcon)
+        themeHelper.apply()
         history = LinkedList(settings.history)
         if (history.isEmpty()) {
             historyFab.hide()
@@ -291,30 +277,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Preferenceを読みだして、テーマを設定する。
-     */
-    private fun applyTheme() {
-        setTheme(settings.backgroundColor, settings.foregroundColor)
-    }
-
-    /**
-     * テーマ設定。
-     *
-     * 背景色と文字色を設定するのみ。
-     *
-     * @param background 背景色
-     * @param foreground 文字色
-     */
-    private fun setTheme(background: Int, foreground: Int) {
-        gridDrawable.setColor(background)
-        ViewCompat.setBackground(root, gridDrawable)
-        root.invalidate()
-        textView.setTextColor(foreground)
-        val icon = toolbar.overflowIcon ?: return
-        DrawableCompat.setTint(DrawableCompat.wrap(icon), getIconColor(background))
-    }
-
-    /**
      * アプリ設定の初期化。
      */
     private fun initPreferences() {
@@ -348,7 +310,7 @@ class MainActivity : AppCompatActivity(),
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_theme ->
-                showThemeDialog()
+                themeHelper.showDialog()
             R.id.action_show_history ->
                 showHistoryDialog()
             R.id.action_clear_history ->
@@ -364,18 +326,8 @@ class MainActivity : AppCompatActivity(),
         return true
     }
 
-    /**
-     * テーマ設定のダイアログを起動。
-     */
-    private fun showThemeDialog() {
-        SelectThemeDialog.newInstance(themes)
-                .show(supportFragmentManager, "")
-    }
-
     override fun onSelectTheme(theme: Theme) {
-        settings.backgroundColor = theme.backgroundColor
-        settings.foregroundColor = theme.foregroundColor
-        applyTheme()
+        themeHelper.select(theme)
     }
 
     override fun onSelectString(string: String) {
@@ -397,13 +349,13 @@ class MainActivity : AppCompatActivity(),
      */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            root.performClick()
+            startVoiceInput()
             return true
         }
 
         override fun onLongPress(e: MotionEvent) {
             if (settings.shouldShowEditorWhenLongTap()) {
-                root.performLongClick()
+                startEdit()
             }
         }
     }
@@ -426,15 +378,5 @@ class MainActivity : AppCompatActivity(),
         private const val TAG_TEXT = "TAG_TEXT"
         private const val RECOGNIZER_REQUEST_CODE = 1
         private const val PERMISSION_REQUEST_CODE = 2
-        @ColorInt
-        private fun getIconColor(@ColorInt background: Int): Int =
-                if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
-
-        private fun getBrightness(@ColorInt color: Int): Int =
-                getBrightness(Color.red(color), Color.green(color), Color.blue(color))
-
-        private fun getBrightness(r: Int, g: Int, b: Int): Int =
-                MathUtils.clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
-
     }
 }
