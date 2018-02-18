@@ -19,8 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="-200dp"
-        android:layout_marginLeft="-20dp"
-        android:layout_marginRight="-20dp"
         android:layout_marginTop="-200dp"
         android:gravity="center"
         android:text="@string/initial_string"
