@@ -11,13 +11,10 @@ import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.speech.RecognizerIntent
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v4.math.MathUtils
 import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
@@ -32,6 +29,7 @@ import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
 import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
 import net.mm2d.android.vmb.history.HistoryHelper
+import net.mm2d.android.vmb.permission.PermissionHelper
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.theme.ThemeHelper
@@ -55,6 +53,7 @@ class MainActivity : AppCompatActivity(),
     private var fontSize: Float = 0.0f
     private lateinit var themeHelper: ThemeHelper
     private lateinit var historyHelper: HistoryHelper
+    private lateinit var permissionHelper: PermissionHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +76,7 @@ class MainActivity : AppCompatActivity(),
         themeHelper = ThemeHelper(this, root, textView, toolbar?.overflowIcon)
         themeHelper.apply()
         historyHelper = HistoryHelper(this, historyFab)
+        permissionHelper = PermissionHelper(this, Manifest.permission.RECORD_AUDIO, PERMISSION_REQUEST_CODE)
         restoreInstanceState(savedInstanceState)
     }
 
@@ -150,29 +150,17 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun startRecognizerDialogWithPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSION_REQUEST_CODE)
-            return
+        if (!permissionHelper.requestPermissionIfNeed()) {
+            startRecognizerDialog()
         }
-        startRecognizerDialog()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode != PERMISSION_REQUEST_CODE || permissions.isEmpty()) {
-            return
-        }
-        val index = permissions.indexOf(Manifest.permission.RECORD_AUDIO)
-        if (index < 0 || index > grantResults.size) {
-            return
-        }
-        if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-            startRecognizerDialog()
-            return
-        }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
-            Toaster.show(this, R.string.toast_should_allow_microphone_permission)
-        } else {
-            supportFragmentManager?.let {
+        when(permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            PermissionHelper.Result.OTHER -> {}
+            PermissionHelper.Result.GRANTED -> startRecognizerDialog()
+            PermissionHelper.Result.DENIED -> Toaster.show(this, R.string.toast_should_allow_microphone_permission)
+            PermissionHelper.Result.DENIED_ALWAYS -> supportFragmentManager?.let {
                 PermissionDialog.newInstance(R.string.dialog_microphone_permission_message)
                         .showAllowingStateLoss(it, "")
             }

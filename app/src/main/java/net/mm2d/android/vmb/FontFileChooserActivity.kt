@@ -8,17 +8,13 @@
 package net.mm2d.android.vmb
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
@@ -36,6 +32,7 @@ import kotlinx.android.synthetic.main.activity_file_chooser.*
 import net.mm2d.android.vmb.FontFileChooserActivity.FileAdapter.ViewHolder
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.PermissionDialog.OnCancelListener
+import net.mm2d.android.vmb.permission.PermissionHelper
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.log.Log
 import java.io.File
@@ -47,6 +44,7 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
     private val defaultPath = Environment.getExternalStorageDirectory()
     private var currentPath = defaultPath
     private lateinit var adapter: FileAdapter
+    private lateinit var permissionHelper: PermissionHelper
     private val comparator = Comparator<File> { o1, o2 ->
         if (o1.isDirectory != o2.isDirectory) {
             if (o1.isDirectory) -1 else 1
@@ -60,6 +58,7 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
         setContentView(R.layout.activity_file_chooser)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.title_file_chooser)
+        permissionHelper = PermissionHelper(this, Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CODE)
         setInitialPath()
         initRecyclerView()
         if (savedInstanceState == null) {
@@ -144,35 +143,24 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener {
         super.onBackPressed()
     }
 
-    @SuppressLint("NewApi")
     private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            recyclerView.visibility = View.INVISIBLE
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+        if (permissionHelper.requestPermissionIfNeed()) {
             return
         }
-        recyclerView.visibility = View.VISIBLE
         setUpDirectory(currentPath)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode != PERMISSION_REQUEST_CODE || permissions.isEmpty()) {
-            return
-        }
-        val index = permissions.indexOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        if (index < 0 || index > grantResults.size) {
-            return
-        }
-        if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-            recyclerView.visibility = View.VISIBLE
-            setUpDirectory(currentPath)
-            return
-        }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Toaster.show(this, R.string.toast_should_allow_storage_permission)
-            finish()
-        } else {
-            supportFragmentManager?.let {
+        when(permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            PermissionHelper.Result.OTHER -> {}
+            PermissionHelper.Result.GRANTED -> {
+                setUpDirectory(currentPath)
+            }
+            PermissionHelper.Result.DENIED -> {
+                Toaster.show(this, R.string.toast_should_allow_storage_permission)
+                finish()
+            }
+            PermissionHelper.Result.DENIED_ALWAYS -> supportFragmentManager?.let {
                 PermissionDialog.newInstance(R.string.dialog_storage_permission_message)
                         .showAllowingStateLoss(it, "")
             }
