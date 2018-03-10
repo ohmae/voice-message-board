@@ -35,11 +35,11 @@ class FileAdapter(context: Context, private val onClick: (file: File) -> Unit)
         return files.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        holder?.bind(files[position], onClick)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(files[position], onClick)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = inflater.inflate(layout.list_item_file_chooser, parent, false)
         return ViewHolder(view)
     }
