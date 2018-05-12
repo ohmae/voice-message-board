@@ -22,7 +22,7 @@ class HistoryDelegate(
         private val activity: FragmentActivity,
         private val historyFab: FloatingActionButton
 ) {
-    private val settings = Settings(activity)
+    private val settings = Settings.get()
     private val history = LinkedList(settings.history)
 
     init {

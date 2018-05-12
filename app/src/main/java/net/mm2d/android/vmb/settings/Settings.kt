@@ -12,12 +12,20 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.support.annotation.ColorInt
 import android.text.TextUtils
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
+import net.mm2d.android.vmb.BuildConfig
+import net.mm2d.log.Log
 import java.util.*
+import java.util.concurrent.locks.Condition
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class Settings(context: Context) {
+class Settings private constructor(context: Context) {
 
     private val mStorage: SettingsStorage = SettingsStorage(context)
 
@@ -72,13 +80,42 @@ class Settings(context: Context) {
         set(history) = mStorage.writeStringSet(Key.HISTORY, history)
 
     companion object {
+        private var settings: Settings? = null
+        private val lock: Lock = ReentrantLock()
+        private val condition: Condition = lock.newCondition()!!
+
+        /**
+         * Settingsのインスタンスを返す。
+         *
+         * 初期化が完了していなければブロックされる。
+         */
+        fun get(): Settings {
+            lock.withLock {
+                while (settings == null) {
+                    if (BuildConfig.DEBUG) {
+                        Log.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
+                    }
+                    condition.await()
+                }
+                return settings as Settings
+            }
+        }
+
         /**
          * アプリ起動時に一度だけコールされ、初期化を行う。
          *
          * @param context コンテキスト
          */
         fun initialize(context: Context) {
-            SettingsStorage.initialize(context)
+            Completable.fromAction {
+                lock.withLock {
+                    SettingsStorage.initialize(context)
+                    settings = Settings(context)
+                    condition.signalAll()
+                }
+            }
+                    .subscribeOn(Schedulers.io())
+                    .subscribe()
         }
     }
 }

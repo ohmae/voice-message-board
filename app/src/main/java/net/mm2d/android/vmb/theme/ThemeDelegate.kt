@@ -38,7 +38,7 @@ class ThemeDelegate(
             Theme(activity.getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW),
             Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN)
     ))
-    private val settings = Settings(activity)
+    private val settings = Settings.get()
     private val gridDrawable = GridDrawable(activity)
 
     /**

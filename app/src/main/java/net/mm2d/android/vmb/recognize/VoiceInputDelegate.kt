@@ -30,7 +30,7 @@ class VoiceInputDelegate(
         private val voiceRequestCode: Int,
         permissionRequestCode: Int,
         private val setText: (text: String) -> Unit) {
-    private val settings = Settings(activity)
+    private val settings = Settings.get()
     private val permissionHelper = PermissionHelper(activity, Manifest.permission.RECORD_AUDIO, permissionRequestCode)
 
     fun start() {

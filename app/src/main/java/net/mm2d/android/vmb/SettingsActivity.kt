@@ -24,13 +24,14 @@ import net.mm2d.android.vmb.settings.Settings
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class SettingsActivity : AppCompatPreferenceActivity() {
-    private lateinit var settings: Settings
+    private val settings by lazy {
+        Settings.get()
+    }
     private lateinit var fontPathPreference: Preference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        settings = Settings(this)
         setUpSetting()
     }
 

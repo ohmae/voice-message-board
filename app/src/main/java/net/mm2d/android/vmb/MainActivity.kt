@@ -35,7 +35,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(),
         SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {
     private val settings by lazy {
-        Settings(this)
+        Settings.get()
     }
     private lateinit var themeDelegate: ThemeDelegate
     private lateinit var historyDelegate: HistoryDelegate
