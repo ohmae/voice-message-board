@@ -8,6 +8,9 @@
 package net.mm2d.android.vmb
 
 import android.app.Application
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+import android.os.StrictMode.VmPolicy
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
 import net.mm2d.android.vmb.settings.Settings
@@ -22,6 +25,7 @@ class App : Application() {
         super.onCreate()
         Log.setInitializer(AndroidLogInitializer.get())
         Log.initialize(BuildConfig.DEBUG, true)
+        setStrictMode()
         RxJavaPlugins.setErrorHandler { e ->
             when (e) {
                 is UndeliverableException -> Log.w(e.cause)
@@ -29,5 +33,24 @@ class App : Application() {
             }
         }
         Settings.initialize(this)
+    }
+
+    private fun setStrictMode() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDropBox()
+                    .penaltyDialog()
+                    .build())
+            StrictMode.setVmPolicy(VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDropBox()
+                    .build())
+        } else {
+            StrictMode.setThreadPolicy(ThreadPolicy.LAX)
+            StrictMode.setVmPolicy(VmPolicy.LAX)
+        }
     }
 }
