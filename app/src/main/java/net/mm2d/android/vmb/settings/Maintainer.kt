@@ -7,10 +7,6 @@
 
 package net.mm2d.android.vmb.settings
 
-import android.content.Context
-import android.preference.PreferenceManager
-import net.mm2d.android.vmb.R
-
 /**
  * 設定値のメンテナー。
  *
@@ -38,16 +34,14 @@ internal object Maintainer {
     /**
      * 起動時に一度だけ呼び出され、SharedPreferencesのメンテナンスを行う。
      *
-     * @param context Context
      * @param storage SettingsStorage
      */
-    fun maintain(context: Context, storage: SettingsStorage) {
+    fun maintain(storage: SettingsStorage) {
         val currentVersion = getSettingsVersion(storage)
         if (currentVersion == SETTINGS_VERSION) {
             return
         }
         storage.writeInt(Key.SETTINGS_VERSION, SETTINGS_VERSION)
-        PreferenceManager.setDefaultValues(context, R.xml.preferences, true)
     }
 
     /**

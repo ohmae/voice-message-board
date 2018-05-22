@@ -12,21 +12,24 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_screen_orientation"
             />
-        <SwitchPreference
+        <!--suppress AndroidElementNotAllowed -->
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="SPEECH_RECOGNIZER"
             android:summaryOff="@string/pref_description_speech_recognizer_off"
             android:summaryOn="@string/pref_description_speech_recognizer_on"
             android:title="@string/pref_title_speech_recognizer"
             />
-        <SwitchPreference
+        <!--suppress AndroidElementNotAllowed -->
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="CANDIDATE_LIST"
             android:summaryOff="@string/pref_description_candidate_list_off"
             android:summaryOn="@string/pref_description_candidate_list_on"
             android:title="@string/pref_title_candidate_list"
             />
-        <SwitchPreference
+        <!--suppress AndroidElementNotAllowed -->
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:dependency="CANDIDATE_LIST"
             android:key="LIST_EDIT"
@@ -34,7 +37,8 @@
             android:summaryOn="@string/pref_description_list_edit_on"
             android:title="@string/pref_title_list_edit"
             />
-        <SwitchPreference
+        <!--suppress AndroidElementNotAllowed -->
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="LONG_TAP_EDIT"
             android:summaryOff="@string/pref_description_long_tap_edit_off"
@@ -45,7 +49,8 @@
     <PreferenceCategory
         android:title="@string/pref_header_display"
         >
-        <SwitchPreference
+        <!--suppress AndroidElementNotAllowed -->
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="USE_FONT"
             android:summaryOff="@string/pref_description_use_font_off"

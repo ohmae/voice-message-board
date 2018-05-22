@@ -12,9 +12,11 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.ListPreference
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
+import android.support.v7.preference.PreferenceManager
 import android.view.MenuItem
 import net.mm2d.android.vmb.font.FontFileChooserActivity
 import net.mm2d.android.vmb.settings.Key
@@ -23,16 +25,15 @@ import net.mm2d.android.vmb.settings.Settings
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SettingsActivity : AppCompatPreferenceActivity() {
-    private val settings by lazy {
-        Settings.get()
-    }
-    private lateinit var fontPathPreference: Preference
-
+class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        setUpSetting()
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                    .add(android.R.id.content, SettingsFragment())
+                    .commit()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -42,8 +43,15 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+}
 
-    private fun setUpSetting() {
+class SettingsFragment : PreferenceFragmentCompat() {
+    private val settings by lazy {
+        Settings.get()
+    }
+    private lateinit var fontPathPreference: Preference
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
         bindPreference(findPreference(Key.SCREEN_ORIENTATION))
         findPreference(Key.PLAY_STORE)?.setOnPreferenceClickListener {
@@ -56,7 +64,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             openUrl(SOURCE_CODE_URL)
         }
         findPreference(Key.LICENSE)?.setOnPreferenceClickListener {
-            val intent = Intent(this, LicenseActivity::class.java)
+            val intent = Intent(context, LicenseActivity::class.java)
             startActivity(intent)
             true
         }
@@ -80,7 +88,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     }
 
     private fun startFontChooser() {
-        val intent = FontFileChooserActivity.makeIntent(this, settings.fontPath)
+        val intent = FontFileChooserActivity.makeIntent(context ?: return, settings.fontPath)
         startActivityForResult(intent, FONT_REQUEST_CODE)
     }
 

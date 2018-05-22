@@ -158,16 +158,4 @@ internal class SettingsStorage(context: Context) {
             return sharedPreferences as SharedPreferences
         }
     }
-
-    companion object {
-        /**
-         * SharedPreferencesのインスタンスを作成し初期化する。
-         *
-         * @param context コンテキスト
-         */
-        @JvmStatic
-        fun initialize(context: Context) {
-            Maintainer.maintain(context, SettingsStorage(context))
-        }
-    }
 }

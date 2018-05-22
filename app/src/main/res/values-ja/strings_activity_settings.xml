@@ -20,11 +20,6 @@
         <item>横固定</item>
         <item>縦固定</item>
     </string-array>
-    <string-array name="pref_screen_orientation_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
-    </string-array>
     <string name="pref_header_display">表示</string>
     <string name="pref_title_use_font">フォント</string>
     <string name="pref_description_use_font_off">標準フォントを使用します</string>
