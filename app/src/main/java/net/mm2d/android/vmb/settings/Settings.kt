@@ -17,6 +17,7 @@ import io.reactivex.schedulers.Schedulers
 import net.mm2d.android.vmb.BuildConfig
 import net.mm2d.log.Log
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
@@ -92,7 +93,9 @@ class Settings private constructor(private val storage: SettingsStorage) {
                     if (BuildConfig.DEBUG) {
                         Log.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
                     }
-                    condition.await()
+                    if (!condition.await(1, TimeUnit.SECONDS)) {
+                        throw IllegalStateException("Settings initialization timeout")
+                    }
                 }
                 return settings as Settings
             }
@@ -104,19 +107,18 @@ class Settings private constructor(private val storage: SettingsStorage) {
          * @param context コンテキスト
          */
         fun initialize(context: Context) {
-            Completable.fromAction {
-                val storage = SettingsStorage(context)
-                try {
-                    Maintainer.maintain(storage)
-                } finally {
-                    lock.withLock {
-                        settings = Settings(storage)
-                        condition.signalAll()
-                    }
-                }
-            }
+            Completable.fromAction { initializeInner(context) }
                     .subscribeOn(Schedulers.io())
                     .subscribe()
+        }
+
+        private fun initializeInner(context: Context) {
+            val storage = SettingsStorage(context)
+            Maintainer.maintain(storage)
+            lock.withLock {
+                settings = Settings(storage)
+                condition.signalAll()
+            }
         }
     }
 }

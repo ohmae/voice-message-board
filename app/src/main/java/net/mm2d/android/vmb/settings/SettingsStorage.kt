@@ -50,6 +50,20 @@ internal class SettingsStorage(context: Context) {
     }
 
     /**
+     * boolean値を書き込む。
+     *
+     * @param key       Key
+     * @param value     書き込む値
+     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
+     */
+    fun writeBoolean(key: Key, value: Boolean, overwrite: Boolean) {
+        if (!overwrite && contains(key)) {
+            return
+        }
+        writeBoolean(key, value)
+    }
+
+    /**
      * boolean値を読み出す。
      *
      * @param key          Key
@@ -69,6 +83,20 @@ internal class SettingsStorage(context: Context) {
         preferences.edit()
                 .putInt(key.name, value)
                 .apply()
+    }
+
+    /**
+     * int値を書き込む。
+     *
+     * @param key       Key
+     * @param value     書き込む値
+     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
+     */
+    fun writeInt(key: Key, value: Int, overwrite: Boolean) {
+        if (!overwrite && contains(key)) {
+            return
+        }
+        writeInt(key, value)
     }
 
     /**
@@ -94,6 +122,20 @@ internal class SettingsStorage(context: Context) {
     }
 
     /**
+     * long値を書き込む。
+     *
+     * @param key       Key
+     * @param value     書き込む値
+     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
+     */
+    fun writeLong(key: Key, value: Long, overwrite: Boolean) {
+        if (!overwrite && contains(key)) {
+            return
+        }
+        writeLong(key, value)
+    }
+
+    /**
      * long値を読み出す。
      *
      * @param key          Key
@@ -113,6 +155,20 @@ internal class SettingsStorage(context: Context) {
         preferences.edit()
                 .putString(key.name, value)
                 .apply()
+    }
+
+    /**
+     * String値を書き込む。
+     *
+     * @param key       Key
+     * @param value     書き込む値
+     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
+     */
+    fun writeString(key: Key, value: String, overwrite: Boolean) {
+        if (!overwrite && contains(key)) {
+            return
+        }
+        writeString(key, value)
     }
 
     /**

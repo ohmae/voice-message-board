@@ -7,6 +7,9 @@
 
 package net.mm2d.android.vmb.settings
 
+import android.content.pm.ActivityInfo
+import android.graphics.Color
+
 /**
  * 設定値のメンテナー。
  *
@@ -42,6 +45,27 @@ internal object Maintainer {
             return
         }
         storage.writeInt(Key.SETTINGS_VERSION, SETTINGS_VERSION)
+        writeDefaultValue(storage, false)
+    }
+
+    /**
+     * デフォルト値の書き込みを行う
+     *
+     * @param storage SettingsStorage
+     */
+    private fun writeDefaultValue(storage: SettingsStorage, overwrite: Boolean) {
+        storage.writeInt(Key.KEY_BACKGROUND, Color.WHITE, overwrite)
+        storage.writeInt(Key.KEY_FOREGROUND, Color.BLACK, overwrite)
+
+        storage.writeBoolean(Key.SPEECH_RECOGNIZER, true, overwrite)
+        storage.writeBoolean(Key.CANDIDATE_LIST, false, overwrite)
+        // HISTORY
+        storage.writeBoolean(Key.LIST_EDIT, false, overwrite)
+        storage.writeBoolean(Key.LONG_TAP_EDIT, false, overwrite)
+
+        storage.writeString(Key.SCREEN_ORIENTATION, Integer.toString(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED), overwrite)
+        storage.writeBoolean(Key.USE_FONT, false, overwrite)
+        // FONT_PATH
     }
 
     /**

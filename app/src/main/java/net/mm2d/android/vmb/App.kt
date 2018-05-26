@@ -11,28 +11,36 @@ import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
+import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.log.AndroidLogInitializer
 import net.mm2d.log.Log
+import net.mm2d.log.android.AndroidLogInitializer
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
+@Suppress("unused")
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        Log.setInitializer(AndroidLogInitializer.get())
+        Log.setInitializer(AndroidLogInitializer.getSingleThread())
         Log.initialize(BuildConfig.DEBUG, true)
         setStrictMode()
-        RxJavaPlugins.setErrorHandler { e ->
-            when (e) {
-                is UndeliverableException -> Log.w(e.cause)
-                else -> Log.w(e)
-            }
-        }
+        RxJavaPlugins.setErrorHandler { logError(it) }
         Settings.initialize(this)
+    }
+
+    private fun logError(e: Throwable) {
+        when (e) {
+            is UndeliverableException
+            -> Log.w(null, "UndeliverableException:", e.cause)
+            is OnErrorNotImplementedException
+            -> Log.w(null, "OnErrorNotImplementedException:", e.cause)
+            else
+            -> Log.w(e)
+        }
     }
 
     private fun setStrictMode() {
