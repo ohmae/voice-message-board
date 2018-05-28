@@ -22,6 +22,7 @@
             android:name=".MainActivity"
             android:label="${app_name}"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
