@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 大前良介(OHMAE Ryosuke)
+ * Copyright (c) 2017 大前良介 (OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -14,6 +14,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import net.mm2d.android.vmb.R
 
@@ -25,18 +26,8 @@ class PermissionDialog : BaseDialogFragment() {
         fun onCancel()
     }
 
-    private var onCancelListener: OnCancelListener? = null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnCancelListener) {
-            onCancelListener = context
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        onCancelListener = null
+    interface OnPositiveClickListener {
+        fun onPositiveClick()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -46,13 +37,14 @@ class PermissionDialog : BaseDialogFragment() {
                 .setMessage(R.string.dialog_microphone_permission_message)
                 .setPositiveButton(R.string.app_info) { _, _ ->
                     startAppInfo(ctx)
+                    (ctx as? OnPositiveClickListener)?.onPositiveClick()
                 }
                 .setNegativeButton(R.string.cancel, { dialog, _ -> dialog.cancel() })
                 .create()
     }
 
     override fun onCancel(dialog: DialogInterface?) {
-        onCancelListener?.onCancel()
+        (context as? OnCancelListener)?.onCancel()
     }
 
     private fun startAppInfo(context: Context) {
@@ -65,8 +57,12 @@ class PermissionDialog : BaseDialogFragment() {
 
     companion object {
         private const val TITLE = "TITLE"
-        fun newInstance(@StringRes message: Int): PermissionDialog = PermissionDialog().apply {
+        private fun newInstance(@StringRes message: Int): PermissionDialog = PermissionDialog().apply {
             arguments = Bundle().apply { putInt(TITLE, message) }
+        }
+
+        fun show(activity: FragmentActivity, @StringRes message: Int) {
+            newInstance(message).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }
 }

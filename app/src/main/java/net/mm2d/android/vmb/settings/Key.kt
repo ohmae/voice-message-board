@@ -1,5 +1,5 @@
 /*
- * Copyright(C) 2014 大前良介(OHMAE Ryosuke)
+ * Copyright (c) 2014 大前良介 (OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -13,6 +13,15 @@ package net.mm2d.android.vmb.settings
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 enum class Key {
+    PLAY_STORE,
+    PRIVACY_POLICY,
+    COPYRIGHT,
+    VERSION_NUMBER,
+    SOURCE_CODE,
+    LICENSE,
+
+    SETTINGS_VERSION,
+
     KEY_BACKGROUND,
     KEY_FOREGROUND,
     HISTORY,
@@ -23,11 +32,4 @@ enum class Key {
     SCREEN_ORIENTATION,
     USE_FONT,
     FONT_PATH,
-    PLAY_STORE,
-    PRIVACY_POLICY,
-    COPYRIGHT,
-    VERSION_NUMBER,
-    SETTINGS_VERSION,
-    SOURCE_CODE,
-    LICENSE,
 }

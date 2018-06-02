@@ -1,5 +1,5 @@
 /*
- * Copyright(C) 2014 大前良介(OHMAE Ryosuke)
+ * Copyright (c) 2014 大前良介 (OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -11,6 +11,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
@@ -88,13 +89,17 @@ class SelectStringDialog : BaseDialogFragment() {
          * @param strings 選択肢
          * @return 新規インスタンス
          */
-        fun newInstance(@StringRes title: Int, strings: ArrayList<String>): SelectStringDialog {
+        private fun newInstance(@StringRes title: Int, strings: ArrayList<String>): SelectStringDialog {
             val instance = SelectStringDialog()
             val args = Bundle()
             args.putInt(KEY_TITLE, title)
             args.putStringArrayList(KEY_STRING_LIST, strings)
             instance.arguments = args
             return instance
+        }
+
+        fun show(activity: FragmentActivity, @StringRes title: Int, strings: ArrayList<String>) {
+            newInstance(title, strings).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }
 }

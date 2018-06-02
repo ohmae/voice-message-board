@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 大前良介(OHMAE Ryosuke)
+ * Copyright (c) 2017 大前良介 (OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.TextView
@@ -114,7 +115,7 @@ class RecognizerDialog : BaseDialogFragment() {
                 dismissAllowingStateLoss()
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         ?: return
-                (targetFragment as? RecognizeListener)?.onRecognize(list)
+                (activity as? RecognizeListener)?.onRecognize(list)
             }
         }
     }
@@ -132,6 +133,9 @@ class RecognizerDialog : BaseDialogFragment() {
         private const val RMS_DB_MAX = 10.0f
         private const val RMS_DB_MIN = -2.12f
         fun normalize(rms: Float): Float = Math.min(Math.max((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN), 0f), 1f)
-        fun newInstance(): RecognizerDialog = RecognizerDialog()
+        private fun newInstance(): RecognizerDialog = RecognizerDialog()
+        fun show(activity: FragmentActivity) {
+            newInstance().showAllowingStateLoss(activity.supportFragmentManager, "")
+        }
     }
 }
