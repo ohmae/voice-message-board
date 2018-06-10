@@ -9,14 +9,12 @@ package net.mm2d.android.vmb.settings
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.graphics.Color
 import android.support.annotation.ColorInt
 import android.text.TextUtils
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import net.mm2d.android.vmb.BuildConfig
 import net.mm2d.log.Log
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
@@ -29,17 +27,17 @@ import kotlin.concurrent.withLock
 class Settings private constructor(private val storage: SettingsStorage) {
     var backgroundColor: Int
         @ColorInt
-        get() = storage.readInt(Key.KEY_BACKGROUND, Color.WHITE)
+        get() = storage.readInt(Key.KEY_BACKGROUND)
         set(@ColorInt color) = storage.writeInt(Key.KEY_BACKGROUND, color)
 
     var foregroundColor: Int
         @ColorInt
-        get() = storage.readInt(Key.KEY_FOREGROUND, Color.BLACK)
+        get() = storage.readInt(Key.KEY_FOREGROUND)
         set(@ColorInt color) = storage.writeInt(Key.KEY_FOREGROUND, color)
 
     val screenOrientation: Int
         get() {
-            val value = storage.readString(Key.SCREEN_ORIENTATION, "")
+            val value = storage.readString(Key.SCREEN_ORIENTATION)
             if (!TextUtils.isEmpty(value)) {
                 try {
                     return Integer.parseInt(value)
@@ -51,30 +49,30 @@ class Settings private constructor(private val storage: SettingsStorage) {
         }
 
     var useFont: Boolean
-        get() = storage.readBoolean(Key.USE_FONT, false)
+        get() = storage.readBoolean(Key.USE_FONT)
         set(value) = storage.writeBoolean(Key.USE_FONT, value)
 
     var fontPath: String
-        get() = storage.readString(Key.FONT_PATH, "")!!
+        get() = storage.readString(Key.FONT_PATH)
         set(value) = storage.writeString(Key.FONT_PATH, value)
 
     val fontPathToUse: String
         get() = if (useFont) fontPath else ""
 
     fun shouldUseSpeechRecognizer(): Boolean =
-            storage.readBoolean(Key.SPEECH_RECOGNIZER, true)
+            storage.readBoolean(Key.SPEECH_RECOGNIZER)
 
     fun shouldShowCandidateList(): Boolean =
-            storage.readBoolean(Key.CANDIDATE_LIST, false)
+            storage.readBoolean(Key.CANDIDATE_LIST)
 
     fun shouldShowEditorWhenLongTap(): Boolean =
-            storage.readBoolean(Key.LONG_TAP_EDIT, false)
+            storage.readBoolean(Key.LONG_TAP_EDIT)
 
     fun shouldShowEditorAfterSelect(): Boolean =
-            storage.readBoolean(Key.LIST_EDIT, false)
+            storage.readBoolean(Key.LIST_EDIT)
 
     var history: Set<String>
-        get() = storage.readStringSet(Key.HISTORY, null) ?: Collections.emptySet()
+        get() = storage.readStringSet(Key.HISTORY)
         set(history) = storage.writeStringSet(Key.HISTORY, history)
 
     companion object {

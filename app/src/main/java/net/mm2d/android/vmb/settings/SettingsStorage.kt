@@ -44,34 +44,26 @@ internal class SettingsStorage(context: Context) {
      * @param value 書き込む値
      */
     fun writeBoolean(key: Key, value: Boolean) {
+        if (!key.isBooleanKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Boolean")
+        }
         preferences.edit()
                 .putBoolean(key.name, value)
                 .apply()
     }
 
     /**
-     * boolean値を書き込む。
-     *
-     * @param key       Key
-     * @param value     書き込む値
-     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
-     */
-    fun writeBoolean(key: Key, value: Boolean, overwrite: Boolean) {
-        if (!overwrite && contains(key)) {
-            return
-        }
-        writeBoolean(key, value)
-    }
-
-    /**
      * boolean値を読み出す。
      *
-     * @param key          Key
-     * @param defaultValue デフォルト値
+     * @param key Key
      * @return 読み出したboolean値
      */
-    fun readBoolean(key: Key, defaultValue: Boolean): Boolean =
-            preferences.getBoolean(key.name, defaultValue)
+    fun readBoolean(key: Key): Boolean {
+        if (!key.isBooleanKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Boolean")
+        }
+        return preferences.getBoolean(key.name, key.getDefaultBoolean())
+    }
 
     /**
      * int値を書き込む。
@@ -80,34 +72,26 @@ internal class SettingsStorage(context: Context) {
      * @param value 書き込む値
      */
     fun writeInt(key: Key, value: Int) {
+        if (!key.isIntKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Int")
+        }
         preferences.edit()
                 .putInt(key.name, value)
                 .apply()
     }
 
     /**
-     * int値を書き込む。
-     *
-     * @param key       Key
-     * @param value     書き込む値
-     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
-     */
-    fun writeInt(key: Key, value: Int, overwrite: Boolean) {
-        if (!overwrite && contains(key)) {
-            return
-        }
-        writeInt(key, value)
-    }
-
-    /**
      * int値を読み出す。
      *
-     * @param key          Key
-     * @param defaultValue デフォルト値
+     * @param key Key
      * @return 読み出したint値
      */
-    fun readInt(key: Key, defaultValue: Int): Int =
-            preferences.getInt(key.name, defaultValue)
+    fun readInt(key: Key): Int {
+        if (!key.isIntKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Int")
+        }
+        return preferences.getInt(key.name, key.getDefaultInt())
+    }
 
     /**
      * long値を書き込む。
@@ -116,34 +100,26 @@ internal class SettingsStorage(context: Context) {
      * @param value 書き込む値
      */
     fun writeLong(key: Key, value: Long) {
+        if (!key.isLongKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Long")
+        }
         preferences.edit()
                 .putLong(key.name, value)
                 .apply()
     }
 
     /**
-     * long値を書き込む。
-     *
-     * @param key       Key
-     * @param value     書き込む値
-     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
-     */
-    fun writeLong(key: Key, value: Long, overwrite: Boolean) {
-        if (!overwrite && contains(key)) {
-            return
-        }
-        writeLong(key, value)
-    }
-
-    /**
      * long値を読み出す。
      *
-     * @param key          Key
-     * @param defaultValue デフォルト値
+     * @param key Key
      * @return 読み出したlong値
      */
-    fun readLong(key: Key, defaultValue: Long): Long =
-            preferences.getLong(key.name, defaultValue)
+    fun readLong(key: Key): Long {
+        if (!key.isLongKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Long")
+        }
+        return preferences.getLong(key.name, key.getDefaultLong())
+    }
 
     /**
      * String値を書き込む。
@@ -152,34 +128,26 @@ internal class SettingsStorage(context: Context) {
      * @param value 書き込む値
      */
     fun writeString(key: Key, value: String) {
+        if (!key.isStringKey()) {
+            throw IllegalArgumentException(key.name + " is not key for String")
+        }
         preferences.edit()
                 .putString(key.name, value)
                 .apply()
     }
 
     /**
-     * String値を書き込む。
-     *
-     * @param key       Key
-     * @param value     書き込む値
-     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
-     */
-    fun writeString(key: Key, value: String, overwrite: Boolean) {
-        if (!overwrite && contains(key)) {
-            return
-        }
-        writeString(key, value)
-    }
-
-    /**
      * String値を読み出す。
      *
-     * @param key          Key
-     * @param defaultValue デフォルト値
+     * @param key Key
      * @return 読み出したString値
      */
-    fun readString(key: Key, defaultValue: String?): String? =
-            preferences.getString(key.name, defaultValue)
+    fun readString(key: Key): String {
+        if (!key.isStringKey()) {
+            throw IllegalArgumentException(key.name + " is not key for String")
+        }
+        return preferences.getString(key.name, key.getDefaultString())
+    }
 
     /**
      * StringSet値を書き込む。
@@ -188,6 +156,9 @@ internal class SettingsStorage(context: Context) {
      * @param value 書き込む値
      */
     fun writeStringSet(key: Key, value: Set<String>) {
+        if (!key.isStringSetKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Set<String>")
+        }
         preferences.edit()
                 .putStringSet(key.name, value)
                 .apply()
@@ -196,12 +167,40 @@ internal class SettingsStorage(context: Context) {
     /**
      * StringSet値を読み出す。
      *
-     * @param key          Key
-     * @param defaultValue デフォルト値
+     * @param key Key
      * @return 読み出したString値
      */
-    fun readStringSet(key: Key, defaultValue: Set<String>?): Set<String>? =
-            preferences.getStringSet(key.name, defaultValue)
+    fun readStringSet(key: Key): Set<String> {
+        if (!key.isStringSetKey()) {
+            throw IllegalArgumentException(key.name + " is not key for Set<String>")
+        }
+        return preferences.getStringSet(key.name, key.getDefaultStringSet())
+    }
+
+    /**
+     * デフォルト値を書き込む。
+     *
+     * @param key       Key
+     * @param overwrite true:値を上書きする、false:値がない場合のみ書き込む
+     */
+    fun writeDefault(key: Key, overwrite: Boolean) {
+        if (!key.isReadWriteKey()) {
+            return
+        }
+        if (!overwrite && contains(key)) {
+            return
+        }
+        when {
+            key.isBooleanKey() ->
+                writeBoolean(key, key.getDefaultBoolean())
+            key.isIntKey() ->
+                writeInt(key, key.getDefaultInt())
+            key.isLongKey() ->
+                writeLong(key, key.getDefaultLong())
+            key.isStringKey() ->
+                writeString(key, key.getDefaultString())
+        }
+    }
 
     private object PreferencesHolder {
         private var sharedPreferences: SharedPreferences? = null
