@@ -9,6 +9,7 @@ package net.mm2d.android.vmb.settings
 
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import java.lang.IllegalArgumentException
 import java.util.*
 
 /**
@@ -16,9 +17,7 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-enum class Key(
-        private val type: Class<*>? = null,
-        private val defaultValue: Any? = null) {
+enum class Key {
     PLAY_STORE,
     PRIVACY_POLICY,
     COPYRIGHT,
@@ -27,45 +26,67 @@ enum class Key(
     LICENSE,
 
     SETTINGS_VERSION(
-            Integer::class.java, -1
+            -1
     ),
 
     KEY_BACKGROUND(
-            Integer::class.java, Color.WHITE
+            Color.WHITE
     ),
     KEY_FOREGROUND(
-            Integer::class.java, Color.BLACK
+            Color.BLACK
     ),
     HISTORY(
-            Set::class.java, Collections.EMPTY_SET
+            Collections.emptySet<String>()
     ),
     SPEECH_RECOGNIZER(
-            java.lang.Boolean::class.java, true
+            true
     ),
     CANDIDATE_LIST(
-            java.lang.Boolean::class.java, false
+            false
     ),
     LIST_EDIT(
-            java.lang.Boolean::class.java, false
+            false
     ),
     LONG_TAP_EDIT(
-            java.lang.Boolean::class.java, false
+            false
     ),
     SCREEN_ORIENTATION(
-            String::class.java, Integer.toString(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+            Integer.toString(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
     ),
     USE_FONT(
-            java.lang.Boolean::class.java, false
+            false
     ),
     FONT_PATH(
-            String::class.java, ""
+            ""
     ),
     ;
 
-    init {
-        if (type?.isInstance(defaultValue) == false) {
-            throw IllegalArgumentException(this.name + " " + type.toString() + " " + defaultValue)
+    private enum class Type {
+        BOOLEAN,
+        INT,
+        LONG,
+        STRING,
+        STRING_SET,
+    }
+
+    private val type: Type?
+    private val defaultValue: Any?
+
+    constructor() {
+        type = null
+        defaultValue = null
+    }
+
+    constructor(value: Any) {
+        type = when (value) {
+            is Boolean -> Type.BOOLEAN
+            is Int -> Type.INT
+            is Long -> Type.LONG
+            is String -> Type.STRING
+            is Set<*> -> Type.STRING_SET
+            else -> throw IllegalArgumentException()
         }
+        defaultValue = value
     }
 
     internal fun isReadWriteKey(): Boolean {
@@ -73,23 +94,23 @@ enum class Key(
     }
 
     internal fun isBooleanKey(): Boolean {
-        return type === java.lang.Boolean::class.java
+        return type === Type.BOOLEAN
     }
 
     internal fun isIntKey(): Boolean {
-        return type === Integer::class.java
+        return type === Type.INT
     }
 
     internal fun isLongKey(): Boolean {
-        return type === java.lang.Long::class.java
+        return type === Type.LONG
     }
 
     internal fun isStringKey(): Boolean {
-        return type === String::class.java
+        return type === Type.STRING
     }
 
     internal fun isStringSetKey(): Boolean {
-        return type === Set::class.java
+        return type === Type.STRING_SET
     }
 
     internal fun getDefaultBoolean(): Boolean {
