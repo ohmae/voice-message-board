@@ -16,7 +16,7 @@ import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
 /**
- * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
+ * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class HistoryDelegate(
         private val activity: FragmentActivity,
