@@ -62,7 +62,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isBooleanKey()) {
             throw IllegalArgumentException(key.name + " is not key for Boolean")
         }
-        return preferences.getBoolean(key.name, key.getDefaultBoolean())
+        return preferences.getBoolean(key.name, key.getDefaultBooleanToRead())
     }
 
     /**
@@ -90,7 +90,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isIntKey()) {
             throw IllegalArgumentException(key.name + " is not key for Int")
         }
-        return preferences.getInt(key.name, key.getDefaultInt())
+        return preferences.getInt(key.name, key.getDefaultIntToRead())
     }
 
     /**
@@ -118,7 +118,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isLongKey()) {
             throw IllegalArgumentException(key.name + " is not key for Long")
         }
-        return preferences.getLong(key.name, key.getDefaultLong())
+        return preferences.getLong(key.name, key.getDefaultLongToRead())
     }
 
     /**
@@ -146,7 +146,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isStringKey()) {
             throw IllegalArgumentException(key.name + " is not key for String")
         }
-        return preferences.getString(key.name, key.getDefaultString())
+        return preferences.getString(key.name, key.getDefaultStringToRead())
     }
 
     /**
@@ -174,7 +174,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isStringSetKey()) {
             throw IllegalArgumentException(key.name + " is not key for Set<String>")
         }
-        return preferences.getStringSet(key.name, key.getDefaultStringSet())
+        return preferences.getStringSet(key.name, key.getDefaultStringSetToRead())
     }
 
     /**
@@ -192,13 +192,15 @@ internal class SettingsStorage(context: Context) {
         }
         when {
             key.isBooleanKey() ->
-                writeBoolean(key, key.getDefaultBoolean())
+                writeBoolean(key, key.getDefaultBooleanToWrite())
             key.isIntKey() ->
-                writeInt(key, key.getDefaultInt())
+                writeInt(key, key.getDefaultIntToWrite())
             key.isLongKey() ->
-                writeLong(key, key.getDefaultLong())
+                writeLong(key, key.getDefaultLongToWrite())
             key.isStringKey() ->
-                writeString(key, key.getDefaultString())
+                writeString(key, key.getDefaultStringToWrite())
+            key.isStringSetKey() ->
+                writeStringSet(key, key.getDefaultStringSetToWrite())
         }
     }
 

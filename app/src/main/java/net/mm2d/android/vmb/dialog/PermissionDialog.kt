@@ -39,7 +39,7 @@ class PermissionDialog : BaseDialogFragment() {
                     startAppInfo(ctx)
                     (ctx as? OnPositiveClickListener)?.onPositiveClick()
                 }
-                .setNegativeButton(R.string.cancel, { dialog, _ -> dialog.cancel() })
+                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
                 .create()
     }
 

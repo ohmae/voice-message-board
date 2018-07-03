@@ -25,40 +25,18 @@ enum class Key {
     SOURCE_CODE,
     LICENSE,
 
-    SETTINGS_VERSION(
-            -1
-    ),
+    SETTINGS_VERSION(-1),
 
-    KEY_BACKGROUND(
-            Color.WHITE
-    ),
-    KEY_FOREGROUND(
-            Color.BLACK
-    ),
-    HISTORY(
-            Collections.emptySet<String>()
-    ),
-    SPEECH_RECOGNIZER(
-            true
-    ),
-    CANDIDATE_LIST(
-            false
-    ),
-    LIST_EDIT(
-            false
-    ),
-    LONG_TAP_EDIT(
-            false
-    ),
-    SCREEN_ORIENTATION(
-            Integer.toString(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-    ),
-    USE_FONT(
-            false
-    ),
-    FONT_PATH(
-            ""
-    ),
+    KEY_BACKGROUND(Color.WHITE),
+    KEY_FOREGROUND(Color.BLACK),
+    HISTORY(Collections.emptySet<String>()),
+    SPEECH_RECOGNIZER(true),
+    CANDIDATE_LIST(false),
+    LIST_EDIT(false),
+    LONG_TAP_EDIT(false),
+    SCREEN_ORIENTATION(Integer.toString(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)),
+    USE_FONT(false),
+    FONT_PATH(""),
     ;
 
     private enum class Type {
@@ -70,24 +48,33 @@ enum class Key {
     }
 
     private val type: Type?
-    private val defaultValue: Any?
+    private val defaultToRead: Any?
+    private val defaultToWrite: Any?
 
     constructor() {
         type = null
-        defaultValue = null
+        defaultToRead = null
+        defaultToWrite = null
     }
 
-    constructor(value: Any) {
-        type = when (value) {
-            is Boolean -> Type.BOOLEAN
-            is Int -> Type.INT
-            is Long -> Type.LONG
-            is String -> Type.STRING
-            is Set<*> -> Type.STRING_SET
-            else -> throw IllegalArgumentException()
+    constructor(toRead: Any, toWrite: Any = toRead) {
+        type = getType(toRead)
+        if (type != getType(toWrite)) {
+            throw IllegalArgumentException("type mismatch $toRead / $toWrite")
         }
-        defaultValue = value
+        defaultToRead = toRead
+        defaultToWrite = toWrite
     }
+
+    private fun getType(value: Any) = when (value) {
+        is Boolean -> Type.BOOLEAN
+        is Int -> Type.INT
+        is Long -> Type.LONG
+        is String -> Type.STRING
+        is Set<*> -> Type.STRING_SET
+        else -> throw IllegalArgumentException("unknown type:" + value.javaClass)
+    }
+
 
     internal fun isReadWriteKey(): Boolean {
         return type != null
@@ -113,30 +100,57 @@ enum class Key {
         return type === Type.STRING_SET
     }
 
-    internal fun getDefaultBoolean(): Boolean {
-        return defaultValue as Boolean
+    internal fun getDefaultBooleanToRead(): Boolean {
+        return defaultToRead as Boolean
     }
 
-    internal fun getDefaultInt(): Int {
-        return defaultValue as Int
+    internal fun getDefaultIntToRead(): Int {
+        return defaultToRead as Int
     }
 
-    internal fun getDefaultLong(): Long {
-        return defaultValue as Long
+    internal fun getDefaultLongToRead(): Long {
+        return defaultToRead as Long
     }
 
-    internal fun getDefaultString(): String {
-        if (defaultValue == null) {
+    internal fun getDefaultStringToRead(): String {
+        if (defaultToRead == null) {
             throw NullPointerException("Default value is not set")
         }
-        return defaultValue as String
+        return defaultToRead as String
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal fun getDefaultStringSet(): Set<String> {
-        if (defaultValue == null) {
+    internal fun getDefaultStringSetToRead(): Set<String> {
+        if (defaultToRead == null) {
             throw NullPointerException("Default value is not set")
         }
-        return defaultValue as Set<String>
+        return defaultToRead as Set<String>
+    }
+
+    internal fun getDefaultBooleanToWrite(): Boolean {
+        return defaultToWrite as Boolean
+    }
+
+    internal fun getDefaultIntToWrite(): Int {
+        return defaultToWrite as Int
+    }
+
+    internal fun getDefaultLongToWrite(): Long {
+        return defaultToWrite as Long
+    }
+
+    internal fun getDefaultStringToWrite(): String {
+        if (defaultToWrite == null) {
+            throw NullPointerException("Default value is not set")
+        }
+        return defaultToWrite as String
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun getDefaultStringSetToWrite(): Set<String> {
+        if (defaultToWrite == null) {
+            throw NullPointerException("Default value is not set")
+        }
+        return defaultToWrite as Set<String>
     }
 }
