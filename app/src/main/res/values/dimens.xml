@@ -8,7 +8,7 @@
     <dimen name="theme_font_size">24sp</dimen>
     <dimen name="theme_title_font_size">18sp</dimen>
     <dimen name="list_font_size">24sp</dimen>
-    <dimen name="recognizer_icon_area_size">96dp</dimen>
+    <dimen name="recognizer_icon_area_size">192dp</dimen>
     <dimen name="recognizer_icon_circle_size">72dp</dimen>
     <dimen name="recognizer_dialog_margin">16dp</dimen>
     <dimen name="recognizer_dialog_title_margin">8dp</dimen>

@@ -7,8 +7,6 @@
 
 package net.mm2d.android.vmb.view
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -30,13 +28,12 @@ class BeatingView
     @Dimension
     private val radiusMax: Float
     private val paint = Paint()
-    @Dimension
-    private var radius = 0f
-    @Dimension
-    private var startRadius = 0f
-    @Dimension
-    private var targetRadius = 0f
-    private var radiusAnimator: Animator? = null
+    private val radiusAnimators: Array<ValueAnimator> = arrayOf(
+            ValueAnimator.ofFloat(0f),
+            ValueAnimator.ofFloat(0f),
+            ValueAnimator.ofFloat(0f)
+    )
+    private val radisus: Array<Float> = arrayOf(0f, 0f, 0f)
 
     init {
         paint.color = ContextCompat.getColor(context, R.color.beating)
@@ -44,48 +41,51 @@ class BeatingView
         val resources = context.resources
         radiusMin = resources.getDimension(R.dimen.recognizer_icon_circle_size) / 2f
         radiusMax = resources.getDimension(R.dimen.recognizer_icon_area_size) / 2f
-        radius = radiusMin
     }
 
     fun onVolumeChanged(volume: Float) {
-        val target = radiusMin + (radiusMax - radiusMin) * volume
-        if (target == targetRadius) {
-            return
-        }
-        if (radiusAnimator?.isRunning == true) {
-            radiusAnimator?.cancel()
-            radius = targetRadius
-        }
-        startRadius = radius
-        targetRadius = target
-        radiusAnimator = ValueAnimator.ofFloat(startRadius, targetRadius).apply {
-            duration = 150L
-            setInterpolator { Math.pow(it.toDouble(), 0.33).toFloat() }
-            addUpdateListener {
-                radius = it.animatedValue as Float
-                invalidate()
-            }
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    radiusAnimator = null
-                }
-            })
-            start()
+        for(i in 0 until 3) {
+            startAnimation(i, volume)
         }
     }
 
+    private fun startAnimation(index: Int, volume: Float) {
+        if (radisus[index] < volume) {
+            radisus[index] = volume
+        }
+        if (radiusAnimators[index].isRunning) {
+            return
+        }
+        val target = (radiusMax - radiusMin) * radisus[index] / 6f * (1 + index)
+        radisus[index] = 0f
+        val animator = ValueAnimator.ofFloat(0f, target).apply {
+            duration = 20 + 200L * (index + 1)
+            setInterpolator { 1f - (it * 2f - 1f).square() }
+            addUpdateListener { invalidate() }
+            start()
+        }
+        radiusAnimators[index] = animator
+    }
+
+    private fun Float.square(): Float = this * this
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (radiusAnimator?.isRunning == true) {
-            radiusAnimator?.cancel()
+        radiusAnimators.forEach {
+            if (it.isRunning) {
+                it.cancel()
+            }
         }
-        radiusAnimator = null
     }
 
     override fun dispatchDraw(canvas: Canvas) {
         val cx = canvas.width / 2f
         val cy = canvas.height / 2f
-        canvas.drawCircle(cx, cy, radius, paint)
+        var radius = radiusMin
+        for (a in radiusAnimators) {
+            radius += a.animatedValue as Float
+            canvas.drawCircle(cx, cy, radius, paint)
+        }
         super.dispatchDraw(canvas)
     }
 }

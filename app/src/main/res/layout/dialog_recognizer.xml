@@ -5,49 +5,46 @@
     android:id="@+id/wave_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/wave1_center">
+    android:paddingBottom="@dimen/wave1_center"
+    >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+    <net.mm2d.android.vmb.view.BeatingView
+        android:id="@+id/beating_view"
+        android:layout_width="@dimen/recognizer_icon_area_size"
+        android:layout_height="@dimen/recognizer_icon_area_size"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginTop="@dimen/recognizer_dialog_margin"
         >
 
-        <TextView
-            android:id="@+id/text"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/recognizer_dialog_title_margin"
-            android:layout_marginTop="@dimen/recognizer_dialog_margin"
-            android:gravity="center_horizontal"
-            android:text="@string/recognizer_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_circle"
             />
 
-        <net.mm2d.android.vmb.view.BeatingView
-            android:id="@+id/beating_view"
-            android:layout_width="@dimen/recognizer_icon_area_size"
-            android:layout_height="@dimen/recognizer_icon_area_size"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/recognizer_dialog_margin"
-            >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_voice"
+            />
+    </net.mm2d.android.vmb.view.BeatingView>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@null"
-                app:srcCompat="@drawable/ic_circle"
-                />
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="172dp"
+        android:layout_marginLeft="@dimen/recognizer_dialog_margin"
+        android:layout_marginRight="@dimen/recognizer_dialog_margin"
+        android:layout_marginTop="@dimen/recognizer_dialog_margin"
+        android:gravity="center_horizontal"
+        android:text="@string/recognizer_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@null"
-                app:srcCompat="@drawable/ic_voice"
-                />
-        </net.mm2d.android.vmb.view.BeatingView>
-    </LinearLayout>
 </net.mm2d.android.vmb.view.WaveView>
