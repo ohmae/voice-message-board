@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.mm2d.android.vmb">
+    package="net.mm2d.android.vmb"
+    >
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -20,9 +21,9 @@
         >
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden"
             android:label="${app_name}"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
