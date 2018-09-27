@@ -12,12 +12,12 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.preference.PreferenceManager
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import net.mm2d.android.vmb.font.FontFileChooserActivity
 import net.mm2d.android.vmb.settings.Key
 import net.mm2d.android.vmb.settings.Settings
@@ -111,7 +111,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         preference ?: return
         preference.setOnPreferenceChangeListener(this::bindPreference)
         val sp = PreferenceManager.getDefaultSharedPreferences(preference.context)
-        val value = sp.getString(preference.key, "")
+        val value = sp.getString(preference.key, "") ?: ""
         bindPreference(preference, value)
     }
 

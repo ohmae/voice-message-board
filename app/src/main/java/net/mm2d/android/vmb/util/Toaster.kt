@@ -8,8 +8,8 @@
 package net.mm2d.android.vmb.util
 
 import android.content.Context
-import android.support.annotation.StringRes
 import android.widget.Toast
+import androidx.annotation.StringRes
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)

@@ -146,7 +146,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isStringKey()) {
             throw IllegalArgumentException(key.name + " is not key for String")
         }
-        return preferences.getString(key.name, key.getDefaultStringToRead())
+        return preferences.getString(key.name, null) ?: key.getDefaultStringToRead()
     }
 
     /**
@@ -174,7 +174,7 @@ internal class SettingsStorage(context: Context) {
         if (!key.isStringSetKey()) {
             throw IllegalArgumentException(key.name + " is not key for Set<String>")
         }
-        return preferences.getStringSet(key.name, key.getDefaultStringSetToRead())
+        return preferences.getStringSet(key.name, null) ?: key.getDefaultStringSetToRead()
     }
 
     /**

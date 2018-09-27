@@ -9,10 +9,10 @@ package net.mm2d.android.vmb
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.math.MathUtils
-import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.math.MathUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener

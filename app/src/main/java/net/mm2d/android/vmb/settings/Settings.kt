@@ -9,8 +9,8 @@ package net.mm2d.android.vmb.settings
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.support.annotation.ColorInt
 import android.text.TextUtils
+import androidx.annotation.ColorInt
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import net.mm2d.android.vmb.BuildConfig

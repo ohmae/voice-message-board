@@ -10,7 +10,7 @@ package net.mm2d.android.vmb.drawable
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 
 /**
  * グリッド模様付き背景を描画するDrawable

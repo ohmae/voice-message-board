@@ -10,12 +10,12 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 
 /**

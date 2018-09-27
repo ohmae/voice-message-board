@@ -11,10 +11,10 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.support.annotation.Dimension
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.annotation.Dimension
+import androidx.core.content.ContextCompat
 import net.mm2d.android.vmb.R
 
 /**
@@ -44,7 +44,7 @@ class BeatingView
     }
 
     fun onVolumeChanged(volume: Float) {
-        for(i in 0 until 3) {
+        for (i in 0 until 3) {
             startAnimation(i, volume)
         }
     }

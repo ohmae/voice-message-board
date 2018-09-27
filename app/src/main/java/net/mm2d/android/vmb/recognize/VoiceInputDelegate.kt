@@ -12,7 +12,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.speech.RecognizerIntent
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog

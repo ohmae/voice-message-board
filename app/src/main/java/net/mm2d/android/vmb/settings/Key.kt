@@ -9,7 +9,6 @@ package net.mm2d.android.vmb.settings
 
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import java.lang.IllegalArgumentException
 import java.util.*
 
 /**

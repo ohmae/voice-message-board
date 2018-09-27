@@ -13,11 +13,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.support.annotation.ColorInt
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import net.mm2d.android.vmb.R
 import java.util.*
 

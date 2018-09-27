@@ -9,13 +9,13 @@ package net.mm2d.android.vmb.theme
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorInt
-import android.support.v4.app.FragmentActivity
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v4.math.MathUtils
-import android.support.v4.view.ViewCompat
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.math.MathUtils
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.drawable.GridDrawable

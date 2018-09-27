@@ -23,7 +23,8 @@ import android.os.Parcelable.Creator
  * @param foregroundColor 文字色
  */
 data class Theme(val name: String, val backgroundColor: Int, val foregroundColor: Int) : Parcelable {
-    constructor(parcel: Parcel) : this(parcel.readString(), parcel.readInt(), parcel.readInt())
+    constructor(parcel: Parcel) : this(parcel.readString()
+            ?: "", parcel.readInt(), parcel.readInt())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)

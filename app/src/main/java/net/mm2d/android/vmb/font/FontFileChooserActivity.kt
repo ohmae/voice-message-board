@@ -14,13 +14,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_file_chooser.*
 import net.mm2d.android.vmb.R.layout
@@ -38,6 +40,7 @@ import java.io.File
 class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiveClickListener {
     private val defaultPath = Environment.getExternalStorageDirectory()
     private var currentPath = defaultPath
+    private val compositeDisposable = CompositeDisposable()
     private lateinit var fileAdapter: FileAdapter
     private lateinit var permissionHelper: PermissionHelper
     private val comparator = Comparator<File> { o1, o2 ->
@@ -109,6 +112,12 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiv
                     fileAdapter.notifyDataSetChanged()
                     progressBar.visibility = View.INVISIBLE
                 })
+                .addTo(compositeDisposable)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
