@@ -63,11 +63,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference(Key.SOURCE_CODE)?.setOnPreferenceClickListener {
             openUrl(SOURCE_CODE_URL)
         }
-        findPreference(Key.LICENSE)?.setOnPreferenceClickListener {
-            val intent = Intent(context, LicenseActivity::class.java)
-            startActivity(intent)
-            true
-        }
+        findPreference(Key.LICENSE)?.setOnPreferenceClickListener(fun(_: Preference): Boolean {
+            LicenseActivity.start(context ?: return true)
+            return true
+        })
         findPreference(Key.VERSION_NUMBER)?.summary = BuildConfig.VERSION_NAME
         setUpFontSetting()
     }

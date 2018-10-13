@@ -7,6 +7,8 @@
 
 package net.mm2d.android.vmb
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -35,5 +37,11 @@ class LicenseActivity : AppCompatActivity() {
             onBackPressed()
         }
         return true
+    }
+
+    companion object {
+        fun start(context: Context) {
+            context.startActivity(Intent(context, LicenseActivity::class.java))
+        }
     }
 }
