@@ -35,7 +35,7 @@
     <string name="pref_description_copyright">© 大前良介 (OHMAE Ryosuke)</string>
     <string name="pref_title_version_number">バージョン</string>
     <string name="pref_title_license">オープンソース ライセンス</string>
-    <string name="pref_description_license">本アプリが利用しているOSSのライセンスを表示します</string>
+    <string name="pref_description_license">本アプリで利用しているOSSのライセンスを表示します</string>
     <string name="pref_title_source_code">ソースコード</string>
     <string name="pref_description_source_code">本アプリのソースコードはMITライセンスで公開しています</string>
 </resources>
