@@ -21,8 +21,11 @@ import net.mm2d.android.vmb.R
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class BeatingView
-@JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : FrameLayout(context, attrs, defStyleAttr) {
+@JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
     @Dimension
     private val radiusMin: Float
     @Dimension
@@ -33,7 +36,7 @@ class BeatingView
             ValueAnimator.ofFloat(0f),
             ValueAnimator.ofFloat(0f)
     )
-    private val radisus: Array<Float> = arrayOf(0f, 0f, 0f)
+    private val radius: Array<Float> = arrayOf(0f, 0f, 0f)
 
     init {
         paint.color = ContextCompat.getColor(context, R.color.beating)
@@ -50,14 +53,14 @@ class BeatingView
     }
 
     private fun startAnimation(index: Int, volume: Float) {
-        if (radisus[index] < volume) {
-            radisus[index] = volume
+        if (radius[index] < volume) {
+            radius[index] = volume
         }
         if (radiusAnimators[index].isRunning) {
             return
         }
-        val target = (radiusMax - radiusMin) * radisus[index] / 6f * (1 + index)
-        radisus[index] = 0f
+        val target = (radiusMax - radiusMin) * radius[index] / 6f * (1 + index)
+        radius[index] = 0f
         val animator = ValueAnimator.ofFloat(0f, target).apply {
             duration = 20 + 200L * (index + 1)
             setInterpolator { 1f - (it * 2f - 1f).square() }
