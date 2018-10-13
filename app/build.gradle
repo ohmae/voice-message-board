@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 def applicationName = "VoiceMessageBoard"
 def versionMajor = 1
 def versionMinor = 4
-def versionPatch = 7
+def versionPatch = 8
 
 android {
     compileSdkVersion 28
