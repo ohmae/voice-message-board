@@ -40,6 +40,7 @@
     <string name="pref_description_copyright">© 大前良介 (OHMAE Ryosuke)</string>
     <string name="pref_title_version_number">Version</string>
     <string name="pref_title_license">Open Source Licenses</string>
+    <string name="pref_description_license">Display license of OSS used by this application</string>
     <string name="pref_title_source_code">Source code</string>
     <string name="pref_description_source_code">Source code of this app is published under the MIT license</string>
 </resources>

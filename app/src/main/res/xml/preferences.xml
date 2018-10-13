@@ -82,18 +82,19 @@
             android:title="@string/pref_title_privacy_policy"
             />
         <Preference
-            android:key="COPYRIGHT"
-            android:summary="@string/pref_description_copyright"
-            android:title="@string/pref_title_copyright"
-            />
-        <Preference
             android:key="SOURCE_CODE"
             android:summary="@string/pref_description_source_code"
             android:title="@string/pref_title_source_code"
             />
         <Preference
             android:key="LICENSE"
+            android:summary="@string/pref_description_license"
             android:title="@string/pref_title_license"
+            />
+        <Preference
+            android:key="COPYRIGHT"
+            android:summary="@string/pref_description_copyright"
+            android:title="@string/pref_title_copyright"
             />
     </PreferenceCategory>
 </PreferenceScreen>
