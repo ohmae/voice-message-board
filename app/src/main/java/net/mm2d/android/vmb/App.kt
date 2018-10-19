@@ -14,8 +14,8 @@ import androidx.multidex.MultiDexApplication
 import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
+import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.android.vmb.tabs.CustomTabsHelperHolder
 import net.mm2d.log.Log
 import net.mm2d.log.android.AndroidLogInitializer
 

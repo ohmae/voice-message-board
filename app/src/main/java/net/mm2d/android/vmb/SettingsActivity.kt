@@ -16,10 +16,10 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.font.FontFileChooserActivity
 import net.mm2d.android.vmb.settings.Key
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.android.vmb.tabs.CustomTabsHelperHolder
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)

@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb.tabs
+package net.mm2d.android.vmb.customtabs
 
 import android.content.Context
 import android.content.Intent

@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb.tabs
+package net.mm2d.android.vmb.customtabs
 
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
