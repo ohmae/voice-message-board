@@ -41,7 +41,12 @@
             android:name=".LicenseActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
-        <activity android:name=".font.FontFileChooserActivity"
+        <activity
+            android:name=".font.FontFileChooserActivity"
+            />
+        <service
+            android:name=".tabs.KeepAliveService"
+            android:exported="true"
             />
     </application>
 

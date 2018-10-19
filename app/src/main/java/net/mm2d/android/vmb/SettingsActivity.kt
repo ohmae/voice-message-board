@@ -8,9 +8,7 @@
 package net.mm2d.android.vmb
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +19,7 @@ import androidx.preference.PreferenceManager
 import net.mm2d.android.vmb.font.FontFileChooserActivity
 import net.mm2d.android.vmb.settings.Key
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.tabs.CustomTabsHelperHolder
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
@@ -101,11 +100,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun findPreference(key: Key): Preference? = super.findPreference(key.name)
 
-    /**
-     * 設定結果を反映させるListenerとの接続。
-     *
-     * @param preference Preference
-     */
     private fun bindPreference(preference: Preference?) {
         preference ?: return
         preference.setOnPreferenceChangeListener(this::bindPreference)
@@ -126,14 +120,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun openUrl(url: String): Boolean {
-        val uri = Uri.parse(url)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            startActivity(intent)
-            return true
-        } catch (ignored: ActivityNotFoundException) {
-        }
-        return false
+        val ctx = context ?: return false
+        CustomTabsHelperHolder.openUrl(ctx, url)
+        return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CustomTabsHelperHolder.mayLaunchUrl(listOf(
+                PRIVACY_POLICY_URL,
+                SOURCE_CODE_URL
+        ))
     }
 
     companion object {

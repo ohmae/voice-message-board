@@ -15,6 +15,7 @@ import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.tabs.CustomTabsHelperHolder
 import net.mm2d.log.Log
 import net.mm2d.log.android.AndroidLogInitializer
 
@@ -30,6 +31,7 @@ class App : MultiDexApplication() {
         setStrictMode()
         RxJavaPlugins.setErrorHandler { logError(it) }
         Settings.initialize(this)
+        CustomTabsHelperHolder.initialize(this)
     }
 
     private fun logError(e: Throwable) {
