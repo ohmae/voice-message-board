@@ -7,15 +7,16 @@
 
 package net.mm2d.android.vmb
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
+import androidx.preference.*
+import androidx.recyclerview.widget.RecyclerView
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.font.FontFileChooserActivity
 import net.mm2d.android.vmb.settings.Key
@@ -44,7 +45,27 @@ class SettingsActivity : AppCompatActivity() {
     }
 }
 
-class SettingsFragment : PreferenceFragmentCompat() {
+abstract class CustomPreferenceFragmentCompat : PreferenceFragmentCompat() {
+    override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
+        return CustomPreferenceGroupAdapter(preferenceScreen)
+    }
+}
+
+@SuppressLint("RestrictedApi")
+private class CustomPreferenceGroupAdapter(preferenceGroup: PreferenceGroup) : PreferenceGroupAdapter(preferenceGroup) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PreferenceViewHolder {
+        return super.onCreateViewHolder(parent, viewType).also {
+            it.findViewById(android.R.id.icon)?.parent?.let { iconHolder ->
+                if (iconHolder is View) {
+                    iconHolder.minimumWidth = 0
+                    iconHolder.setPadding(0, 0, 0, 0)
+                }
+            }
+        }
+    }
+}
+
+class SettingsFragment : CustomPreferenceFragmentCompat() {
     private val settings by lazy {
         Settings.get()
     }
