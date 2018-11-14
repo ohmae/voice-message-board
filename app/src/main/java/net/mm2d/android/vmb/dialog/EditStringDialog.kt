@@ -73,10 +73,10 @@ class EditStringDialog : BaseDialogFragment() {
             }
         }
         return AlertDialog.Builder(act)
-                .setTitle(act.getString(R.string.dialog_title_edit))
-                .setView(view)
-                .setPositiveButton(R.string.ok) { _, _ -> inputText() }
-                .create()
+            .setTitle(act.getString(R.string.dialog_title_edit))
+            .setView(view)
+            .setPositiveButton(R.string.ok) { _, _ -> inputText() }
+            .create()
     }
 
     private fun inputText() {

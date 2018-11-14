@@ -63,5 +63,5 @@ internal object Maintainer {
      * @return バージョン
      */
     private fun getSettingsVersion(storage: SettingsStorage): Int =
-            storage.readInt(Key.SETTINGS_VERSION)
+        storage.readInt(Key.SETTINGS_VERSION)
 }

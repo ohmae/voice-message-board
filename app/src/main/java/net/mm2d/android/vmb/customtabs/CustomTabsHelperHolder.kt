@@ -44,10 +44,10 @@ object CustomTabsHelperHolder {
             return
         }
         val builder = customTabsHelper.createCustomTabsIntent()
-                .setShowTitle(true)
-                .setToolbarColor(AttrUtils.resolveColor(context, R.attr.colorPrimary, Color.BLACK))
+            .setShowTitle(true)
+            .setToolbarColor(AttrUtils.resolveColor(context, R.attr.colorPrimary, Color.BLACK))
         AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)?.toBitmap()
-                ?.let { builder.setCloseButtonIcon(it) }
+            ?.let { builder.setCloseButtonIcon(it) }
         if (customTabsHelper.launchUrl(context, builder.build(), url)) {
             return
         }

@@ -24,8 +24,8 @@ internal class SettingsStorage(context: Context) {
      */
     fun clear() {
         preferences.edit()
-                .clear()
-                .apply()
+            .clear()
+            .apply()
     }
 
     /**
@@ -35,7 +35,7 @@ internal class SettingsStorage(context: Context) {
      * @return keyが含まれている場合true
      */
     fun contains(key: Key): Boolean =
-            preferences.contains(key.name)
+        preferences.contains(key.name)
 
     /**
      * boolean値を書き込む。
@@ -48,8 +48,8 @@ internal class SettingsStorage(context: Context) {
             throw IllegalArgumentException(key.name + " is not key for Boolean")
         }
         preferences.edit()
-                .putBoolean(key.name, value)
-                .apply()
+            .putBoolean(key.name, value)
+            .apply()
     }
 
     /**
@@ -76,8 +76,8 @@ internal class SettingsStorage(context: Context) {
             throw IllegalArgumentException(key.name + " is not key for Int")
         }
         preferences.edit()
-                .putInt(key.name, value)
-                .apply()
+            .putInt(key.name, value)
+            .apply()
     }
 
     /**
@@ -104,8 +104,8 @@ internal class SettingsStorage(context: Context) {
             throw IllegalArgumentException(key.name + " is not key for Long")
         }
         preferences.edit()
-                .putLong(key.name, value)
-                .apply()
+            .putLong(key.name, value)
+            .apply()
     }
 
     /**
@@ -132,8 +132,8 @@ internal class SettingsStorage(context: Context) {
             throw IllegalArgumentException(key.name + " is not key for String")
         }
         preferences.edit()
-                .putString(key.name, value)
-                .apply()
+            .putString(key.name, value)
+            .apply()
     }
 
     /**
@@ -160,8 +160,8 @@ internal class SettingsStorage(context: Context) {
             throw IllegalArgumentException(key.name + " is not key for Set<String>")
         }
         preferences.edit()
-                .putStringSet(key.name, value)
-                .apply()
+            .putStringSet(key.name, value)
+            .apply()
     }
 
     /**

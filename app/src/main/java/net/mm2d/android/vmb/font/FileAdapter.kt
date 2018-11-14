@@ -21,8 +21,8 @@ import java.io.File
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class FileAdapter(context: Context, private val onClick: (file: File) -> Unit)
-    : Adapter<FileAdapter.ViewHolder>() {
+class FileAdapter(context: Context, private val onClick: (file: File) -> Unit) :
+    Adapter<FileAdapter.ViewHolder>() {
     private var files: Array<File> = emptyArray()
     private val inflater = LayoutInflater.from(context)
 

@@ -55,15 +55,17 @@ class SelectThemeDialog : BaseDialogFragment() {
         val arg = arguments!!
         val themeList = arg.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
         return AlertDialog.Builder(act)
-                .setTitle(act.getString(R.string.theme_select))
-                .setAdapter(ThemeListAdapter(act, themeList)) { _, which ->
-                    eventListener?.onSelectTheme(themeList[which])
-                }
-                .create()
+            .setTitle(act.getString(R.string.theme_select))
+            .setAdapter(ThemeListAdapter(act, themeList)) { _, which ->
+                eventListener?.onSelectTheme(themeList[which])
+            }
+            .create()
     }
 
-    private class ThemeListAdapter internal constructor(context: Context, collection: Collection<Theme>)
-        : BaseListAdapter<Theme>(context, collection) {
+    private class ThemeListAdapter internal constructor(
+        context: Context,
+        collection: Collection<Theme>
+    ) : BaseListAdapter<Theme>(context, collection) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val theme = getItem(position)

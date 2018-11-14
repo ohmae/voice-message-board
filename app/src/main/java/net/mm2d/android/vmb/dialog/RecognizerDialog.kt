@@ -48,8 +48,8 @@ class RecognizerDialog : BaseDialogFragment() {
         waveView = view.findViewById(R.id.wave_view)
         textView = view.findViewById(R.id.text)
         return AlertDialog.Builder(act)
-                .setView(view)
-                .create()
+            .setView(view)
+            .create()
     }
 
     private fun startListening() {
@@ -68,7 +68,10 @@ class RecognizerDialog : BaseDialogFragment() {
 
     private fun createRecognizerIntent(): Intent {
         return Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
             putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context?.packageName)
@@ -105,7 +108,7 @@ class RecognizerDialog : BaseDialogFragment() {
 
             override fun onPartialResults(results: Bundle?) {
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?: return
+                    ?: return
                 if (list.size > 0 && !list[0].isEmpty()) {
                     textView.text = list[0]
                 }
@@ -114,7 +117,7 @@ class RecognizerDialog : BaseDialogFragment() {
             override fun onResults(results: Bundle?) {
                 dismissAllowingStateLoss()
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?: return
+                    ?: return
                 (activity as? RecognizeListener)?.onRecognize(list)
             }
         }
@@ -132,7 +135,9 @@ class RecognizerDialog : BaseDialogFragment() {
     companion object {
         private const val RMS_DB_MAX = 10.0f
         private const val RMS_DB_MIN = -2.12f
-        fun normalize(rms: Float): Float = Math.min(Math.max((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN), 0f), 1f)
+        fun normalize(rms: Float): Float =
+            Math.min(Math.max((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN), 0f), 1f)
+
         private fun newInstance(): RecognizerDialog = RecognizerDialog()
         fun show(activity: FragmentActivity) {
             newInstance().showAllowingStateLoss(activity.supportFragmentManager, "")

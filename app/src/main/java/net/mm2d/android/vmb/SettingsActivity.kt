@@ -31,8 +31,8 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(android.R.id.content, SettingsFragment())
-                    .commit()
+                .add(android.R.id.content, SettingsFragment())
+                .commit()
         }
     }
 
@@ -52,7 +52,8 @@ abstract class CustomPreferenceFragmentCompat : PreferenceFragmentCompat() {
 }
 
 @SuppressLint("RestrictedApi")
-private class CustomPreferenceGroupAdapter(preferenceGroup: PreferenceGroup) : PreferenceGroupAdapter(preferenceGroup) {
+private class CustomPreferenceGroupAdapter(preferenceGroup: PreferenceGroup) :
+    PreferenceGroupAdapter(preferenceGroup) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PreferenceViewHolder {
         return super.onCreateViewHolder(parent, viewType).also {
             it.findViewById(android.R.id.icon)?.parent?.let { iconHolder ->
@@ -148,16 +149,19 @@ class SettingsFragment : CustomPreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        CustomTabsHelperHolder.mayLaunchUrl(listOf(
+        CustomTabsHelperHolder.mayLaunchUrl(
+            listOf(
                 PRIVACY_POLICY_URL,
                 SOURCE_CODE_URL
-        ))
+            )
+        )
     }
 
     companion object {
         private const val MARKET_URL = "market://details?id=net.mm2d.android.vmb"
         private const val SOURCE_CODE_URL = "https://github.com/ohmae/voice-message-board"
-        private const val PRIVACY_POLICY_URL = "https://github.com/ohmae/voice-message-board/blob/develop/PRIVACY-POLICY.md"
+        private const val PRIVACY_POLICY_URL =
+            "https://github.com/ohmae/voice-message-board/blob/develop/PRIVACY-POLICY.md"
         private const val FONT_REQUEST_CODE = 1
     }
 }

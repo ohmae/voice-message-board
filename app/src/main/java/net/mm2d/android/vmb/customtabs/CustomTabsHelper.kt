@@ -39,7 +39,11 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
     private fun bind(context: Context) {
         if (!bound) {
             val packageName = findPackageNameToUse(context) ?: return
-            bound = CustomTabsClient.bindCustomTabsService(context.applicationContext, packageName, this)
+            bound = CustomTabsClient.bindCustomTabsService(
+                context.applicationContext,
+                packageName,
+                this
+            )
         }
     }
 
@@ -63,7 +67,7 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
     private fun makeOtherLikelyBundles(urls: List<String>): List<Bundle>? {
         if (urls.size == 1) return null
         return urls.subList(1, urls.size)
-                .map { Bundle().apply { putParcelable(CustomTabsService.KEY_URL, Uri.parse(it)) } }
+            .map { Bundle().apply { putParcelable(CustomTabsService.KEY_URL, Uri.parse(it)) } }
     }
 
     fun createCustomTabsIntent(): CustomTabsIntent.Builder {
@@ -71,7 +75,10 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
     }
 
     fun launchUrl(context: Context, customTabsIntent: CustomTabsIntent, url: String): Boolean {
-        customTabsIntent.intent.putExtra(EXTRA_CUSTOM_TABS_KEEP_ALIVE, Intent(context, KeepAliveService::class.java))
+        customTabsIntent.intent.putExtra(
+            EXTRA_CUSTOM_TABS_KEEP_ALIVE,
+            Intent(context, KeepAliveService::class.java)
+        )
         if (session == null) {
             customTabsIntent.intent.setPackage(findPackageNameToUse(context))
         }
@@ -107,20 +114,21 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
 
     companion object {
         private val PREFERRED_PACKAGES = listOf(
-                "com.android.chrome", // Chrome
-                "com.chrome.beta", // Chrome Beta
-                "com.chrome.dev", // Chrome Dev
-                "com.chrome.canary", // Chrome Canary
-                "com.google.android.apps.chrome" // Chrome Local
+            "com.android.chrome", // Chrome
+            "com.chrome.beta", // Chrome Beta
+            "com.chrome.dev", // Chrome Dev
+            "com.chrome.canary", // Chrome Canary
+            "com.google.android.apps.chrome" // Chrome Local
         )
-        private const val EXTRA_CUSTOM_TABS_KEEP_ALIVE = "android.support.customtabs.extra.KEEP_ALIVE"
+        private const val EXTRA_CUSTOM_TABS_KEEP_ALIVE =
+            "android.support.customtabs.extra.KEEP_ALIVE"
 
         private fun findPackageNameToUse(context: Context): String? {
             val browsers = OpenUriUtils.getBrowserPackages(context)
             val candidate = context.packageManager
-                    .queryIntentServices(Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION), 0)
-                    .mapNotNull { it?.serviceInfo?.packageName }
-                    .filter { browsers.contains(it) }
+                .queryIntentServices(Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION), 0)
+                .mapNotNull { it?.serviceInfo?.packageName }
+                .filter { browsers.contains(it) }
             if (candidate.isEmpty()) return null
             if (candidate.size == 1) return candidate[0]
             val defaultBrowser = OpenUriUtils.getDefaultBrowserPackage(context)

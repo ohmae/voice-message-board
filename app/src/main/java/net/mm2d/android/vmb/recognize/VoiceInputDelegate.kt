@@ -26,12 +26,14 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class VoiceInputDelegate(
-        private val activity: FragmentActivity,
-        private val voiceRequestCode: Int,
-        permissionRequestCode: Int,
-        private val setText: (text: String) -> Unit) {
+    private val activity: FragmentActivity,
+    private val voiceRequestCode: Int,
+    permissionRequestCode: Int,
+    private val setText: (text: String) -> Unit
+) {
     private val settings = Settings.get()
-    private val permissionHelper = PermissionHelper(activity, Manifest.permission.RECORD_AUDIO, permissionRequestCode)
+    private val permissionHelper =
+        PermissionHelper(activity, Manifest.permission.RECORD_AUDIO, permissionRequestCode)
 
     fun start() {
         if (settings.shouldUseSpeechRecognizer()) {
@@ -53,7 +55,10 @@ class VoiceInputDelegate(
 
     private fun startActivity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
             putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, activity.packageName)
@@ -86,7 +91,11 @@ class VoiceInputDelegate(
         }
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
             PermissionHelper.Result.OTHER -> return
             PermissionHelper.Result.GRANTED ->

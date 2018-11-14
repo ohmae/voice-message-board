@@ -19,8 +19,8 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class HistoryDelegate(
-        private val activity: FragmentActivity,
-        private val historyFab: FloatingActionButton
+    private val activity: FragmentActivity,
+    private val historyFab: FloatingActionButton
 ) {
     private val settings = Settings.get()
     private val history = LinkedList(settings.history)
@@ -43,11 +43,11 @@ class HistoryDelegate(
 
     fun showClearDialog() {
         AlertDialog.Builder(activity)
-                .setTitle(R.string.dialog_title_clear_history)
-                .setMessage(R.string.dialog_message_clear_history)
-                .setPositiveButton(R.string.ok) { _, _ -> clear() }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setTitle(R.string.dialog_title_clear_history)
+            .setMessage(R.string.dialog_message_clear_history)
+            .setPositiveButton(R.string.ok) { _, _ -> clear() }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     fun put(string: String) {

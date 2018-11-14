@@ -60,16 +60,16 @@ class Settings private constructor(private val storage: SettingsStorage) {
         get() = if (useFont) fontPath else ""
 
     fun shouldUseSpeechRecognizer(): Boolean =
-            storage.readBoolean(Key.SPEECH_RECOGNIZER)
+        storage.readBoolean(Key.SPEECH_RECOGNIZER)
 
     fun shouldShowCandidateList(): Boolean =
-            storage.readBoolean(Key.CANDIDATE_LIST)
+        storage.readBoolean(Key.CANDIDATE_LIST)
 
     fun shouldShowEditorWhenLongTap(): Boolean =
-            storage.readBoolean(Key.LONG_TAP_EDIT)
+        storage.readBoolean(Key.LONG_TAP_EDIT)
 
     fun shouldShowEditorAfterSelect(): Boolean =
-            storage.readBoolean(Key.LIST_EDIT)
+        storage.readBoolean(Key.LIST_EDIT)
 
     var history: Set<String>
         get() = storage.readStringSet(Key.HISTORY)
@@ -106,8 +106,8 @@ class Settings private constructor(private val storage: SettingsStorage) {
          */
         fun initialize(context: Context) {
             Completable.fromAction { initializeInner(context) }
-                    .subscribeOn(Schedulers.io())
-                    .subscribe()
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         }
 
         private fun initializeInner(context: Context) {

@@ -33,14 +33,14 @@ class PermissionDialog : BaseDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val ctx = context!!
         return AlertDialog.Builder(ctx)
-                .setTitle(R.string.dialog_permission_title)
-                .setMessage(R.string.dialog_microphone_permission_message)
-                .setPositiveButton(R.string.app_info) { _, _ ->
-                    startAppInfo(ctx)
-                    (ctx as? OnPositiveClickListener)?.onPositiveClick()
-                }
-                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
-                .create()
+            .setTitle(R.string.dialog_permission_title)
+            .setMessage(R.string.dialog_microphone_permission_message)
+            .setPositiveButton(R.string.app_info) { _, _ ->
+                startAppInfo(ctx)
+                (ctx as? OnPositiveClickListener)?.onPositiveClick()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .create()
     }
 
     override fun onCancel(dialog: DialogInterface?) {
@@ -57,9 +57,10 @@ class PermissionDialog : BaseDialogFragment() {
 
     companion object {
         private const val TITLE = "TITLE"
-        private fun newInstance(@StringRes message: Int): PermissionDialog = PermissionDialog().apply {
-            arguments = Bundle().apply { putInt(TITLE, message) }
-        }
+        private fun newInstance(@StringRes message: Int): PermissionDialog =
+            PermissionDialog().apply {
+                arguments = Bundle().apply { putInt(TITLE, message) }
+            }
 
         fun show(activity: FragmentActivity, @StringRes message: Int) {
             newInstance(message).showAllowingStateLoss(activity.supportFragmentManager, "")

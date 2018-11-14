@@ -33,7 +33,7 @@ import java.util.*
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class MainActivity : AppCompatActivity(),
-        SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {
+    SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {
     private val settings by lazy {
         Settings.get()
     }
@@ -68,9 +68,10 @@ class MainActivity : AppCompatActivity(),
         themeDelegate = ThemeDelegate(this, root, textView, toolbar?.overflowIcon)
         themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, historyFab)
-        voiceInputDelegate = VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
-            setText(it)
-        }
+        voiceInputDelegate =
+                VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
+                    setText(it)
+                }
         restoreInstanceState(savedInstanceState)
     }
 
@@ -116,7 +117,11 @@ class MainActivity : AppCompatActivity(),
         requestedOrientation = settings.screenOrientation
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         voiceInputDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 

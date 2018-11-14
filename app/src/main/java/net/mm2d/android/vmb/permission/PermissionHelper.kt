@@ -16,9 +16,10 @@ import androidx.fragment.app.FragmentActivity
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 class PermissionHelper(
-        private val activity: FragmentActivity,
-        private val permission: String,
-        private val requestCode: Int) {
+    private val activity: FragmentActivity,
+    private val permission: String,
+    private val requestCode: Int
+) {
     enum class Result {
         OTHER,
         GRANTED,
@@ -27,7 +28,10 @@ class PermissionHelper(
     }
 
     private fun isGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(
+            activity,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun requestPermissionIfNeed(): Boolean {
@@ -38,7 +42,11 @@ class PermissionHelper(
         return true
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Result {
+    fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ): Result {
         if (requestCode != requestCode || permissions.isEmpty()) {
             return Result.OTHER
         }

@@ -18,17 +18,18 @@ import android.os.Build
  */
 internal object OpenUriUtils {
     fun getBrowserPackages(context: Context): Set<String> {
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PackageManager.MATCH_ALL else 0
+        val flags =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PackageManager.MATCH_ALL else 0
         return context.packageManager
-                .queryIntentActivities(makeBrowserTestIntent(), flags)
-                .mapNotNull { it?.activityInfo?.packageName }
-                .toSet()
+            .queryIntentActivities(makeBrowserTestIntent(), flags)
+            .mapNotNull { it?.activityInfo?.packageName }
+            .toSet()
     }
 
     fun getDefaultBrowserPackage(context: Context): String? {
         val packageName = context.packageManager
-                .resolveActivity(makeBrowserTestIntent(), 0)
-                ?.activityInfo?.packageName ?: return null
+            .resolveActivity(makeBrowserTestIntent(), 0)
+            ?.activityInfo?.packageName ?: return null
         return if (getBrowserPackages(context).contains(packageName)) packageName else null
     }
 
@@ -43,16 +44,17 @@ internal object OpenUriUtils {
     }
 
     fun hasDefaultAppOtherThanBrowser(
-            context: Context,
-            uri: String): Boolean {
+        context: Context,
+        uri: String
+    ): Boolean {
         val packageManager = context.packageManager
         val intent = makeBrowseIntent(uri)
         val packageName = packageManager.resolveActivity(intent, 0)
-                ?.activityInfo?.packageName ?: return false
+            ?.activityInfo?.packageName ?: return false
         if (getBrowserPackages(context).contains(packageName)) {
             return false
         }
         return packageManager.queryIntentActivities(intent, 0)
-                .any { it?.activityInfo?.packageName == packageName }
+            .any { it?.activityInfo?.packageName == packageName }
     }
 }

@@ -27,17 +27,19 @@ import java.util.*
  */
 
 class ThemeDelegate(
-        private val activity: FragmentActivity,
-        private val root: View,
-        private val textView: TextView,
-        private val icon: Drawable?
+    private val activity: FragmentActivity,
+    private val root: View,
+    private val textView: TextView,
+    private val icon: Drawable?
 ) {
-    private val themes = ArrayList<Theme>(listOf(
+    private val themes = ArrayList<Theme>(
+        listOf(
             Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
             Theme(activity.getString(R.string.theme_black_white), Color.BLACK, Color.WHITE),
             Theme(activity.getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW),
             Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN)
-    ))
+        )
+    )
     private val settings = Settings.get()
     private val gridDrawable = GridDrawable(activity)
 
@@ -82,12 +84,12 @@ class ThemeDelegate(
     companion object {
         @ColorInt
         private fun getIconColor(@ColorInt background: Int): Int =
-                if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
+            if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
 
         private fun getBrightness(@ColorInt color: Int): Int =
-                getBrightness(Color.red(color), Color.green(color), Color.blue(color))
+            getBrightness(Color.red(color), Color.green(color), Color.blue(color))
 
         private fun getBrightness(r: Int, g: Int, b: Int): Int =
-                MathUtils.clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
+            MathUtils.clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
     }
 }

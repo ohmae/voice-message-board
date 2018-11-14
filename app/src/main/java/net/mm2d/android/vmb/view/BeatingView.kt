@@ -22,9 +22,9 @@ import net.mm2d.android.vmb.R
  */
 class BeatingView
 @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
     @Dimension
     private val radiusMin: Float
@@ -32,9 +32,9 @@ class BeatingView
     private val radiusMax: Float
     private val paint = Paint()
     private val radiusAnimators: Array<ValueAnimator> = arrayOf(
-            ValueAnimator.ofFloat(0f),
-            ValueAnimator.ofFloat(0f),
-            ValueAnimator.ofFloat(0f)
+        ValueAnimator.ofFloat(0f),
+        ValueAnimator.ofFloat(0f),
+        ValueAnimator.ofFloat(0f)
     )
     private val radius: Array<Float> = arrayOf(0f, 0f, 0f)
 

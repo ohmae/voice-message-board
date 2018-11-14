@@ -48,7 +48,7 @@ abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
      * @return レイアウトが作成されたView
      */
     protected fun inflateView(layout: Int, convertView: View?, parent: ViewGroup): View =
-            convertView ?: inflater.inflate(layout, parent, false)
+        convertView ?: inflater.inflate(layout, parent, false)
 
     override fun getCount(): Int = list.size
 

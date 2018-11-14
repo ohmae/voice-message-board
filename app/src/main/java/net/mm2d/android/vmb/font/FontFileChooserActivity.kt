@@ -56,7 +56,11 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiv
         setContentView(layout.activity_file_chooser)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(string.title_file_chooser)
-        permissionHelper = PermissionHelper(this, Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CODE)
+        permissionHelper = PermissionHelper(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            PERMISSION_REQUEST_CODE
+        )
         setInitialPath()
         initRecyclerView()
         if (savedInstanceState == null) {
@@ -105,14 +109,14 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiv
         fileAdapter.setFiles(emptyArray())
         progressBar.visibility = View.VISIBLE
         Single.fromCallable { file.listFiles().apply { sortWith(comparator) } }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer {
-                    fileAdapter.setFiles(it)
-                    fileAdapter.notifyDataSetChanged()
-                    progressBar.visibility = View.INVISIBLE
-                })
-                .addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(Consumer {
+                fileAdapter.setFiles(it)
+                fileAdapter.notifyDataSetChanged()
+                progressBar.visibility = View.INVISIBLE
+            })
+            .addTo(compositeDisposable)
     }
 
     override fun onDestroy() {
@@ -144,7 +148,11 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiv
         setUpDirectory(currentPath)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
             PermissionHelper.Result.OTHER -> return
             PermissionHelper.Result.GRANTED -> setUpDirectory(currentPath)
