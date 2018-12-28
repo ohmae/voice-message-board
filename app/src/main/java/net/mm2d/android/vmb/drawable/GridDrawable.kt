@@ -49,8 +49,8 @@ class GridDrawable(context: Context) : Drawable() {
     }
 
     override fun draw(canvas: Canvas) {
-        val width = canvas.width.toFloat()
-        val height = canvas.height.toFloat()
+        val width = bounds.width().toFloat()
+        val height = bounds.height().toFloat()
         canvas.drawColor(backgroundColor)
         var x = gridSize - 1
         while (x < width) {
