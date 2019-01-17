@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:orientation="horizontal"
+        android:alpha="0.9"
         >
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
