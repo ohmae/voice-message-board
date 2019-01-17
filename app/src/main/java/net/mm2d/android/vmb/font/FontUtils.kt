@@ -12,7 +12,7 @@ import android.widget.TextView
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
-import net.mm2d.log.Log
+import net.mm2d.log.Logger
 import java.io.File
 
 /**
@@ -24,7 +24,7 @@ object FontUtils {
             Typeface.createFromFile(file)
             return true
         } catch (e: Exception) {
-            Log.w(e)
+            Logger.w(e)
         }
         return false
     }

@@ -14,7 +14,7 @@ import androidx.annotation.ColorInt
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import net.mm2d.android.vmb.BuildConfig
-import net.mm2d.log.Log
+import net.mm2d.log.Logger
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
@@ -89,7 +89,7 @@ class Settings private constructor(private val storage: SettingsStorage) {
             lock.withLock {
                 while (settings == null) {
                     if (BuildConfig.DEBUG) {
-                        Log.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
+                        Logger.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
                     }
                     if (!condition.await(1, TimeUnit.SECONDS)) {
                         throw IllegalStateException("Settings initialization timeout")

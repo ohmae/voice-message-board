@@ -16,8 +16,8 @@ import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.log.Log
-import net.mm2d.log.android.AndroidLogInitializer
+import net.mm2d.log.Logger
+import net.mm2d.log.android.AndroidSenders
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
@@ -26,8 +26,7 @@ import net.mm2d.log.android.AndroidLogInitializer
 class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
-        Log.setInitializer(AndroidLogInitializer.getSingleThread())
-        Log.initialize(BuildConfig.DEBUG, true)
+        setUpLogger()
         setStrictMode()
         RxJavaPlugins.setErrorHandler { logError(it) }
         Settings.initialize(this)
@@ -37,30 +36,27 @@ class App : MultiDexApplication() {
     private fun logError(e: Throwable) {
         when (e) {
             is UndeliverableException
-            -> Log.w(null, "UndeliverableException:", e.cause)
+            -> Logger.w("UndeliverableException:", e.cause)
             is OnErrorNotImplementedException
-            -> Log.w(null, "OnErrorNotImplementedException:", e.cause)
+            -> Logger.w("OnErrorNotImplementedException:", e.cause)
             else
-            -> Log.w(e)
+            -> Logger.w(e)
         }
+    }
+
+    private fun setUpLogger() {
+        if (!BuildConfig.DEBUG) {
+            return
+        }
+        Logger.setSender(AndroidSenders.create())
+        Logger.setLogLevel(Logger.VERBOSE)
+        AndroidSenders.appendCaller(true)
+        AndroidSenders.appendThread(true)
     }
 
     private fun setStrictMode() {
         if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(
-                ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyDropBox()
-                    .build()
-            )
-            StrictMode.setVmPolicy(
-                VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyDropBox()
-                    .build()
-            )
+            StrictMode.enableDefaults()
         } else {
             StrictMode.setThreadPolicy(ThreadPolicy.LAX)
             StrictMode.setVmPolicy(VmPolicy.LAX)
