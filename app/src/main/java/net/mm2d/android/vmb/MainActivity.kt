@@ -8,11 +8,13 @@
 package net.mm2d.android.vmb
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.math.MathUtils
+import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.activity_main.*
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
@@ -25,6 +27,7 @@ import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.theme.ThemeDelegate
+import net.mm2d.android.vmb.util.ViewUtils
 import java.util.*
 
 /**
@@ -58,14 +61,14 @@ class MainActivity : AppCompatActivity(),
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         editFab.setOnClickListener { startEdit() }
-        root.apply {
+        scrollView.apply {
             setOnTouchListener { _, event ->
                 gestureDetector.onTouchEvent(event)
                 scaleDetector.onTouchEvent(event)
-                true
+                false
             }
         }
-        themeDelegate = ThemeDelegate(this, root, textView, toolbar?.overflowIcon)
+        themeDelegate = ThemeDelegate(this, scrollView, textView, toolbar?.overflowIcon)
         themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, historyFab)
         voiceInputDelegate =
@@ -73,6 +76,9 @@ class MainActivity : AppCompatActivity(),
                     setText(it)
                 }
         restoreInstanceState(savedInstanceState)
+        ViewUtils.execOnLayout(scrollView) {
+            updatePadding()
+        }
     }
 
     /**
@@ -115,6 +121,14 @@ class MainActivity : AppCompatActivity(),
     override fun onResume() {
         super.onResume()
         requestedOrientation = settings.screenOrientation
+        updatePadding()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        ViewUtils.execOnLayout(scrollView) {
+            updatePadding()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -152,6 +166,8 @@ class MainActivity : AppCompatActivity(),
     private fun setText(string: String) {
         textView.text = string
         historyDelegate.put(string)
+        scrollView.scrollTo(0, 0)
+        updatePadding()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -231,7 +247,15 @@ class MainActivity : AppCompatActivity(),
             val factor = detector.scaleFactor
             fontSize = MathUtils.clamp(fontSize * factor, fontSizeMin, fontSizeMax)
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            updatePadding()
             return true
+        }
+    }
+
+    private fun updatePadding() {
+        scrollView.post {
+            val diff = scrollView.height - textView.height
+            scrollView.updatePadding(top = if (diff > 0) diff / 2 else 0)
         }
     }
 
