@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:ems="10"
     android:imeOptions="actionDone"
+    android:importantForAutofill="no"
     android:inputType="textMultiLine"
     android:maxLines="3"
     android:textSize="@dimen/edit_font_size"
