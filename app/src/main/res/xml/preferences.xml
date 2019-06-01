@@ -16,8 +16,7 @@
             android:title="@string/pref_title_screen_orientation"
             app:iconSpaceReserved="false"
             />
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:defaultValue="true"
             android:key="SPEECH_RECOGNIZER"
             android:summaryOff="@string/pref_description_speech_recognizer_off"
@@ -25,8 +24,7 @@
             android:title="@string/pref_title_speech_recognizer"
             app:iconSpaceReserved="false"
             />
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:defaultValue="false"
             android:key="CANDIDATE_LIST"
             android:summaryOff="@string/pref_description_candidate_list_off"
@@ -34,8 +32,7 @@
             android:title="@string/pref_title_candidate_list"
             app:iconSpaceReserved="false"
             />
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:defaultValue="false"
             android:dependency="CANDIDATE_LIST"
             android:key="LIST_EDIT"
@@ -44,8 +41,7 @@
             android:title="@string/pref_title_list_edit"
             app:iconSpaceReserved="false"
             />
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:defaultValue="true"
             android:key="LONG_TAP_EDIT"
             android:summaryOff="@string/pref_description_long_tap_edit_off"
@@ -57,8 +53,7 @@
     <PreferenceCategory
         android:title="@string/pref_header_display"
         >
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:defaultValue="false"
             android:key="USE_FONT"
             android:summaryOff="@string/pref_description_use_font_off"
