@@ -17,11 +17,13 @@ import android.preference.PreferenceManager
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 internal class SettingsStorage(context: Context) {
+    @Suppress("ReplaceGetOrSet")
     private val preferences: SharedPreferences = PreferencesHolder.get(context)
 
     /**
      * 書き込まれている内容を消去する。
      */
+    @Suppress("unused")
     fun clear() {
         preferences.edit()
             .clear()
@@ -99,6 +101,7 @@ internal class SettingsStorage(context: Context) {
      * @param key   Key
      * @param value 書き込む値
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     fun writeLong(key: Key, value: Long) {
         if (!key.isLongKey()) {
             throw IllegalArgumentException(key.name + " is not key for Long")
@@ -114,6 +117,7 @@ internal class SettingsStorage(context: Context) {
      * @param key Key
      * @return 読み出したlong値
      */
+    @Suppress("unused")
     fun readLong(key: Key): Long {
         if (!key.isLongKey()) {
             throw IllegalArgumentException(key.name + " is not key for Long")

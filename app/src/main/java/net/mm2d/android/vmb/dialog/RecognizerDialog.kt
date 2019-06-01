@@ -109,7 +109,7 @@ class RecognizerDialog : BaseDialogFragment() {
             override fun onPartialResults(results: Bundle?) {
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     ?: return
-                if (list.size > 0 && !list[0].isEmpty()) {
+                if (list.isNotEmpty() && list[0].isNotEmpty()) {
                     textView.text = list[0]
                 }
             }

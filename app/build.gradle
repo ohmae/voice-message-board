@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "net.mm2d.android.vmb"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"

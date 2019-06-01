@@ -46,7 +46,7 @@ class FileAdapter(context: Context, private val onClick: (file: File) -> Unit) :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text = itemView.findViewById<TextView>(id.text)!!
-        val icon = itemView.findViewById<ImageView>(id.icon)!!
+        private val icon = itemView.findViewById<ImageView>(id.icon)!!
 
         fun bind(file: File, onClick: (file: File) -> Unit) {
             itemView.setOnClickListener { onClick.invoke(file) }
