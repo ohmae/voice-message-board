@@ -62,13 +62,13 @@ class MainActivity : AppCompatActivity(),
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         editFab.setOnClickListener { startEdit() }
-        scrollView.apply {
-            setOnTouchListener { _, event ->
-                gestureDetector.onTouchEvent(event)
-                scaleDetector.onTouchEvent(event)
-                false
-            }
+        val listener = { _: View, event: MotionEvent ->
+            gestureDetector.onTouchEvent(event)
+            scaleDetector.onTouchEvent(event)
+            false
         }
+        scrollView.setOnTouchListener(listener)
+        textView.setOnTouchListener(listener)
         themeDelegate = ThemeDelegate(this, scrollView, textView, toolbar?.overflowIcon)
         themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, historyFab)

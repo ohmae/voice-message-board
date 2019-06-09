@@ -24,6 +24,7 @@
             android:paddingBottom="@dimen/bottom_padding"
             android:text="@string/initial_string"
             android:textSize="@dimen/font_size"
+            android:textIsSelectable="true"
             />
     </ScrollView>
 
