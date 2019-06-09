@@ -8,6 +8,7 @@
     <string name="action_theme">テーマを変更</string>
     <string name="action_show_history">履歴から選択</string>
     <string name="action_clear_history">履歴をクリア</string>
+    <string name="action_share">テキストをシェア</string>
     <string name="initial_string">ここをタップ！</string>
     <string name="dialog_title_edit">編集</string>
     <string name="dialog_title_select">選択</string>

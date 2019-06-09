@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ShareCompat
 import androidx.core.math.MathUtils
 import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.activity_main.*
@@ -72,9 +73,9 @@ class MainActivity : AppCompatActivity(),
         themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, historyFab)
         voiceInputDelegate =
-                VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
-                    setText(it)
-                }
+            VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
+                setText(it)
+            }
         restoreInstanceState(savedInstanceState)
         ViewUtils.execOnLayout(scrollView) {
             updatePadding()
@@ -198,6 +199,11 @@ class MainActivity : AppCompatActivity(),
                 historyDelegate.showSelectDialog()
             R.id.action_clear_history ->
                 historyDelegate.showClearDialog()
+            R.id.action_share ->
+                ShareCompat.IntentBuilder.from(this)
+                    .setText(textView.text)
+                    .setType("text/plain")
+                    .startChooser()
             else ->
                 return super.onOptionsItemSelected(item)
         }

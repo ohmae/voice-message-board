@@ -8,6 +8,7 @@
     <string name="action_theme">Change theme</string>
     <string name="action_show_history">Select from history</string>
     <string name="action_clear_history">Clear history</string>
+    <string name="action_share">Share this text</string>
     <string name="initial_string">Tap Here!</string>
     <string name="dialog_title_edit">Edit</string>
     <string name="dialog_title_select">Select</string>
