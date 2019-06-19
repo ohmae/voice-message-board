@@ -6,7 +6,7 @@ apply plugin: 'com.github.ben-manes.versions'
 def applicationName = "VoiceMessageBoard"
 def versionMajor = 1
 def versionMinor = 6
-def versionPatch = 1
+def versionPatch = 2
 
 android {
     compileSdkVersion 28
