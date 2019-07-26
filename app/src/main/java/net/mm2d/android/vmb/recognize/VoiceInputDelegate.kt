@@ -54,15 +54,15 @@ class VoiceInputDelegate(
     }
 
     private fun startActivity() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).also {
+            it.putExtra(
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
             )
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, activity.packageName)
-            putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.recognizer_title))
+            it.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            it.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            it.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, activity.packageName)
+            it.putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.recognizer_title))
         }
         try {
             activity.startActivityForResult(intent, voiceRequestCode)

@@ -29,19 +29,17 @@ internal object OpenUriUtils {
     fun getDefaultBrowserPackage(context: Context): String? {
         val packageName = context.packageManager
             .resolveActivity(makeBrowserTestIntent(), 0)
-            ?.activityInfo?.packageName ?: return null
+            ?.activityInfo
+            ?.packageName
+            ?: return null
         return if (getBrowserPackages(context).contains(packageName)) packageName else null
     }
 
-    fun makeBrowseIntent(uri: String): Intent {
-        return Intent(Intent.ACTION_VIEW, Uri.parse(uri)).apply {
-            addCategory(Intent.CATEGORY_BROWSABLE)
-        }
+    fun makeBrowseIntent(uri: String): Intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri)).apply {
+        addCategory(Intent.CATEGORY_BROWSABLE)
     }
 
-    private fun makeBrowserTestIntent(): Intent {
-        return makeBrowseIntent("http://www.example.com/")
-    }
+    private fun makeBrowserTestIntent(): Intent = makeBrowseIntent("http://www.example.com/")
 
     fun hasDefaultAppOtherThanBrowser(
         context: Context,

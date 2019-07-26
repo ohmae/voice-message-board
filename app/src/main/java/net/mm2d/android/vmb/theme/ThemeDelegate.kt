@@ -32,7 +32,7 @@ class ThemeDelegate(
     private val textView: TextView,
     private val icon: Drawable?
 ) {
-    private val themes = ArrayList<Theme>(
+    private val themes = ArrayList(
         listOf(
             Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
             Theme(activity.getString(R.string.theme_black_white), Color.BLACK, Color.WHITE),

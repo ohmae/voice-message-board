@@ -50,13 +50,13 @@ class EditStringDialog : BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val act = activity!!
-        val string = arguments?.getString(KEY_STRING) ?: return act.let {
+        val activity = activity!!
+        val string = arguments?.getString(KEY_STRING) ?: return activity.let {
             dismiss()
             AlertDialog.Builder(it).create()
         }
-        val inflater = act.layoutInflater
-        val decorView = act.window.decorView as ViewGroup
+        val inflater = activity.layoutInflater
+        val decorView = activity.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
         editText = view.findViewById<EditText>(R.id.editText).apply {
             setText(string)
@@ -72,8 +72,8 @@ class EditStringDialog : BaseDialogFragment() {
                 }
             }
         }
-        return AlertDialog.Builder(act)
-            .setTitle(act.getString(R.string.dialog_title_edit))
+        return AlertDialog.Builder(activity)
+            .setTitle(activity.getString(R.string.dialog_title_edit))
             .setView(view)
             .setPositiveButton(R.string.ok) { _, _ -> inputText() }
             .create()
@@ -106,11 +106,9 @@ class EditStringDialog : BaseDialogFragment() {
          * @param editString 編集する元の文字列
          * @return 新規インスタンス
          */
-        private fun newInstance(editString: String): EditStringDialog {
-            return EditStringDialog().apply {
-                arguments = Bundle().apply {
-                    putString(KEY_STRING, editString)
-                }
+        private fun newInstance(editString: String): EditStringDialog = EditStringDialog().apply {
+            arguments = Bundle().apply {
+                putString(KEY_STRING, editString)
             }
         }
 

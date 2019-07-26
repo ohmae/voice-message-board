@@ -66,60 +66,48 @@ class RecognizerDialog : BaseDialogFragment() {
         }
     }
 
-    private fun createRecognizerIntent(): Intent {
-        return Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
+    private fun createRecognizerIntent(): Intent =
+        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).also {
+            it.putExtra(
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
             )
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context?.packageName)
+            it.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            it.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            it.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context?.packageName)
         }
-    }
 
-    private fun createRecognitionListener(): RecognitionListener {
-        return object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {
-            }
+    private fun createRecognitionListener(): RecognitionListener = object : RecognitionListener {
+        override fun onReadyForSpeech(params: Bundle?) = Unit
+        override fun onBeginningOfSpeech() = Unit
+        override fun onBufferReceived(buffer: ByteArray?) = Unit
+        override fun onEndOfSpeech() = Unit
+        override fun onEvent(eventType: Int, params: Bundle?) = Unit
 
-            override fun onBeginningOfSpeech() {
-            }
+        override fun onRmsChanged(rms: Float) {
+            val volume = normalize(rms)
+            beatingView.onVolumeChanged(volume)
+            waveView.onVolumeChanged(volume)
+        }
 
-            override fun onBufferReceived(buffer: ByteArray?) {
-            }
+        override fun onError(error: Int) {
+            Toaster.show(context, R.string.toast_voice_input_fail)
+            dismissAllowingStateLoss()
+        }
 
-            override fun onEndOfSpeech() {
+        override fun onPartialResults(results: Bundle?) {
+            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                ?: return
+            if (list.isNotEmpty() && list[0].isNotEmpty()) {
+                textView.text = list[0]
             }
+        }
 
-            override fun onEvent(eventType: Int, params: Bundle?) {
-            }
-
-            override fun onRmsChanged(rms: Float) {
-                val volume = normalize(rms)
-                beatingView.onVolumeChanged(volume)
-                waveView.onVolumeChanged(volume)
-            }
-
-            override fun onError(error: Int) {
-                Toaster.show(context, R.string.toast_voice_input_fail)
-                dismissAllowingStateLoss()
-            }
-
-            override fun onPartialResults(results: Bundle?) {
-                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    ?: return
-                if (list.isNotEmpty() && list[0].isNotEmpty()) {
-                    textView.text = list[0]
-                }
-            }
-
-            override fun onResults(results: Bundle?) {
-                dismissAllowingStateLoss()
-                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    ?: return
-                (activity as? RecognizeListener)?.onRecognize(list)
-            }
+        override fun onResults(results: Bundle?) {
+            dismissAllowingStateLoss()
+            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                ?: return
+            (activity as? RecognizeListener)?.onRecognize(list)
         }
     }
 
@@ -136,7 +124,7 @@ class RecognizerDialog : BaseDialogFragment() {
         private const val RMS_DB_MAX = 10.0f
         private const val RMS_DB_MIN = -2.12f
         fun normalize(rms: Float): Float =
-            Math.min(Math.max((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN), 0f), 1f)
+            ((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)).coerceIn(0f, 1f)
 
         private fun newInstance(): RecognizerDialog = RecognizerDialog()
         fun show(activity: FragmentActivity) {

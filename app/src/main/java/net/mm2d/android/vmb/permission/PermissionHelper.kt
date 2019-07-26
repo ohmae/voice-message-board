@@ -27,12 +27,8 @@ class PermissionHelper(
         DENIED_ALWAYS
     }
 
-    private fun isGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            activity,
-            permission
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun isGranted(): Boolean =
+        ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
 
     fun requestPermissionIfNeed(): Boolean {
         if (isGranted()) {

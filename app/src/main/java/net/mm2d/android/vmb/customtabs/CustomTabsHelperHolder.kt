@@ -46,7 +46,8 @@ object CustomTabsHelperHolder {
         val builder = customTabsHelper.createCustomTabsIntent()
             .setShowTitle(true)
             .setToolbarColor(AttrUtils.resolveColor(context, R.attr.colorPrimary, Color.BLACK))
-        AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)?.toBitmap()
+        AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
+            ?.toBitmap()
             ?.let { builder.setCloseButtonIcon(it) }
         if (customTabsHelper.launchUrl(context, builder.build(), url)) {
             return
@@ -64,9 +65,10 @@ object CustomTabsHelperHolder {
     private fun Drawable.toBitmap(): Bitmap {
         if (this is BitmapDrawable) return bitmap
         return Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888).also {
-            val canvas = Canvas(it)
-            setBounds(0, 0, canvas.width, canvas.height)
-            draw(canvas)
+            Canvas(it).also {
+                setBounds(0, 0, it.width, it.height)
+                draw(it)
+            }
         }
     }
 }

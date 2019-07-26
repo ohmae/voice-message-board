@@ -37,22 +37,20 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
     }
 
     private fun bind(context: Context) {
-        if (!bound) {
-            val packageName = findPackageNameToUse(context) ?: return
-            bound = CustomTabsClient.bindCustomTabsService(
-                context.applicationContext,
-                packageName,
-                this
-            )
-        }
+        if (bound) return
+        val packageName = findPackageNameToUse(context) ?: return
+        bound = CustomTabsClient.bindCustomTabsService(
+            context.applicationContext,
+            packageName,
+            this
+        )
     }
 
     private fun unbind(context: Context) {
-        if (bound) {
-            context.applicationContext.unbindService(this)
-            bound = false
-            session = null
-        }
+        if (!bound) return
+        context.applicationContext.unbindService(this)
+        bound = false
+        session = null
     }
 
     fun mayLaunchUrl(url: String) {
@@ -70,9 +68,7 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
             .map { Bundle().apply { putParcelable(CustomTabsService.KEY_URL, Uri.parse(it)) } }
     }
 
-    fun createCustomTabsIntent(): CustomTabsIntent.Builder {
-        return CustomTabsIntent.Builder(session)
-    }
+    fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
 
     fun launchUrl(context: Context, customTabsIntent: CustomTabsIntent, url: String): Boolean {
         customTabsIntent.intent.putExtra(
@@ -82,12 +78,12 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
         if (session == null) {
             customTabsIntent.intent.setPackage(findPackageNameToUse(context))
         }
-        return try {
+        try {
             customTabsIntent.launchUrl(context, Uri.parse(url))
-            true
+            return true
         } catch (ignored: ActivityNotFoundException) {
-            false
         }
+        return false
     }
 
     private inner class CustomTabsBinder : ActivityLifecycleCallbacks {
@@ -131,9 +127,10 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
                 .filter { browsers.contains(it) }
             if (candidate.isEmpty()) return null
             if (candidate.size == 1) return candidate[0]
-            val defaultBrowser = OpenUriUtils.getDefaultBrowserPackage(context)
-            if (defaultBrowser != null && candidate.contains(defaultBrowser)) {
-                return defaultBrowser
+            OpenUriUtils.getDefaultBrowserPackage(context)?.let {
+                if (candidate.contains(it)) {
+                    return it
+                }
             }
             return PREFERRED_PACKAGES.find { candidate.contains(it) }
         }
