@@ -179,10 +179,9 @@ class FontFileChooserActivity : AppCompatActivity(), OnCancelListener, OnPositiv
         private const val CURRENT_PATH_KEY = "CURRENT_PATH_KEY"
         private const val EXTRA_INITIAL_PATH = "EXTRA_INITIAL_PATH"
 
-        fun makeIntent(context: Context, path: String): Intent {
-            return Intent(context, FontFileChooserActivity::class.java).apply {
+        fun makeIntent(context: Context, path: String): Intent =
+            Intent(context, FontFileChooserActivity::class.java).apply {
                 putExtra(EXTRA_INITIAL_PATH, path)
             }
-        }
     }
 }

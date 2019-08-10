@@ -9,7 +9,6 @@ package net.mm2d.android.vmb.settings
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.text.TextUtils
 import androidx.annotation.ColorInt
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -38,7 +37,7 @@ class Settings private constructor(private val storage: SettingsStorage) {
     val screenOrientation: Int
         get() {
             val value = storage.readString(Key.SCREEN_ORIENTATION)
-            if (!TextUtils.isEmpty(value)) {
+            if (value.isNotEmpty()) {
                 try {
                     return Integer.parseInt(value)
                 } catch (e: NumberFormatException) {
@@ -78,25 +77,23 @@ class Settings private constructor(private val storage: SettingsStorage) {
     companion object {
         private var settings: Settings? = null
         private val lock: Lock = ReentrantLock()
-        private val condition: Condition = lock.newCondition()!!
+        private val condition: Condition = lock.newCondition()
 
         /**
          * Settingsのインスタンスを返す。
          *
          * 初期化が完了していなければブロックされる。
          */
-        fun get(): Settings {
-            lock.withLock {
-                while (settings == null) {
-                    if (BuildConfig.DEBUG) {
-                        Logger.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
-                    }
-                    if (!condition.await(1, TimeUnit.SECONDS)) {
-                        throw IllegalStateException("Settings initialization timeout")
-                    }
+        fun get(): Settings = lock.withLock {
+            while (settings == null) {
+                if (BuildConfig.DEBUG) {
+                    Logger.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
                 }
-                return settings as Settings
+                if (!condition.await(1, TimeUnit.SECONDS)) {
+                    throw IllegalStateException("Settings initialization timeout")
+                }
             }
+            settings as Settings
         }
 
         /**

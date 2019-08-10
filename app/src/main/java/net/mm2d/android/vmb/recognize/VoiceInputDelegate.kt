@@ -62,7 +62,10 @@ class VoiceInputDelegate(
             it.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             it.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
             it.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, activity.packageName)
-            it.putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.recognizer_title))
+            it.putExtra(
+                RecognizerIntent.EXTRA_PROMPT,
+                activity.getString(R.string.recognizer_title)
+            )
         }
         try {
             activity.startActivityForResult(intent, voiceRequestCode)

@@ -31,13 +31,13 @@ class PermissionDialog : BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val ctx = context!!
-        return AlertDialog.Builder(ctx)
+        val context = context!!
+        return AlertDialog.Builder(context)
             .setTitle(R.string.dialog_permission_title)
             .setMessage(R.string.dialog_microphone_permission_message)
             .setPositiveButton(R.string.app_info) { _, _ ->
-                startAppInfo(ctx)
-                (ctx as? OnPositiveClickListener)?.onPositiveClick()
+                startAppInfo(context)
+                (context as? OnPositiveClickListener)?.onPositiveClick()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
             .create()

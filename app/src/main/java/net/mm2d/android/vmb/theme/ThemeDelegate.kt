@@ -13,14 +13,12 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.math.MathUtils
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
-import java.util.*
 
 /**
  * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
@@ -32,13 +30,11 @@ class ThemeDelegate(
     private val textView: TextView,
     private val icon: Drawable?
 ) {
-    private val themes = ArrayList(
-        listOf(
-            Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
-            Theme(activity.getString(R.string.theme_black_white), Color.BLACK, Color.WHITE),
-            Theme(activity.getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW),
-            Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN)
-        )
+    private val themes = arrayListOf(
+        Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
+        Theme(activity.getString(R.string.theme_black_white), Color.BLACK, Color.WHITE),
+        Theme(activity.getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW),
+        Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN)
     )
     private val settings = Settings.get()
     private val gridDrawable = GridDrawable(activity)
@@ -90,6 +86,6 @@ class ThemeDelegate(
             getBrightness(Color.red(color), Color.green(color), Color.blue(color))
 
         private fun getBrightness(r: Int, g: Int, b: Int): Int =
-            MathUtils.clamp((r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt(), 0, 255)
+            (r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt().coerceIn(0, 255)
     }
 }

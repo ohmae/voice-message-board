@@ -61,11 +61,11 @@ class BeatingView
         }
         val target = (radiusMax - radiusMin) * radius[index] / 6f * (1 + index)
         radius[index] = 0f
-        val animator = ValueAnimator.ofFloat(0f, target).apply {
-            duration = 20 + 200L * (index + 1)
-            setInterpolator { 1f - (it * 2f - 1f).square() }
-            addUpdateListener { invalidate() }
-            start()
+        val animator = ValueAnimator.ofFloat(0f, target).also {
+            it.duration = 20 + 200L * (index + 1)
+            it.setInterpolator { 1f - (it * 2f - 1f).square() }
+            it.addUpdateListener { invalidate() }
+            it.start()
         }
         radiusAnimators[index] = animator
     }

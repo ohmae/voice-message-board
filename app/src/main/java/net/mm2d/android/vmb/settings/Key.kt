@@ -9,7 +9,6 @@ package net.mm2d.android.vmb.settings
 
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import java.util.*
 
 /**
  * 設定値。
@@ -28,23 +27,17 @@ enum class Key {
 
     KEY_BACKGROUND(Color.WHITE),
     KEY_FOREGROUND(Color.BLACK),
-    HISTORY(Collections.emptySet<String>()),
+    HISTORY(emptySet<String>()),
     SPEECH_RECOGNIZER(true),
     CANDIDATE_LIST(false),
     LIST_EDIT(false),
     LONG_TAP_EDIT(false),
-    SCREEN_ORIENTATION(Integer.toString(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)),
+    SCREEN_ORIENTATION(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED.toString()),
     USE_FONT(false),
     FONT_PATH(""),
     ;
 
-    private enum class Type {
-        BOOLEAN,
-        INT,
-        LONG,
-        STRING,
-        STRING_SET,
-    }
+    private enum class Type { BOOLEAN, INT, LONG, STRING, STRING_SET, }
 
     private val type: Type?
     private val defaultToRead: Any?
@@ -74,82 +67,24 @@ enum class Key {
         else -> throw IllegalArgumentException("unknown type:" + value.javaClass)
     }
 
+    internal fun isReadWriteKey(): Boolean = type != null
+    internal fun isBooleanKey(): Boolean = type === Type.BOOLEAN
+    internal fun isIntKey(): Boolean = type === Type.INT
+    internal fun isLongKey(): Boolean = type === Type.LONG
+    internal fun isStringKey(): Boolean = type === Type.STRING
+    internal fun isStringSetKey(): Boolean = type === Type.STRING_SET
 
-    internal fun isReadWriteKey(): Boolean {
-        return type != null
-    }
-
-    internal fun isBooleanKey(): Boolean {
-        return type === Type.BOOLEAN
-    }
-
-    internal fun isIntKey(): Boolean {
-        return type === Type.INT
-    }
-
-    internal fun isLongKey(): Boolean {
-        return type === Type.LONG
-    }
-
-    internal fun isStringKey(): Boolean {
-        return type === Type.STRING
-    }
-
-    internal fun isStringSetKey(): Boolean {
-        return type === Type.STRING_SET
-    }
-
-    internal fun getDefaultBooleanToRead(): Boolean {
-        return defaultToRead as Boolean
-    }
-
-    internal fun getDefaultIntToRead(): Int {
-        return defaultToRead as Int
-    }
-
-    internal fun getDefaultLongToRead(): Long {
-        return defaultToRead as Long
-    }
-
-    internal fun getDefaultStringToRead(): String {
-        if (defaultToRead == null) {
-            throw NullPointerException("Default value is not set")
-        }
-        return defaultToRead as String
-    }
-
+    internal fun getDefaultBooleanToRead(): Boolean = defaultToRead as Boolean
+    internal fun getDefaultIntToRead(): Int = defaultToRead as Int
+    internal fun getDefaultLongToRead(): Long = defaultToRead as Long
+    internal fun getDefaultStringToRead(): String = defaultToRead as String
     @Suppress("UNCHECKED_CAST")
-    internal fun getDefaultStringSetToRead(): Set<String> {
-        if (defaultToRead == null) {
-            throw NullPointerException("Default value is not set")
-        }
-        return defaultToRead as Set<String>
-    }
+    internal fun getDefaultStringSetToRead(): Set<String> = defaultToRead as Set<String>
 
-    internal fun getDefaultBooleanToWrite(): Boolean {
-        return defaultToWrite as Boolean
-    }
-
-    internal fun getDefaultIntToWrite(): Int {
-        return defaultToWrite as Int
-    }
-
-    internal fun getDefaultLongToWrite(): Long {
-        return defaultToWrite as Long
-    }
-
-    internal fun getDefaultStringToWrite(): String {
-        if (defaultToWrite == null) {
-            throw NullPointerException("Default value is not set")
-        }
-        return defaultToWrite as String
-    }
-
+    internal fun getDefaultBooleanToWrite(): Boolean = defaultToWrite as Boolean
+    internal fun getDefaultIntToWrite(): Int = defaultToWrite as Int
+    internal fun getDefaultLongToWrite(): Long = defaultToWrite as Long
+    internal fun getDefaultStringToWrite(): String = defaultToWrite as String
     @Suppress("UNCHECKED_CAST")
-    internal fun getDefaultStringSetToWrite(): Set<String> {
-        if (defaultToWrite == null) {
-            throw NullPointerException("Default value is not set")
-        }
-        return defaultToWrite as Set<String>
-    }
+    internal fun getDefaultStringSetToWrite(): Set<String> = defaultToWrite as Set<String>
 }

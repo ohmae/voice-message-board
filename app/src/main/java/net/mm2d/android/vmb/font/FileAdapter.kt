@@ -31,18 +31,14 @@ class FileAdapter(context: Context, private val onClick: (file: File) -> Unit) :
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return files.size
-    }
+    override fun getItemCount(): Int = files.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(files[position], onClick)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = inflater.inflate(layout.list_item_file_chooser, parent, false)
-        return ViewHolder(view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(inflater.inflate(layout.list_item_file_chooser, parent, false))
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text = itemView.findViewById<TextView>(id.text)!!

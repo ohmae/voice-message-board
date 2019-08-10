@@ -19,15 +19,14 @@ import java.io.File
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 object FontUtils {
-    fun isValidFontFile(file: File): Boolean {
+    fun isValidFontFile(file: File): Boolean =
         try {
             Typeface.createFromFile(file)
-            return true
+            true
         } catch (e: Exception) {
             Logger.w(e)
+            false
         }
-        return false
-    }
 
     fun setFont(textView: TextView, settings: Settings) {
         if (settings.fontPathToUse.isEmpty()) {

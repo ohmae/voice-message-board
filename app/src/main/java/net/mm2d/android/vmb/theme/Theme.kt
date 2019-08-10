@@ -22,30 +22,23 @@ import android.os.Parcelable.Creator
  * @param backgroundColor 背景色
  * @param foregroundColor 文字色
  */
-data class Theme(val name: String, val backgroundColor: Int, val foregroundColor: Int) :
-    Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString()
-            ?: "", parcel.readInt(), parcel.readInt()
-    )
-
+data class Theme(
+    val name: String,
+    val backgroundColor: Int,
+    val foregroundColor: Int
+) : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeInt(backgroundColor)
         parcel.writeInt(foregroundColor)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
 
     companion object CREATOR : Creator<Theme> {
-        override fun createFromParcel(parcel: Parcel): Theme {
-            return Theme(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Theme?> {
-            return arrayOfNulls(size)
-        }
+        override fun createFromParcel(parcel: Parcel): Theme = create(parcel)
+        override fun newArray(size: Int): Array<Theme?> = arrayOfNulls(size)
+        private fun create(parcel: Parcel): Theme =
+            Theme(parcel.readString() ?: "", parcel.readInt(), parcel.readInt())
     }
 }

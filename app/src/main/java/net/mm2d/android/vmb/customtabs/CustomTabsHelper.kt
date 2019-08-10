@@ -62,11 +62,10 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
         session?.mayLaunchUrl(Uri.parse(urls[0]), null, makeOtherLikelyBundles(urls))
     }
 
-    private fun makeOtherLikelyBundles(urls: List<String>): List<Bundle>? {
-        if (urls.size == 1) return null
-        return urls.subList(1, urls.size)
+    private fun makeOtherLikelyBundles(urls: List<String>): List<Bundle>? =
+        if (urls.size == 1) null
+        else urls.subList(1, urls.size)
             .map { Bundle().apply { putParcelable(CustomTabsService.KEY_URL, Uri.parse(it)) } }
-    }
 
     fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
 

@@ -95,13 +95,12 @@ class SelectThemeDialog : BaseDialogFragment() {
          * @param themes テーマリスト
          * @return 新規インスタンス
          */
-        private fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog {
-            return SelectThemeDialog().apply {
+        private fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog =
+            SelectThemeDialog().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList(KEY_THEME_LIST, themes)
                 }
             }
-        }
 
         fun show(activity: FragmentActivity, themes: ArrayList<Theme>) {
             newInstance(themes).showAllowingStateLoss(activity.supportFragmentManager, "")

@@ -14,7 +14,6 @@ import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
-import androidx.core.math.MathUtils
 import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.activity_main.*
 import net.mm2d.android.vmb.dialog.EditStringDialog
@@ -250,7 +249,7 @@ class MainActivity : AppCompatActivity(),
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             val factor = detector.scaleFactor
-            fontSize = MathUtils.clamp(fontSize * factor, fontSizeMin, fontSizeMax)
+            fontSize = (fontSize * factor).coerceIn(fontSizeMin, fontSizeMax)
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
             updatePadding()
             return true

@@ -62,13 +62,13 @@ object CustomTabsHelperHolder {
         }
     }
 
-    private fun Drawable.toBitmap(): Bitmap {
-        if (this is BitmapDrawable) return bitmap
-        return Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888).also {
-            Canvas(it).also {
-                setBounds(0, 0, it.width, it.height)
-                draw(it)
+    private fun Drawable.toBitmap(): Bitmap =
+        if (this is BitmapDrawable) bitmap
+        else Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
+            .also { bitmap ->
+                Canvas(bitmap).also {
+                    setBounds(0, 0, it.width, it.height)
+                    draw(it)
+                }
             }
-        }
-    }
 }
