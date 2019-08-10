@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId "net.mm2d.android.vmb"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         resConfigs "en", "ja"
@@ -64,9 +64,9 @@ dependencies {
     implementation 'net.mm2d:log:0.8.4'
     implementation 'net.mm2d:log-android:0.8.4'
     implementation 'net.mm2d:preference:0.2.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 
     testImplementation 'junit:junit:4.12'
 }
