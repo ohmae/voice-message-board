@@ -12,10 +12,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
+import kotlinx.android.synthetic.main.list_item_string.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
@@ -70,7 +70,7 @@ class SelectStringDialog : BaseDialogFragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = inflateView(R.layout.list_item_string, convertView, parent)
-            view.findViewById<TextView>(R.id.textView).text = getItem(position)
+            view.textView.text = getItem(position)
             return view
         }
     }

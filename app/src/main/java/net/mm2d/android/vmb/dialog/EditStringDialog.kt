@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
+import kotlinx.android.synthetic.main.dialog_edit.view.*
 import net.mm2d.android.vmb.R
 
 /**
@@ -58,7 +59,7 @@ class EditStringDialog : BaseDialogFragment() {
         val inflater = activity.layoutInflater
         val decorView = activity.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
-        editText = view.findViewById<EditText>(R.id.editText).apply {
+        editText = view.editText.apply {
             setText(string)
             setSelection(string.length)
             setOnEditorActionListener { _, actionId, event ->

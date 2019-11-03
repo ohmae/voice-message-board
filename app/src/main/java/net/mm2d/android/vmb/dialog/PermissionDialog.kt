@@ -43,7 +43,7 @@ class PermissionDialog : BaseDialogFragment() {
             .create()
     }
 
-    override fun onCancel(dialog: DialogInterface?) {
+    override fun onCancel(dialog: DialogInterface) {
         (context as? OnCancelListener)?.onCancel()
     }
 

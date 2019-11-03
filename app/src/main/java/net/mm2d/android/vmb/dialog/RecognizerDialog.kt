@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
+import kotlinx.android.synthetic.main.dialog_recognizer.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.view.BeatingView
@@ -43,10 +44,10 @@ class RecognizerDialog : BaseDialogFragment() {
         val inflater = act.layoutInflater
         val decorView = act.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
-        beatingView = view.findViewById(R.id.beating_view)
+        beatingView = view.beating_view
         beatingView.setOnClickListener { recognizer?.stopListening() }
-        waveView = view.findViewById(R.id.wave_view)
-        textView = view.findViewById(R.id.text)
+        waveView = view.wave_view
+        textView = view.text
         return AlertDialog.Builder(act)
             .setView(view)
             .create()
@@ -111,7 +112,7 @@ class RecognizerDialog : BaseDialogFragment() {
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         try {
             recognizer?.destroy()

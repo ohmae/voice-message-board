@@ -12,9 +12,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
+import kotlinx.android.synthetic.main.list_item_theme.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
@@ -70,10 +70,10 @@ class SelectThemeDialog : BaseDialogFragment() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val theme = getItem(position)
             val view = inflateView(R.layout.list_item_theme, convertView, parent)
-            val sample = view.findViewById<TextView>(R.id.textSample)
+            val sample = view.textSample
             sample.setBackgroundColor(theme.backgroundColor)
             sample.setTextColor(theme.foregroundColor)
-            view.findViewById<TextView>(R.id.textTitle).text = theme.name
+            view.textTitle.text = theme.name
             return view
         }
     }

@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(),
         updatePadding()
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         ViewUtils.execOnLayout(scrollView) {
             updatePadding()

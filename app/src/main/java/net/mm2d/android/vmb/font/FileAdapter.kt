@@ -15,7 +15,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import net.mm2d.android.vmb.R.*
+import kotlinx.android.synthetic.main.list_item_file_chooser.view.*
+import net.mm2d.android.vmb.R.drawable
+import net.mm2d.android.vmb.R.layout
 import java.io.File
 
 /**
@@ -41,8 +43,8 @@ class FileAdapter(context: Context, private val onClick: (file: File) -> Unit) :
         ViewHolder(inflater.inflate(layout.list_item_file_chooser, parent, false))
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val text = itemView.findViewById<TextView>(id.text)!!
-        private val icon = itemView.findViewById<ImageView>(id.icon)!!
+        val text: TextView = itemView.text
+        private val icon: ImageView = itemView.icon
 
         fun bind(file: File, onClick: (file: File) -> Unit) {
             itemView.setOnClickListener { onClick.invoke(file) }
