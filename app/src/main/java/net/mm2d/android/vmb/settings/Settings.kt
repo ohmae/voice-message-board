@@ -9,71 +9,73 @@ package net.mm2d.android.vmb.settings
 
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.util.Log
 import androidx.annotation.ColorInt
+import androidx.preference.PreferenceDataStore
+import net.mm2d.android.vmb.settings.Key.Main
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class Settings private constructor(private val storage: SettingsStorage) {
+class Settings private constructor(
+    private val preferences: Preferences<Main>
+) {
+    val preferenceDataSource: PreferenceDataStore
+        get() = preferences.dataStore
+
     var backgroundColor: Int
         @ColorInt
-        get() = storage.readInt(Key.KEY_BACKGROUND)
-        set(@ColorInt color) = storage.writeInt(Key.KEY_BACKGROUND, color)
+        get() = preferences.readInt(Main.BACKGROUND_INT, 0)
+        set(@ColorInt color) = preferences.writeInt(Main.BACKGROUND_INT, color)
 
     var foregroundColor: Int
         @ColorInt
-        get() = storage.readInt(Key.KEY_FOREGROUND)
-        set(@ColorInt color) = storage.writeInt(Key.KEY_FOREGROUND, color)
+        get() = preferences.readInt(Main.FOREGROUND_INT, 0)
+        set(@ColorInt color) = preferences.writeInt(Main.FOREGROUND_INT, color)
 
     val screenOrientation: Int
-        get() {
-            val value = storage.readString(Key.SCREEN_ORIENTATION)
-            if (value.isNotEmpty()) {
-                try {
-                    return Integer.parseInt(value)
-                } catch (e: NumberFormatException) {
-                    e.printStackTrace()
-                }
-            }
-            return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
+        get() = preferences.readString(Main.SCREEN_ORIENTATION_STRING, "").let {
+            Log.e("XXXX", "screenOrientation: $it")
+            it.toIntOrNull()
+        } ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     var useFont: Boolean
-        get() = storage.readBoolean(Key.USE_FONT)
-        set(value) = storage.writeBoolean(Key.USE_FONT, value)
+        get() = preferences.readBoolean(Main.USE_FONT_BOOLEAN, false)
+        set(value) = preferences.writeBoolean(Main.USE_FONT_BOOLEAN, value)
 
     var fontPath: String
-        get() = storage.readString(Key.FONT_PATH)
-        set(value) = storage.writeString(Key.FONT_PATH, value)
+        get() = preferences.readString(Main.FONT_PATH_STRING, "")
+        set(value) = preferences.writeString(Main.FONT_PATH_STRING, value)
 
     val fontPathToUse: String
         get() = if (useFont) fontPath else ""
 
     fun shouldUseSpeechRecognizer(): Boolean =
-        storage.readBoolean(Key.SPEECH_RECOGNIZER)
+        preferences.readBoolean(Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN, false)
 
     fun shouldShowCandidateList(): Boolean =
-        storage.readBoolean(Key.CANDIDATE_LIST)
+        preferences.readBoolean(Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN, false)
 
     fun shouldShowEditorWhenLongTap(): Boolean =
-        storage.readBoolean(Key.LONG_TAP_EDIT)
+        preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN, false)
 
     fun shouldShowEditorAfterSelect(): Boolean =
-        storage.readBoolean(Key.LIST_EDIT)
+        preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_BOOLEAN, false)
 
     var history: Set<String>
-        get() = storage.readStringSet(Key.HISTORY)
-        set(history) = storage.writeStringSet(Key.HISTORY, history)
+        get() = preferences.readStringSet(Main.HISTORY_SET, emptySet())
+        set(history) = preferences.writeStringSet(Main.HISTORY_SET, history)
 
     companion object {
         private lateinit var settings: Settings
 
-        fun get(): Settings = settings
-
         fun initialize(context: Context) {
-            val storage = SettingsStorage(context)
-            Maintainer.maintain(storage)
-            settings = Settings(storage)
+            Preferences(context, Main::class).also {
+                Maintainer.maintain(context, it)
+                settings = Settings(it)
+            }
         }
+
+        fun get(): Settings = settings
     }
 }

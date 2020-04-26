@@ -10,7 +10,7 @@
             android:defaultValue="-1"
             android:entries="@array/pref_screen_orientation_titles"
             android:entryValues="@array/pref_screen_orientation_values"
-            android:key="SCREEN_ORIENTATION"
+            android:key="SCREEN_ORIENTATION_STRING"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_screen_orientation"
@@ -18,7 +18,7 @@
             />
         <SwitchPreference
             android:defaultValue="true"
-            android:key="SPEECH_RECOGNIZER"
+            android:key="SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN"
             android:summaryOff="@string/pref_description_speech_recognizer_off"
             android:summaryOn="@string/pref_description_speech_recognizer_on"
             android:title="@string/pref_title_speech_recognizer"
@@ -26,7 +26,7 @@
             />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="CANDIDATE_LIST"
+            android:key="SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN"
             android:summaryOff="@string/pref_description_candidate_list_off"
             android:summaryOn="@string/pref_description_candidate_list_on"
             android:title="@string/pref_title_candidate_list"
@@ -34,8 +34,8 @@
             />
         <SwitchPreference
             android:defaultValue="false"
-            android:dependency="CANDIDATE_LIST"
-            android:key="LIST_EDIT"
+            android:dependency="SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN"
+            android:key="SHOULD_SHOW_EDITOR_BOOLEAN"
             android:summaryOff="@string/pref_description_list_edit_off"
             android:summaryOn="@string/pref_description_list_edit_on"
             android:title="@string/pref_title_list_edit"
@@ -43,7 +43,7 @@
             />
         <SwitchPreference
             android:defaultValue="true"
-            android:key="LONG_TAP_EDIT"
+            android:key="SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN"
             android:summaryOff="@string/pref_description_long_tap_edit_off"
             android:summaryOn="@string/pref_description_long_tap_edit_on"
             android:title="@string/pref_title_long_tap_edit"
@@ -55,15 +55,15 @@
         >
         <SwitchPreference
             android:defaultValue="false"
-            android:key="USE_FONT"
+            android:key="USE_FONT_BOOLEAN"
             android:summaryOff="@string/pref_description_use_font_off"
             android:summaryOn="@string/pref_description_use_font_on"
             android:title="@string/pref_title_use_font"
             app:iconSpaceReserved="false"
             />
         <Preference
-            android:dependency="USE_FONT"
-            android:key="FONT_PATH"
+            android:dependency="USE_FONT_BOOLEAN"
+            android:key="FONT_PATH_STRING"
             android:summary="@string/pref_description_font_path"
             android:title="@string/pref_title_font_path"
             app:iconSpaceReserved="false"
@@ -73,36 +73,36 @@
         android:title="@string/pref_header_information"
         >
         <Preference
-            android:key="VERSION_NUMBER"
+            android:key="VERSION_NUMBER_SCREEN"
             android:title="@string/pref_title_version_number"
             app:iconSpaceReserved="false"
             />
         <Preference
-            android:key="PLAY_STORE"
+            android:key="PLAY_STORE_SCREEN"
             android:summary="@string/pref_description_play_store"
             android:title="@string/pref_title_play_store"
             app:iconSpaceReserved="false"
             />
         <Preference
-            android:key="PRIVACY_POLICY"
+            android:key="PRIVACY_POLICY_SCREEN"
             android:summary="@string/pref_description_privacy_policy"
             android:title="@string/pref_title_privacy_policy"
             app:iconSpaceReserved="false"
             />
         <Preference
-            android:key="SOURCE_CODE"
+            android:key="SOURCE_CODE_SCREEN"
             android:summary="@string/pref_description_source_code"
             android:title="@string/pref_title_source_code"
             app:iconSpaceReserved="false"
             />
         <Preference
-            android:key="LICENSE"
+            android:key="LICENSE_SCREEN"
             android:summary="@string/pref_description_license"
             android:title="@string/pref_title_license"
             app:iconSpaceReserved="false"
             />
         <Preference
-            android:key="COPYRIGHT"
+            android:key="COPYRIGHT_SCREEN"
             android:summary="@string/pref_description_copyright"
             android:title="@string/pref_title_copyright"
             app:iconSpaceReserved="false"

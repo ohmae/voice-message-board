@@ -18,11 +18,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.font.FontUtils
-import net.mm2d.android.vmb.settings.Key
+import net.mm2d.android.vmb.settings.Key.Main
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
 import java.io.File
@@ -58,22 +57,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        preferenceManager.preferenceDataStore = settings.preferenceDataSource
         addPreferencesFromResource(R.xml.preferences)
-        bindPreference(findPreference(Key.SCREEN_ORIENTATION))
-        findPreference(Key.PLAY_STORE)?.setOnPreferenceClickListener {
+        bindPreference(Main.SCREEN_ORIENTATION_STRING)
+        findPreference(Main.PLAY_STORE_SCREEN)?.setOnPreferenceClickListener {
             openUrl(MARKET_URL)
         }
-        findPreference(Key.PRIVACY_POLICY)?.setOnPreferenceClickListener {
+        findPreference(Main.PRIVACY_POLICY_SCREEN)?.setOnPreferenceClickListener {
             openUrl(PRIVACY_POLICY_URL)
         }
-        findPreference(Key.SOURCE_CODE)?.setOnPreferenceClickListener {
+        findPreference(Main.SOURCE_CODE_SCREEN)?.setOnPreferenceClickListener {
             openUrl(SOURCE_CODE_URL)
         }
-        findPreference(Key.LICENSE)?.setOnPreferenceClickListener(fun(_: Preference): Boolean {
-            LicenseActivity.start(context ?: return true)
-            return true
-        })
-        findPreference(Key.VERSION_NUMBER)?.summary = BuildConfig.VERSION_NAME
+        findPreference(Main.LICENSE_SCREEN)?.setOnPreferenceClickListener {
+            LicenseActivity.start(requireContext())
+            true
+        }
+        findPreference(Main.VERSION_NUMBER_SCREEN)?.summary = BuildConfig.VERSION_NAME
         setUpFontSetting()
     }
 
@@ -83,7 +83,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setUpFontSetting() {
-        fontPathPreference = findPreference(Key.FONT_PATH)!!
+        fontPathPreference = findPreference(Main.FONT_PATH_STRING)!!
         fontPathPreference.setOnPreferenceClickListener {
             startFontChooser()
             true
@@ -144,13 +144,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun findPreference(key: Key): Preference? = super.findPreference(key.name)
+    private fun findPreference(key: Main): Preference? = super.findPreference(key.name)
 
-    private fun bindPreference(preference: Preference?) {
-        preference ?: return
+    private fun bindPreference(key: Main) {
+        val preference = findPreference(key) ?: return
         preference.setOnPreferenceChangeListener(this::bindPreference)
-        val sp = PreferenceManager.getDefaultSharedPreferences(preference.context)
-        val value = sp.getString(preference.key, "") ?: ""
+        val value = preferenceManager.preferenceDataStore?.getString(key.name, "") ?: ""
         bindPreference(preference, value)
     }
 

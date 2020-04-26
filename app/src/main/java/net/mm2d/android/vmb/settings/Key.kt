@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 大前良介 (OHMAE Ryosuke)
+ * Copyright (c) 2020 大前良介 (OHMAE Ryosuke)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/MIT
@@ -7,84 +7,77 @@
 
 package net.mm2d.android.vmb.settings
 
-import android.content.pm.ActivityInfo
-import android.graphics.Color
+import net.mm2d.android.vmb.BuildConfig
 
-/**
- * 設定値。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
-enum class Key {
-    PLAY_STORE,
-    PRIVACY_POLICY,
-    COPYRIGHT,
-    VERSION_NUMBER,
-    SOURCE_CODE,
-    LICENSE,
+interface Key {
+    enum class Main : Key {
+        PREFERENCES_VERSION_INT,
+        APP_VERSION_AT_INSTALL_INT,
+        APP_VERSION_AT_LAST_LAUNCHED_INT,
 
-    SETTINGS_VERSION(-1),
+        VERSION_NUMBER_SCREEN,
+        PLAY_STORE_SCREEN,
+        PRIVACY_POLICY_SCREEN,
+        SOURCE_CODE_SCREEN,
+        LICENSE_SCREEN,
+        COPYRIGHT_SCREEN,
 
-    KEY_BACKGROUND(Color.WHITE),
-    KEY_FOREGROUND(Color.BLACK),
-    HISTORY(emptySet<String>()),
-    SPEECH_RECOGNIZER(true),
-    CANDIDATE_LIST(false),
-    LIST_EDIT(false),
-    LONG_TAP_EDIT(false),
-    SCREEN_ORIENTATION(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED.toString()),
-    USE_FONT(false),
-    FONT_PATH(""),
-    ;
-
-    private enum class Type { BOOLEAN, INT, LONG, STRING, STRING_SET, }
-
-    private val type: Type?
-    private val defaultToRead: Any?
-    private val defaultToWrite: Any?
-
-    constructor() {
-        type = null
-        defaultToRead = null
-        defaultToWrite = null
+        BACKGROUND_INT,
+        FOREGROUND_INT,
+        HISTORY_SET,
+        SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN,
+        SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN,
+        SHOULD_SHOW_EDITOR_BOOLEAN,
+        SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN,
+        SCREEN_ORIENTATION_STRING,
+        USE_FONT_BOOLEAN,
+        FONT_PATH_STRING,
     }
+}
 
-    constructor(toRead: Any, toWrite: Any = toRead) {
-        type = getType(toRead)
-        if (type != getType(toWrite)) {
-            throw IllegalArgumentException("type mismatch $toRead / $toWrite")
+private const val SUFFIX_BOOLEAN = "_BOOLEAN"
+private const val SUFFIX_INT = "_INT"
+private const val SUFFIX_LONG = "_LONG"
+private const val SUFFIX_FLOAT = "_FLOAT"
+private const val SUFFIX_STRING = "_STRING"
+private const val SUFFIX_SET = "_SET"
+private const val SUFFIX_SCREEN = "_SCREEN"
+
+private val SUFFIXES =
+    listOf(
+        SUFFIX_BOOLEAN,
+        SUFFIX_INT,
+        SUFFIX_LONG,
+        SUFFIX_FLOAT,
+        SUFFIX_STRING,
+        SUFFIX_SET,
+        SUFFIX_SCREEN
+    )
+
+internal fun Array<out Enum<*>>.checkSuffix() {
+    if (!BuildConfig.DEBUG) return
+    forEach { key ->
+        require(SUFFIXES.any { key.name.endsWith(it) }) { "$key has no type suffix." }
+    }
+}
+
+internal fun Enum<*>.checkSuffix(value: Any) {
+    if (!BuildConfig.DEBUG) return
+    when (value) {
+        is Boolean -> require(name.endsWith(SUFFIX_BOOLEAN)) {
+            "$this is used for Boolean, suffix \"$SUFFIX_BOOLEAN\" is required."
         }
-        defaultToRead = toRead
-        defaultToWrite = toWrite
+        is Int -> require(name.endsWith(SUFFIX_INT)) {
+            "$this is used for Int, suffix \"$SUFFIX_INT\" is required."
+        }
+        is Long -> require(name.endsWith(SUFFIX_LONG)) {
+            "$this is used for Long, suffix \"$SUFFIX_LONG\" is required."
+        }
+        is Float -> require(name.endsWith(SUFFIX_FLOAT)) {
+            "$this is used for Float, suffix \"$SUFFIX_FLOAT\" is required."
+        }
+        is String -> require(name.endsWith(SUFFIX_STRING)) {
+            "$this is used for String, suffix \"$SUFFIX_STRING\" is required."
+        }
     }
-
-    private fun getType(value: Any) = when (value) {
-        is Boolean -> Type.BOOLEAN
-        is Int -> Type.INT
-        is Long -> Type.LONG
-        is String -> Type.STRING
-        is Set<*> -> Type.STRING_SET
-        else -> throw IllegalArgumentException("unknown type:" + value.javaClass)
-    }
-
-    internal fun isReadWriteKey(): Boolean = type != null
-    internal fun isBooleanKey(): Boolean = type === Type.BOOLEAN
-    internal fun isIntKey(): Boolean = type === Type.INT
-    internal fun isLongKey(): Boolean = type === Type.LONG
-    internal fun isStringKey(): Boolean = type === Type.STRING
-    internal fun isStringSetKey(): Boolean = type === Type.STRING_SET
-
-    internal fun getDefaultBooleanToRead(): Boolean = defaultToRead as Boolean
-    internal fun getDefaultIntToRead(): Int = defaultToRead as Int
-    internal fun getDefaultLongToRead(): Long = defaultToRead as Long
-    internal fun getDefaultStringToRead(): String = defaultToRead as String
-    @Suppress("UNCHECKED_CAST")
-    internal fun getDefaultStringSetToRead(): Set<String> = defaultToRead as Set<String>
-
-    internal fun getDefaultBooleanToWrite(): Boolean = defaultToWrite as Boolean
-    internal fun getDefaultIntToWrite(): Int = defaultToWrite as Int
-    internal fun getDefaultLongToWrite(): Long = defaultToWrite as Long
-    internal fun getDefaultStringToWrite(): String = defaultToWrite as String
-    @Suppress("UNCHECKED_CAST")
-    internal fun getDefaultStringSetToWrite(): Set<String> = defaultToWrite as Set<String>
 }
