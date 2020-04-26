@@ -51,7 +51,7 @@ class EditStringDialog : BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val activity = activity!!
+        val activity = requireActivity()
         val string = arguments?.getString(KEY_STRING) ?: return activity.let {
             dismiss()
             AlertDialog.Builder(it).create()

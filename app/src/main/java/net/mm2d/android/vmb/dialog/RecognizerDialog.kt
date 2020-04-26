@@ -39,16 +39,16 @@ class RecognizerDialog : BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val act = activity!!
+        val activity = requireActivity()
         startListening()
-        val inflater = act.layoutInflater
-        val decorView = act.window.decorView as ViewGroup
+        val inflater = activity.layoutInflater
+        val decorView = activity.window.decorView as ViewGroup
         val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
         beatingView = view.beating_view
         beatingView.setOnClickListener { recognizer?.stopListening() }
         waveView = view.wave_view
         textView = view.text
-        return AlertDialog.Builder(act)
+        return AlertDialog.Builder(activity)
             .setView(view)
             .create()
     }

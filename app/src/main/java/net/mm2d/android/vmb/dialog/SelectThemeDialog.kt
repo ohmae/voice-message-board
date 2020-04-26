@@ -51,12 +51,12 @@ class SelectThemeDialog : BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val act = activity!!
-        val arg = arguments!!
-        val themeList = arg.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
-        return AlertDialog.Builder(act)
-            .setTitle(act.getString(R.string.theme_select))
-            .setAdapter(ThemeListAdapter(act, themeList)) { _, which ->
+        val activity = requireActivity()
+        val argument = requireArguments()
+        val themeList = argument.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
+        return AlertDialog.Builder(activity)
+            .setTitle(activity.getString(R.string.theme_select))
+            .setAdapter(ThemeListAdapter(activity, themeList)) { _, which ->
                 eventListener?.onSelectTheme(themeList[which])
             }
             .create()
