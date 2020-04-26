@@ -11,9 +11,6 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import androidx.multidex.MultiDexApplication
-import io.reactivex.exceptions.OnErrorNotImplementedException
-import io.reactivex.exceptions.UndeliverableException
-import io.reactivex.plugins.RxJavaPlugins
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.log.Logger
@@ -28,20 +25,8 @@ class App : MultiDexApplication() {
         super.onCreate()
         setUpLogger()
         setStrictMode()
-        RxJavaPlugins.setErrorHandler { logError(it) }
         Settings.initialize(this)
         CustomTabsHelperHolder.initialize(this)
-    }
-
-    private fun logError(e: Throwable) {
-        when (e) {
-            is UndeliverableException
-            -> Logger.w(e.cause, "UndeliverableException:")
-            is OnErrorNotImplementedException
-            -> Logger.w(e.cause, "OnErrorNotImplementedException:")
-            else
-            -> Logger.w(e)
-        }
     }
 
     private fun setUpLogger() {

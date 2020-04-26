@@ -10,15 +10,6 @@ package net.mm2d.android.vmb.settings
 import android.content.Context
 import android.content.pm.ActivityInfo
 import androidx.annotation.ColorInt
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
-import net.mm2d.android.vmb.BuildConfig
-import net.mm2d.log.Logger
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.Condition
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
@@ -75,45 +66,14 @@ class Settings private constructor(private val storage: SettingsStorage) {
         set(history) = storage.writeStringSet(Key.HISTORY, history)
 
     companion object {
-        private var settings: Settings? = null
-        private val lock: Lock = ReentrantLock()
-        private val condition: Condition = lock.newCondition()
+        private lateinit var settings: Settings
 
-        /**
-         * Settingsのインスタンスを返す。
-         *
-         * 初期化が完了していなければブロックされる。
-         */
-        fun get(): Settings = lock.withLock {
-            while (settings == null) {
-                if (BuildConfig.DEBUG) {
-                    Logger.e("!!!!!!!!!! BLOCK !!!!!!!!!!")
-                }
-                if (!condition.await(1, TimeUnit.SECONDS)) {
-                    throw IllegalStateException("Settings initialization timeout")
-                }
-            }
-            settings as Settings
-        }
+        fun get(): Settings = settings
 
-        /**
-         * アプリ起動時に一度だけコールされ、初期化を行う。
-         *
-         * @param context コンテキスト
-         */
         fun initialize(context: Context) {
-            Completable.fromAction { initializeInner(context) }
-                .subscribeOn(Schedulers.io())
-                .subscribe()
-        }
-
-        private fun initializeInner(context: Context) {
             val storage = SettingsStorage(context)
             Maintainer.maintain(storage)
-            lock.withLock {
-                settings = Settings(storage)
-                condition.signalAll()
-            }
+            settings = Settings(storage)
         }
     }
 }
