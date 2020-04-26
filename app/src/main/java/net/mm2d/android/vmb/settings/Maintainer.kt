@@ -57,6 +57,7 @@ internal object Maintainer {
         preferences.writeString(Main.SCREEN_ORIENTATION_STRING, ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED.toString())
         preferences.writeBoolean(Main.USE_FONT_BOOLEAN, false)
         preferences.writeString(Main.FONT_PATH_STRING, "")
+        preferences.writeString(Main.FONT_NAME_STRING, "")
     }
 
     private fun migrateFromVersion0(sharedPreferences: SharedPreferences, preferences: Preferences<Main>) {
@@ -69,9 +70,10 @@ internal object Maintainer {
             boolean(OldKey.LIST_EDIT, Main.SHOULD_SHOW_EDITOR_BOOLEAN)
             boolean(OldKey.LONG_TAP_EDIT, Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN)
             string(OldKey.SCREEN_ORIENTATION, Main.SCREEN_ORIENTATION_STRING)
-            boolean(OldKey.USE_FONT, Main.USE_FONT_BOOLEAN)
-            string(OldKey.FONT_PATH, Main.FONT_PATH_STRING)
         }
+        preferences.writeBoolean(Main.USE_FONT_BOOLEAN, false)
+        preferences.writeString(Main.FONT_PATH_STRING, "")
+        preferences.writeString(Main.FONT_NAME_STRING, "")
     }
 
     private class Migrator(

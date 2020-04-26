@@ -88,13 +88,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             startFontChooser()
             true
         }
-        setFontPath()
+        setFontName()
     }
 
-    private fun setFontPath() {
-        val path = settings.fontPath
-        if (path.isEmpty()) fontPathPreference.setSummary(R.string.pref_description_font_path)
-        else fontPathPreference.summary = path
+    private fun setFontName() {
+        val name = settings.fontName
+        if (name.isEmpty()) fontPathPreference.setSummary(R.string.pref_description_font_path)
+        else fontPathPreference.summary = name
     }
 
     private fun startFontChooser() {
@@ -112,10 +112,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val uri = data?.data ?: return
         val context = requireContext()
         scope.launch {
-            val path = copyToLocal(context, uri)
+            val (path, name) = prepareFontFile(context, uri)
             withContext(Dispatchers.Main) {
                 settings.fontPath = path
-                setFontPath()
+                settings.fontName = name
+                setFontName()
                 if (path.isEmpty()) {
                     Toaster.show(context, R.string.toast_failed_to_load_font)
                 }
@@ -123,24 +124,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun copyToLocal(context: Context, uri: Uri): String {
+    private fun prepareFontFile(context: Context, uri: Uri): Pair<String, String> {
         val name: String = context.contentResolver.query(uri, null, null, null, null)?.use {
             if (it.moveToFirst()) {
                 it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
             } else null
-        } ?: return ""
+        } ?: return "" to ""
 
-        val stream = context.contentResolver.openInputStream(uri) ?: return ""
+        val stream = context.contentResolver.openInputStream(uri) ?: return "" to ""
         val data = stream.use { it.readBytes() }
         val file = File(context.filesDir, "font").also {
             if (it.exists()) it.delete()
         }
         file.writeBytes(data)
         return if (FontUtils.isValidFontFile(file)) {
-            file.absolutePath
+            file.absolutePath to name
         } else {
             file.delete()
-            ""
+            "" to ""
         }
     }
 

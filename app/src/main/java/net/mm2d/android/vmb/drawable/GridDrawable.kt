@@ -21,6 +21,7 @@ class GridDrawable(context: Context) : Drawable() {
     private val paint: Paint = Paint()
     private var gridSize: Float = 0f
     private var gridColor: Int = 0
+
     @ColorInt
     private var backgroundColor: Int = 0
 

@@ -28,6 +28,7 @@ class BeatingView
 ) : FrameLayout(context, attrs, defStyleAttr) {
     @Dimension
     private val radiusMin: Float
+
     @Dimension
     private val radiusMax: Float
     private val paint = Paint()

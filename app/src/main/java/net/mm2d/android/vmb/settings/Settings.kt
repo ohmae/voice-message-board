@@ -47,6 +47,10 @@ class Settings private constructor(
         get() = preferences.readString(Main.FONT_PATH_STRING, "")
         set(value) = preferences.writeString(Main.FONT_PATH_STRING, value)
 
+    var fontName: String
+        get() = preferences.readString(Main.FONT_NAME_STRING, "")
+        set(value) = preferences.writeString(Main.FONT_NAME_STRING, value)
+
     val fontPathToUse: String
         get() = if (useFont) fontPath else ""
 

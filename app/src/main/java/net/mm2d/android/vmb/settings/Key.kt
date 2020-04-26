@@ -32,6 +32,7 @@ interface Key {
         SCREEN_ORIENTATION_STRING,
         USE_FONT_BOOLEAN,
         FONT_PATH_STRING,
+        FONT_NAME_STRING,
     }
 }
 

@@ -30,8 +30,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     FrameLayout(context, attrs, defStyleAttr) {
     @ColorInt
     private val wave1Color: Int
+
     @ColorInt
     private val wave2Color: Int
+
     @ColorInt
     private val wave3Color: Int
     private val paint = Paint()

@@ -42,6 +42,7 @@ object FontUtils {
         }
         settings.useFont = false
         settings.fontPath = ""
+        settings.fontName = ""
         textView.typeface = Typeface.DEFAULT
         Toaster.show(textView.context, R.string.toast_failed_to_load_font)
     }
