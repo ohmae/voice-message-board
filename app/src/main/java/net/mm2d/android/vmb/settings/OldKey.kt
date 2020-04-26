@@ -13,15 +13,7 @@ package net.mm2d.android.vmb.settings
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
 enum class OldKey {
-    PLAY_STORE,
-    PRIVACY_POLICY,
-    COPYRIGHT,
-    VERSION_NUMBER,
-    SOURCE_CODE,
-    LICENSE,
-
     SETTINGS_VERSION,
-
     KEY_BACKGROUND,
     KEY_FOREGROUND,
     HISTORY,
@@ -30,6 +22,4 @@ enum class OldKey {
     LIST_EDIT,
     LONG_TAP_EDIT,
     SCREEN_ORIENTATION,
-    USE_FONT,
-    FONT_PATH,
 }

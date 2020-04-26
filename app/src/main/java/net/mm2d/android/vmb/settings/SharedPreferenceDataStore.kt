@@ -13,9 +13,6 @@ import androidx.preference.PreferenceDataStore
 class SharedPreferenceDataStore(
     private val sharedPreferences: SharedPreferences
 ) : PreferenceDataStore() {
-    fun clear(): Unit =
-        sharedPreferences.edit().clear().apply()
-
     fun contains(key: String): Boolean =
         sharedPreferences.contains(key)
 

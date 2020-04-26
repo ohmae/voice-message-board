@@ -19,9 +19,4 @@ object Toaster {
         context ?: return
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
-
-    fun showShort(context: Context?, @StringRes text: Int) {
-        context ?: return
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-    }
 }

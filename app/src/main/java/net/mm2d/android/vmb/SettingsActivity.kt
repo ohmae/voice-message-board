@@ -118,7 +118,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 settings.fontName = name
                 setFontName()
                 if (path.isEmpty()) {
-                    Toaster.show(context, R.string.toast_failed_to_load_font)
+                    Toaster.show(context, R.string.toast_not_a_valid_font)
                 }
             }
         }
