@@ -21,8 +21,7 @@ import java.io.File
 object FontUtils {
     fun isValidFontFile(file: File): Boolean =
         try {
-            Typeface.createFromFile(file)
-            true
+            Typeface.createFromFile(file) != Typeface.DEFAULT
         } catch (e: Exception) {
             Logger.w(e)
             false

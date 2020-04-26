@@ -31,7 +31,7 @@ class PermissionDialog : BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val context = context!!
+        val context = requireContext()
         return AlertDialog.Builder(context)
             .setTitle(R.string.dialog_permission_title)
             .setMessage(R.string.dialog_microphone_permission_message)

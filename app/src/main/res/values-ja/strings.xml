@@ -3,7 +3,6 @@
     <string name="app_name">声で伝言板</string>
     <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
-    <string name="title_file_chooser">フォントファイルを選択</string>
     <string name="action_settings">設定</string>
     <string name="action_theme">テーマを変更</string>
     <string name="action_show_history">履歴から選択</string>
@@ -23,13 +22,10 @@
     <string name="toast_voice_input_fail">音声認識に失敗しました</string>
     <string name="toast_fail_to_start_voice_input">音声認識サービスとの接続に失敗しました</string>
     <string name="toast_should_allow_microphone_permission">音声認識を利用するには権限を許可してください</string>
-    <string name="toast_should_allow_storage_permission">ストレージを利用するには権限を許可してください</string>
-    <string name="toast_can_not_read_file_or_directory">このファイル・ディレクトリは読み出しできません</string>
     <string name="toast_not_a_valid_font">有効なフォントファイルではありません</string>
     <string name="toast_failed_to_load_font">フォントの読み込みに失敗しました。再設定してください</string>
     <string name="dialog_permission_title">権限の許可が必要</string>
     <string name="dialog_microphone_permission_message">マイクへのアクセス権がありません。\n音声認識を利用するには「アプリ情報」から許可してください</string>
-    <string name="dialog_storage_permission_message">ストレージへのアクセス権がありません。\nストレージを使用するために「アプリ情報」から許可してください</string>
     <string name="dialog_title_clear_history">確認</string>
     <string name="dialog_message_clear_history">履歴をクリアします。よろしいですか？</string>
     <string name="app_info">アプリ情報</string>

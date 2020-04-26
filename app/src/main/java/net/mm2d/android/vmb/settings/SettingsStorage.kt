@@ -9,7 +9,7 @@ package net.mm2d.android.vmb.settings
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 
 /**
  * SharedPreferencesへのアクセスをカプセル化するクラス。
