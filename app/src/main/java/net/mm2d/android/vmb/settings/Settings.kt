@@ -9,7 +9,6 @@ package net.mm2d.android.vmb.settings
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.preference.PreferenceDataStore
 import net.mm2d.android.vmb.settings.Key.Main
@@ -35,7 +34,6 @@ class Settings private constructor(
 
     val screenOrientation: Int
         get() = preferences.readString(Main.SCREEN_ORIENTATION_STRING, "").let {
-            Log.e("XXXX", "screenOrientation: $it")
             it.toIntOrNull()
         } ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
