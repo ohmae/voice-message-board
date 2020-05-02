@@ -15,7 +15,17 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.core.view.updatePadding
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.ktx.isImmediateUpdateAllowed
+import com.google.android.play.core.ktx.requestAppUpdateInfo
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
@@ -50,6 +60,7 @@ class MainActivity : AppCompatActivity(),
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
     private var fontSize: Float = 0.0f
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +90,12 @@ class MainActivity : AppCompatActivity(),
         ViewUtils.execOnLayout(scrollView) {
             updatePadding()
         }
+        checkUpdate()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
     }
 
     /**
@@ -146,6 +163,17 @@ class MainActivity : AppCompatActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         voiceInputDelegate.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun checkUpdate() {
+        scope.launch {
+            val manager = AppUpdateManagerFactory.create(applicationContext)
+            val info = manager.requestAppUpdateInfo()
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && info.isImmediateUpdateAllowed) {
+                val options = AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
+                manager.startUpdateFlow(info, this@MainActivity, options)
+            }
+        }
     }
 
     /**
