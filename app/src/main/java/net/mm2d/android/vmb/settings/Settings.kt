@@ -33,9 +33,8 @@ class Settings private constructor(
         set(@ColorInt color) = preferences.writeInt(Main.FOREGROUND_INT, color)
 
     val screenOrientation: Int
-        get() = preferences.readString(Main.SCREEN_ORIENTATION_STRING, "").let {
-            it.toIntOrNull()
-        } ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        get() = preferences.readString(Main.SCREEN_ORIENTATION_STRING, "").toIntOrNull()
+            ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     var useFont: Boolean
         get() = preferences.readBoolean(Main.USE_FONT_BOOLEAN, false)
