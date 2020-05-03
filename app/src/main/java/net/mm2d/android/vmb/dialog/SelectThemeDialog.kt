@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.list_item_theme.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.theme.Theme
+import net.mm2d.android.vmb.util.isStarted
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
@@ -103,6 +104,9 @@ class SelectThemeDialog : BaseDialogFragment() {
             }
 
         fun show(activity: FragmentActivity, themes: ArrayList<Theme>) {
+            if (activity.isFinishing || !activity.isStarted()) {
+                return
+            }
             newInstance(themes).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }

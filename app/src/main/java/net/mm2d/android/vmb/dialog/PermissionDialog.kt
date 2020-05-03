@@ -17,6 +17,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.util.isStarted
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
@@ -63,6 +64,9 @@ class PermissionDialog : BaseDialogFragment() {
             }
 
         fun show(activity: FragmentActivity, @StringRes message: Int) {
+            if (activity.isFinishing || !activity.isStarted()) {
+                return
+            }
             newInstance(message).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }

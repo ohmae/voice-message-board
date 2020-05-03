@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.dialog_recognizer.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.Toaster
+import net.mm2d.android.vmb.util.isStarted
 import net.mm2d.android.vmb.view.BeatingView
 import net.mm2d.android.vmb.view.WaveView
 import java.util.*
@@ -129,6 +130,9 @@ class RecognizerDialog : BaseDialogFragment() {
 
         private fun newInstance(): RecognizerDialog = RecognizerDialog()
         fun show(activity: FragmentActivity) {
+            if (activity.isFinishing || !activity.isStarted()) {
+                return
+            }
             newInstance().showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }

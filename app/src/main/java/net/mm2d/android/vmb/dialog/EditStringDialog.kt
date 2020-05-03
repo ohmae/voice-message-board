@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.dialog_edit.view.*
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.util.isStarted
 
 /**
  * 文字列編集を行うダイアログ。
@@ -114,6 +115,9 @@ class EditStringDialog : BaseDialogFragment() {
         }
 
         fun show(activity: FragmentActivity, editString: String) {
+            if (activity.isFinishing || !activity.isStarted()) {
+                return
+            }
             newInstance(editString).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }

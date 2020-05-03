@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.list_item_string.view.*
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.util.isStarted
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
@@ -99,6 +100,9 @@ class SelectStringDialog : BaseDialogFragment() {
         }
 
         fun show(activity: FragmentActivity, @StringRes title: Int, strings: ArrayList<String>) {
+            if (activity.isFinishing || !activity.isStarted()) {
+                return
+            }
             newInstance(title, strings).showAllowingStateLoss(activity.supportFragmentManager, "")
         }
     }
