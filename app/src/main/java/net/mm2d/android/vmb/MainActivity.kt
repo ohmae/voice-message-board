@@ -19,6 +19,7 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import com.google.android.play.core.ktx.requestAppUpdateInfo
 import kotlinx.android.synthetic.main.activity_main.*
@@ -169,7 +170,10 @@ class MainActivity : AppCompatActivity(),
         scope.launch {
             val manager = AppUpdateManagerFactory.create(applicationContext)
             val info = manager.requestAppUpdateInfo()
-            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && info.isImmediateUpdateAllowed) {
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                info.clientVersionStalenessDays.let { it != null && it >= DAYS_FOR_UPDATE } &&
+                info.isImmediateUpdateAllowed
+            ) {
                 val options = AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
                 manager.startUpdateFlow(info, this@MainActivity, options)
             }
@@ -295,6 +299,7 @@ class MainActivity : AppCompatActivity(),
     companion object {
         private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private const val TAG_TEXT = "TAG_TEXT"
+        private const val DAYS_FOR_UPDATE: Int = 2
         private const val RECOGNIZER_REQUEST_CODE = 1
         private const val PERMISSION_REQUEST_CODE = 2
     }
