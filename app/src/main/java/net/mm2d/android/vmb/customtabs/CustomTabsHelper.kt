@@ -70,10 +70,6 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
     fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
 
     fun launchUrl(context: Context, customTabsIntent: CustomTabsIntent, url: String): Boolean {
-        customTabsIntent.intent.putExtra(
-            EXTRA_CUSTOM_TABS_KEEP_ALIVE,
-            Intent(context, KeepAliveService::class.java)
-        )
         if (session == null) {
             customTabsIntent.intent.setPackage(findPackageNameToUse(context))
         }
@@ -115,8 +111,6 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
             "com.chrome.canary", // Chrome Canary
             "com.google.android.apps.chrome" // Chrome Local
         )
-        private const val EXTRA_CUSTOM_TABS_KEEP_ALIVE =
-            "android.support.customtabs.extra.KEEP_ALIVE"
 
         private fun findPackageNameToUse(context: Context): String? {
             val browsers = OpenUriUtils.getBrowserPackages(context)

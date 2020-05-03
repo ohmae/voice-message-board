@@ -40,10 +40,6 @@
             android:name=".LicenseActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
-        <service
-            android:name=".customtabs.KeepAliveService"
-            android:exported="true"
-            />
     </application>
 
 </manifest>
