@@ -7,25 +7,49 @@
 
 package net.mm2d.android.vmb.customtabs
 
-import android.app.Activity
-import android.app.Application.ActivityLifecycleCallbacks
-import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.browser.customtabs.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class CustomTabsHelper : CustomTabsServiceConnection() {
+class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), LifecycleObserver {
+    private val appContext: Context = context.applicationContext
     private var bound: Boolean = false
     private var session: CustomTabsSession? = null
 
-    val binder: ActivityLifecycleCallbacks
-        get() = CustomTabsBinder()
+    init {
+        ProcessLifecycleOwner.get()
+            .lifecycle
+            .addObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun bind() {
+        if (bound) return
+        val packageName = findPackageNameToUse(appContext) ?: return
+        bound = CustomTabsClient.bindCustomTabsService(
+            appContext,
+            packageName,
+            this
+        )
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun unbind() {
+        if (!bound) return
+        appContext.unbindService(this)
+        bound = false
+        session = null
+    }
 
     override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
         client.warmup(0)
@@ -33,23 +57,6 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
     }
 
     override fun onServiceDisconnected(name: ComponentName) {
-        session = null
-    }
-
-    private fun bind(context: Context) {
-        if (bound) return
-        val packageName = findPackageNameToUse(context) ?: return
-        bound = CustomTabsClient.bindCustomTabsService(
-            context.applicationContext,
-            packageName,
-            this
-        )
-    }
-
-    private fun unbind(context: Context) {
-        if (!bound) return
-        context.applicationContext.unbindService(this)
-        bound = false
         session = null
     }
 
@@ -73,34 +80,7 @@ class CustomTabsHelper : CustomTabsServiceConnection() {
         if (session == null) {
             customTabsIntent.intent.setPackage(findPackageNameToUse(context))
         }
-        try {
-            customTabsIntent.launchUrl(context, Uri.parse(url))
-            return true
-        } catch (ignored: ActivityNotFoundException) {
-        }
-        return false
-    }
-
-    private inner class CustomTabsBinder : ActivityLifecycleCallbacks {
-        private var createdCount: Int = 0
-
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            createdCount++
-            bind(activity)
-        }
-
-        override fun onActivityStarted(activity: Activity) {}
-        override fun onActivityResumed(activity: Activity) {}
-        override fun onActivityPaused(activity: Activity) {}
-        override fun onActivityStopped(activity: Activity) {}
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-
-        override fun onActivityDestroyed(activity: Activity) {
-            createdCount--
-            if (createdCount == 0 && activity.isFinishing) {
-                unbind(activity)
-            }
-        }
+        return runCatching { customTabsIntent.launchUrl(context, Uri.parse(url)) }.isSuccess
     }
 
     companion object {

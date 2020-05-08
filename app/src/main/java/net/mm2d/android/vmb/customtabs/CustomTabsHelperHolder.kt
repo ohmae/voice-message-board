@@ -26,8 +26,7 @@ object CustomTabsHelperHolder {
     private lateinit var customTabsHelper: CustomTabsHelper
 
     fun initialize(application: Application) {
-        customTabsHelper = CustomTabsHelper()
-        application.registerActivityLifecycleCallbacks(customTabsHelper.binder)
+        customTabsHelper = CustomTabsHelper(application)
     }
 
     fun mayLaunchUrl(url: String) {
