@@ -13,11 +13,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.list_item_theme.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.theme.Theme
-import net.mm2d.android.vmb.util.isStarted
+import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
@@ -26,21 +27,10 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SelectThemeDialog : BaseDialogFragment() {
-
+class SelectThemeDialog : DialogFragment() {
     private var eventListener: SelectThemeListener? = null
 
-    /**
-     * テーマが選択された時に呼ばれるリスナー。
-     *
-     * 呼び出し元のActivityに実装して利用する。
-     */
     interface SelectThemeListener {
-        /**
-         * テーマが選択された。
-         *
-         * @param theme 選択されたテーマ
-         */
         fun onSelectTheme(theme: Theme)
     }
 
@@ -80,34 +70,19 @@ class SelectThemeDialog : BaseDialogFragment() {
     }
 
     companion object {
-
-        /**
-         * テーマリストのkey
-         */
+        private const val TAG = "SelectThemeDialog"
         private const val KEY_THEME_LIST = "KEY_THEME_LIST"
 
-        /**
-         * Dialogのインスタンスを作成。
-         *
-         * 表示するテーマリストを渡すため、
-         * コンストラクタではなく
-         * このstaticメソッドを利用する。
-         *
-         * @param themes テーマリスト
-         * @return 新規インスタンス
-         */
-        private fun newInstance(themes: ArrayList<Theme>): SelectThemeDialog =
-            SelectThemeDialog().apply {
-                arguments = Bundle().apply {
-                    putParcelableArrayList(KEY_THEME_LIST, themes)
-                }
-            }
-
         fun show(activity: FragmentActivity, themes: ArrayList<Theme>) {
-            if (activity.isFinishing || !activity.isStarted()) {
-                return
-            }
-            newInstance(themes).showAllowingStateLoss(activity.supportFragmentManager, "")
+            if (activity.isInActive()) return
+            val manager = activity.supportFragmentManager
+            if (manager.isStateSaved) return
+            if (manager.findFragmentByTag(TAG) != null) return
+            SelectThemeDialog().also { dialog ->
+                dialog.arguments = Bundle().also {
+                    it.putParcelableArrayList(KEY_THEME_LIST, themes)
+                }
+            }.show(manager, TAG)
         }
     }
 }

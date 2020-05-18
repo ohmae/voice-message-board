@@ -14,10 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.list_item_string.view.*
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.util.isStarted
+import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
@@ -26,21 +27,10 @@ import java.util.*
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class SelectStringDialog : BaseDialogFragment() {
-
+class SelectStringDialog : DialogFragment() {
     private var eventListener: SelectStringListener? = null
 
-    /**
-     * 文字列を選択した時に呼ばれるリスナー
-     *
-     * 呼び出し元のActivityに実装して利用する。
-     */
     interface SelectStringListener {
-        /**
-         * 文字列が選択された。
-         *
-         * @param string 選択された文字列。
-         */
         fun onSelectString(string: String)
     }
 
@@ -77,33 +67,21 @@ class SelectStringDialog : BaseDialogFragment() {
     }
 
     companion object {
+        private const val TAG = "SelectStringDialog"
         private const val KEY_TITLE = "KEY_TITLE"
         private const val KEY_STRING_LIST = "KEY_STRING_LIST"
 
-        /**
-         * Dialogのインスタンスを作成。
-         *
-         * 表示する情報を引数で渡すため
-         * コンストラクタではなく、
-         * このstaticメソッドを利用する。
-         *
-         * @param strings 選択肢
-         * @return 新規インスタンス
-         */
-        private fun newInstance(@StringRes title: Int, strings: ArrayList<String>): SelectStringDialog {
-            val instance = SelectStringDialog()
-            val args = Bundle()
-            args.putInt(KEY_TITLE, title)
-            args.putStringArrayList(KEY_STRING_LIST, strings)
-            instance.arguments = args
-            return instance
-        }
-
         fun show(activity: FragmentActivity, @StringRes title: Int, strings: ArrayList<String>) {
-            if (activity.isFinishing || !activity.isStarted()) {
-                return
-            }
-            newInstance(title, strings).showAllowingStateLoss(activity.supportFragmentManager, "")
+            if (activity.isInActive()) return
+            val manager = activity.supportFragmentManager
+            if (manager.isStateSaved) return
+            if (manager.findFragmentByTag(TAG) != null) return
+            SelectStringDialog().also { dialog ->
+                dialog.arguments = Bundle().also {
+                    it.putInt(KEY_TITLE, title)
+                    it.putStringArrayList(KEY_STRING_LIST, strings)
+                }
+            }.show(manager, TAG)
         }
     }
 }

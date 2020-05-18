@@ -15,14 +15,15 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.util.isStarted
+import net.mm2d.android.vmb.util.isInActive
 
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class PermissionDialog : BaseDialogFragment() {
+class PermissionDialog : DialogFragment() {
     interface OnCancelListener {
         fun onCancel()
     }
@@ -57,17 +58,19 @@ class PermissionDialog : BaseDialogFragment() {
     }
 
     companion object {
+        private const val TAG = "PermissionDialog"
         private const val TITLE = "TITLE"
-        private fun newInstance(@StringRes message: Int): PermissionDialog =
-            PermissionDialog().apply {
-                arguments = Bundle().apply { putInt(TITLE, message) }
-            }
 
         fun show(activity: FragmentActivity, @StringRes message: Int) {
-            if (activity.isFinishing || !activity.isStarted()) {
-                return
-            }
-            newInstance(message).showAllowingStateLoss(activity.supportFragmentManager, "")
+            if (activity.isInActive()) return
+            val manager = activity.supportFragmentManager
+            if (manager.isStateSaved) return
+            if (manager.findFragmentByTag(TAG) != null) return
+            PermissionDialog().also { dialog ->
+                dialog.arguments = Bundle().also {
+                    it.putInt(TITLE, message)
+                }
+            }.show(manager, TAG)
         }
     }
 }

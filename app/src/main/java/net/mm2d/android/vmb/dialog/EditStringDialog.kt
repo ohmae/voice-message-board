@@ -15,32 +15,22 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.dialog_edit.view.*
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.util.isStarted
+import net.mm2d.android.vmb.util.isInActive
 
 /**
  * 文字列編集を行うダイアログ。
  *
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class EditStringDialog : BaseDialogFragment() {
-
+class EditStringDialog : DialogFragment() {
     private lateinit var editText: EditText
     private var eventListener: ConfirmStringListener? = null
 
-    /**
-     * 文字列を確定した時に呼ばれるリスナー
-     *
-     * 呼び出し元のActivityに実装して利用する。
-     */
     interface ConfirmStringListener {
-        /**
-         * 文字列が確定された。
-         *
-         * @param string 確定された文字列。
-         */
         fun onConfirmString(string: String)
     }
 
@@ -92,33 +82,19 @@ class EditStringDialog : BaseDialogFragment() {
     }
 
     companion object {
-
-        /**
-         * 選択文字列のkey
-         */
+        private const val TAG = "EditStringDialog"
         private const val KEY_STRING = "KEY_STRING"
 
-        /**
-         * Dialogのインスタンスを作成。
-         *
-         * 表示する情報を引数で渡すため
-         * コンストラクタではなく、
-         * このstaticメソッドを利用する。
-         *
-         * @param editString 編集する元の文字列
-         * @return 新規インスタンス
-         */
-        private fun newInstance(editString: String): EditStringDialog = EditStringDialog().apply {
-            arguments = Bundle().apply {
-                putString(KEY_STRING, editString)
-            }
-        }
-
         fun show(activity: FragmentActivity, editString: String) {
-            if (activity.isFinishing || !activity.isStarted()) {
-                return
-            }
-            newInstance(editString).showAllowingStateLoss(activity.supportFragmentManager, "")
+            if (activity.isInActive()) return
+            val manager = activity.supportFragmentManager
+            if (manager.isStateSaved) return
+            if (manager.findFragmentByTag(TAG) != null) return
+            EditStringDialog().also { dialog ->
+                dialog.arguments = Bundle().also {
+                    it.putString(KEY_STRING, editString)
+                }
+            }.show(manager, TAG)
         }
     }
 }

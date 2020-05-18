@@ -17,11 +17,12 @@ import android.speech.SpeechRecognizer
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.dialog_recognizer.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.Toaster
-import net.mm2d.android.vmb.util.isStarted
+import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.BeatingView
 import net.mm2d.android.vmb.view.WaveView
 import java.util.*
@@ -29,7 +30,7 @@ import java.util.*
 /**
  * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
  */
-class RecognizerDialog : BaseDialogFragment() {
+class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null
     private lateinit var textView: TextView
     private lateinit var beatingView: BeatingView
@@ -123,17 +124,18 @@ class RecognizerDialog : BaseDialogFragment() {
     }
 
     companion object {
+        private const val TAG = "RecognizerDialog"
         private const val RMS_DB_MAX = 10.0f
         private const val RMS_DB_MIN = -2.12f
         fun normalize(rms: Float): Float =
             ((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)).coerceIn(0f, 1f)
 
-        private fun newInstance(): RecognizerDialog = RecognizerDialog()
         fun show(activity: FragmentActivity) {
-            if (activity.isFinishing || !activity.isStarted()) {
-                return
-            }
-            newInstance().showAllowingStateLoss(activity.supportFragmentManager, "")
+            if (activity.isInActive()) return
+            val manager = activity.supportFragmentManager
+            if (manager.isStateSaved) return
+            if (manager.findFragmentByTag(TAG) != null) return
+            RecognizerDialog().show(manager, TAG)
         }
     }
 }
