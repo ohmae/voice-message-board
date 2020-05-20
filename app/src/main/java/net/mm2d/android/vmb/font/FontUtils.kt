@@ -32,14 +32,11 @@ object FontUtils {
             textView.typeface = Typeface.DEFAULT
             return
         }
-        try {
-            val typeFace = Typeface.createFromFile(settings.fontPath)
-            if (typeFace != null) {
-                textView.setTypeface(typeFace, Typeface.NORMAL)
+        runCatching { Typeface.createFromFile(settings.fontPath) }.getOrNull()
+            ?.let {
+                textView.setTypeface(it, Typeface.NORMAL)
                 return
             }
-        } catch (e: Exception) {
-        }
         settings.useFont = false
         settings.fontPath = ""
         settings.fontName = ""

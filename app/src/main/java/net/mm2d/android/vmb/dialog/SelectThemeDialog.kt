@@ -36,9 +36,7 @@ class SelectThemeDialog : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is SelectThemeListener) {
-            eventListener = context
-        }
+        eventListener = context as? SelectThemeListener
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

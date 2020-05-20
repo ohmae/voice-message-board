@@ -44,10 +44,7 @@ class SelectStringDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity()
         val argument = requireArguments()
-        val stringList = argument.getStringArrayList(KEY_STRING_LIST) ?: return activity.let {
-            dismiss()
-            AlertDialog.Builder(it).create()
-        }
+        val stringList = argument.getStringArrayList(KEY_STRING_LIST)!!
         return AlertDialog.Builder(activity)
             .setTitle(argument.getInt(KEY_TITLE))
             .setAdapter(StringListAdapter(activity, stringList)) { _, which ->
@@ -56,14 +53,15 @@ class SelectStringDialog : DialogFragment() {
             .create()
     }
 
-    class StringListAdapter(context: Context, collection: Collection<String>) :
-        BaseListAdapter<String>(context, collection) {
+    class StringListAdapter(
+        context: Context,
+        collection: Collection<String>
+    ) : BaseListAdapter<String>(context, collection) {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = inflateView(R.layout.list_item_string, convertView, parent)
-            view.textView.text = getItem(position)
-            return view
-        }
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+            inflateView(R.layout.list_item_string, convertView, parent).also {
+                it.textView.text = getItem(position)
+            }
     }
 
     companion object {

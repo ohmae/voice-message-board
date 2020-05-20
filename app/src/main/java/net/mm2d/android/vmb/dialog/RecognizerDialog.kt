@@ -116,10 +116,7 @@ class RecognizerDialog : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        try {
-            recognizer?.destroy()
-        } catch (_: RuntimeException) {
-        }
+        runCatching { recognizer?.destroy() }
         recognizer = null
     }
 
