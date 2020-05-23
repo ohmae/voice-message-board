@@ -15,9 +15,6 @@ import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.settings.Settings
 import java.util.*
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class HistoryDelegate(
     private val activity: FragmentActivity,
     private val historyFab: FloatingActionButton
@@ -35,9 +32,7 @@ class HistoryDelegate(
     fun exist(): Boolean = !history.isEmpty()
 
     fun showSelectDialog() {
-        if (history.isEmpty()) {
-            return
-        }
+        if (history.isEmpty()) return
         SelectStringDialog.show(activity, R.string.dialog_title_history, ArrayList(history))
     }
 

@@ -14,9 +14,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.core.content.res.use
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 object AttrUtils {
     @ColorInt
     fun resolveColor(context: Context, @AttrRes attr: Int, @ColorInt defaultColor: Int): Int =

@@ -21,9 +21,6 @@ import androidx.core.content.ContextCompat
 import net.mm2d.android.vmb.R
 import java.util.*
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class WaveView
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :

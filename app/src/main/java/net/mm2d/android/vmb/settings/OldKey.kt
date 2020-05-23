@@ -7,11 +7,6 @@
 
 package net.mm2d.android.vmb.settings
 
-/**
- * 設定値。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 enum class OldKey {
     SETTINGS_VERSION,
     KEY_BACKGROUND,

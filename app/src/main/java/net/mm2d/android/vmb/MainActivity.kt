@@ -36,11 +36,6 @@ import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.util.ViewUtils
 import java.util.*
 
-/**
- * 起動後から表示されるActivity。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class MainActivity : AppCompatActivity(),
     SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {
     private val settings by lazy {
@@ -88,11 +83,6 @@ class MainActivity : AppCompatActivity(),
         checkUpdate()
     }
 
-    /**
-     * Bundleがあればそこから、なければ初期値をViewに設定する。
-     *
-     * @param savedInstanceState State
-     */
     private fun restoreInstanceState(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             // 画面幅に初期文字列が収まる大きさに調整
@@ -168,22 +158,11 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    /**
-     * テキストの編集を開始する。
-     */
     private fun startEdit() {
         val string = textView.text.toString()
         EditStringDialog.show(this, string)
     }
 
-    /**
-     * 文字列を設定する。
-     *
-     * Activityからも設定できるようにpublic
-     * onSaveInstanceStateでここで設定した文字列は保持される。
-     *
-     * @param string 表示する文字列
-     */
     private fun setText(string: String) {
         textView.text = string
         historyDelegate.put(string)
@@ -245,12 +224,6 @@ class MainActivity : AppCompatActivity(),
         setText(string)
     }
 
-    /**
-     * タッチイベントをClickとLongClickに振り分ける。
-     *
-     * 直接OnClickを使うとピンチ時に反応するため、
-     * GestureDetectorを利用する。
-     */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             voiceInputDelegate.start()
@@ -264,13 +237,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    /**
-     * ピンチ操作でフォントサイズを調整する。
-     */
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            val factor = detector.scaleFactor
-            fontSize = (fontSize * factor).coerceIn(fontSizeMin, fontSizeMax)
+            fontSize = (fontSize * detector.scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
             updatePadding()
             return true

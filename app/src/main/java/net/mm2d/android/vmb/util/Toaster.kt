@@ -11,9 +11,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.annotation.StringRes
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 object Toaster {
     fun show(context: Context?, @StringRes text: Int) {
         context ?: return

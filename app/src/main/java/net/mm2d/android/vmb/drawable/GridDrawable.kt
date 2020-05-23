@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.drawable
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 
 /**
@@ -19,23 +20,11 @@ import androidx.annotation.ColorInt
  */
 class GridDrawable(context: Context) : Drawable() {
     private val paint: Paint = Paint()
-    private var gridSize: Float = 0f
+    private var gridSize: Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, GRID_SIZE, context.resources.displayMetrics);
     private var gridColor: Int = 0
-
     @ColorInt
     private var backgroundColor: Int = 0
 
-    init {
-        gridSize = GRID_SIZE * context.resources.displayMetrics.density
-    }
-
-    /**
-     * 描画色を設定する。
-     *
-     * グリッド色は背景色から設定する。
-     *
-     * @param background 背景
-     */
     fun setColor(background: Int) {
         val hsv = FloatArray(3)
         Color.RGBToHSV(Color.red(background), Color.green(background), Color.blue(background), hsv)
@@ -76,6 +65,6 @@ class GridDrawable(context: Context) : Drawable() {
     override fun getOpacity(): Int = PixelFormat.OPAQUE
 
     companion object {
-        private const val GRID_SIZE = 10
+        private const val GRID_SIZE = 10f
     }
 }

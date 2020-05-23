@@ -13,9 +13,6 @@ import androidx.annotation.ColorInt
 import androidx.preference.PreferenceDataStore
 import net.mm2d.android.vmb.settings.Key.Main
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class Settings private constructor(
     private val preferences: Preferences<Main>
 ) {

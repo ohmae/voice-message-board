@@ -16,9 +16,6 @@ import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.log.Logger
 import net.mm2d.log.android.AndroidSenders
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 @Suppress("unused")
 class App : MultiDexApplication() {
     override fun onCreate() {

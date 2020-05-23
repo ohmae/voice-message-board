@@ -18,9 +18,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), LifecycleObserver {
     private val appContext: Context = context.applicationContext
     private var bound: Boolean = false

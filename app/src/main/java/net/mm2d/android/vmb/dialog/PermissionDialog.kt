@@ -20,9 +20,6 @@ import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.isInActive
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class PermissionDialog : DialogFragment() {
     interface OnCancelListener {
         fun onCancel()

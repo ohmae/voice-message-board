@@ -26,9 +26,6 @@ import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
 import java.io.File
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -166,8 +163,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun openUrl(url: String): Boolean {
-        val ctx = context ?: return false
-        CustomTabsHelperHolder.openUrl(ctx, url)
+        CustomTabsHelperHolder.openUrl(requireContext(), url)
         return true
     }
 

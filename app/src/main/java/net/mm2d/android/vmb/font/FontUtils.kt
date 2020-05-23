@@ -12,20 +12,12 @@ import android.widget.TextView
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
-import net.mm2d.log.Logger
 import java.io.File
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 object FontUtils {
-    fun isValidFontFile(file: File): Boolean =
-        try {
-            Typeface.createFromFile(file) != Typeface.DEFAULT
-        } catch (e: Exception) {
-            Logger.w(e)
-            false
-        }
+    fun isValidFontFile(file: File): Boolean = runCatching {
+        Typeface.createFromFile(file) != Typeface.DEFAULT
+    }.getOrNull() ?: false
 
     fun setFont(textView: TextView, settings: Settings) {
         if (settings.fontPathToUse.isEmpty()) {

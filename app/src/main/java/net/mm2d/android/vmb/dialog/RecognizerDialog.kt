@@ -27,9 +27,6 @@ import net.mm2d.android.vmb.view.BeatingView
 import net.mm2d.android.vmb.view.WaveView
 import java.util.*
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null
     private lateinit var textView: TextView
@@ -99,8 +96,7 @@ class RecognizerDialog : DialogFragment() {
         }
 
         override fun onPartialResults(results: Bundle?) {
-            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                ?: return
+            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
             if (list.isNotEmpty() && list[0].isNotEmpty()) {
                 textView.text = list[0]
             }
@@ -108,8 +104,7 @@ class RecognizerDialog : DialogFragment() {
 
         override fun onResults(results: Bundle?) {
             dismissAllowingStateLoss()
-            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                ?: return
+            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
             (activity as? RecognizeListener)?.onRecognize(list)
         }
     }

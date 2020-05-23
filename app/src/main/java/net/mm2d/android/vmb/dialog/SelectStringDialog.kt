@@ -22,11 +22,6 @@ import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
-/**
- * 音声認識の結果複数の候補が出た時に表示するダイアログ。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class SelectStringDialog : DialogFragment() {
     private var eventListener: SelectStringListener? = null
 

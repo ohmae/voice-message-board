@@ -19,9 +19,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.AttrUtils
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 object CustomTabsHelperHolder {
     private lateinit var customTabsHelper: CustomTabsHelper
 

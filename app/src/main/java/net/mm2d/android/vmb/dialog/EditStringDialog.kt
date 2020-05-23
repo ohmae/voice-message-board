@@ -21,11 +21,6 @@ import kotlinx.android.synthetic.main.dialog_edit.view.*
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.isInActive
 
-/**
- * 文字列編集を行うダイアログ。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class EditStringDialog : DialogFragment() {
     private lateinit var editText: EditText
     private var eventListener: ConfirmStringListener? = null

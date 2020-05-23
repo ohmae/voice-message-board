@@ -22,9 +22,6 @@ import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
 import java.util.*
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class VoiceInputDelegate(
     private val activity: FragmentActivity,
     private val voiceRequestCode: Int,

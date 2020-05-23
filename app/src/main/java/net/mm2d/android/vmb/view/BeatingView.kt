@@ -17,9 +17,6 @@ import androidx.annotation.Dimension
 import androidx.core.content.ContextCompat
 import net.mm2d.android.vmb.R
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class BeatingView
 @JvmOverloads constructor(
     context: Context,

@@ -11,17 +11,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
 
-/**
- * テーマを表現するクラス。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- *
- * @constructor
- *
- * @param name            名前
- * @param backgroundColor 背景色
- * @param foregroundColor 文字色
- */
 data class Theme(
     val name: String,
     val backgroundColor: Int,

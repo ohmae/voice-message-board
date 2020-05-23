@@ -15,9 +15,6 @@ import androidx.preference.PreferenceManager
 import net.mm2d.android.vmb.BuildConfig
 import net.mm2d.android.vmb.settings.Key.Main
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 internal object Maintainer {
     // 0 : 1.2.4-
     // 1 : 1.7.0-

@@ -23,7 +23,6 @@ import net.mm2d.android.vmb.settings.Settings
 /**
  * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
  */
-
 class ThemeDelegate(
     private val activity: FragmentActivity,
     private val root: View,
@@ -39,21 +38,10 @@ class ThemeDelegate(
     private val settings = Settings.get()
     private val gridDrawable = GridDrawable(activity)
 
-    /**
-     * Preferenceを読みだして、テーマを設定する。
-     */
     fun apply() {
         apply(settings.backgroundColor, settings.foregroundColor)
     }
 
-    /**
-     * テーマ設定。
-     *
-     * 背景色と文字色を設定するのみ。
-     *
-     * @param background 背景色
-     * @param foreground 文字色
-     */
     private fun apply(background: Int, foreground: Int) {
         gridDrawable.setColor(background)
         ViewCompat.setBackground(root, gridDrawable)
@@ -70,9 +58,6 @@ class ThemeDelegate(
         apply()
     }
 
-    /**
-     * テーマ設定のダイアログを起動。
-     */
     fun showDialog() {
         SelectThemeDialog.show(activity, themes)
     }

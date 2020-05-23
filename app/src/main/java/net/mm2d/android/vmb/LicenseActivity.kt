@@ -14,9 +14,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_license.*
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class LicenseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +23,6 @@ class LicenseActivity : AppCompatActivity() {
             setTitle(R.string.pref_title_license)
             setDisplayHomeAsUpEnabled(true)
         }
-
         webView.settings.setSupportZoom(false)
         webView.settings.displayZoomControls = false
         webView.loadUrl("file:///android_asset/license.html")

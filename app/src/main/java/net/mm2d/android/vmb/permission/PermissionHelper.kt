@@ -12,9 +12,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 
-/**
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class PermissionHelper(
     private val activity: FragmentActivity,
     private val permission: String,
@@ -31,9 +28,7 @@ class PermissionHelper(
         ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
 
     fun requestPermissionIfNeed(): Boolean {
-        if (isGranted()) {
-            return false
-        }
+        if (isGranted()) return false
         ActivityCompat.requestPermissions(activity, arrayOf(permission), requestCode)
         return true
     }

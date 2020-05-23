@@ -22,11 +22,6 @@ import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 import java.util.*
 
-/**
- * テーマ選択ダイアログ。
- *
- * @author [大前良介 (OHMAE Ryosuke)](mailto:ryo@mm2d.net)
- */
 class SelectThemeDialog : DialogFragment() {
     private var eventListener: SelectThemeListener? = null
 
@@ -58,12 +53,11 @@ class SelectThemeDialog : DialogFragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val theme = getItem(position)
-            val view = inflateView(R.layout.list_item_theme, convertView, parent)
-            val sample = view.textSample
-            sample.setBackgroundColor(theme.backgroundColor)
-            sample.setTextColor(theme.foregroundColor)
-            view.textTitle.text = theme.name
-            return view
+            return inflateView(R.layout.list_item_theme, convertView, parent).also {
+                it.textSample.setBackgroundColor(theme.backgroundColor)
+                it.textSample.setTextColor(theme.foregroundColor)
+                it.textTitle.text = theme.name
+            }
         }
     }
 
