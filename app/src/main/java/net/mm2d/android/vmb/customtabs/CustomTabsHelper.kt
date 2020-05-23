@@ -29,6 +29,7 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
             .addObserver(this)
     }
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun bind() {
         if (bound) return
@@ -40,6 +41,7 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
         )
     }
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun unbind() {
         if (!bound) return

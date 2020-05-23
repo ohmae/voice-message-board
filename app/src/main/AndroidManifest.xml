@@ -5,9 +5,6 @@
     package="net.mm2d.android.vmb"
     >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -27,9 +24,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -41,5 +38,8 @@
             android:theme="@style/AppTheme.NoActionBar"
             />
     </application>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

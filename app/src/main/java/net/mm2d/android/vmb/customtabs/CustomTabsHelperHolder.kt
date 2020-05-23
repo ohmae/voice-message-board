@@ -26,6 +26,7 @@ object CustomTabsHelperHolder {
         customTabsHelper = CustomTabsHelper(application)
     }
 
+    @Suppress("unused")
     fun mayLaunchUrl(url: String) {
         customTabsHelper.mayLaunchUrl(url)
     }

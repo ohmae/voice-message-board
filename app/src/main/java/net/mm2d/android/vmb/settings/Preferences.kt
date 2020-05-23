@@ -44,11 +44,13 @@ class Preferences<K>(
         dataStore.putInt(key.name, value)
     }
 
+    @Suppress("unused")
     fun readLong(key: K, default: Long): Long {
         key.checkSuffix(default)
         return dataStore.getLong(key.name, default)
     }
 
+    @Suppress("unused")
     fun writeLong(key: K, value: Long) {
         key.checkSuffix(value)
         dataStore.putLong(key.name, value)
