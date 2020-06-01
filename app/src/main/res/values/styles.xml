@@ -16,4 +16,12 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="PreferenceCompatTheme" parent="@style/PreferenceThemeOverlay">
+        <item name="preferenceCategoryStyle">@style/PreferenceCategoryCompat</item>
+    </style>
+
+    <style name="PreferenceCategoryCompat" parent="@style/Preference.Category">
+        <item name="android:layout">@layout/preference_category_compat</item>
+    </style>
 </resources>

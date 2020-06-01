@@ -13,27 +13,14 @@ import android.os.StrictMode.VmPolicy
 import androidx.multidex.MultiDexApplication
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.log.Logger
-import net.mm2d.log.android.AndroidSenders
 
 @Suppress("unused")
 class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
-        setUpLogger()
         setStrictMode()
         Settings.initialize(this)
         CustomTabsHelperHolder.initialize(this)
-    }
-
-    private fun setUpLogger() {
-        if (!BuildConfig.DEBUG) {
-            return
-        }
-        Logger.setSender(AndroidSenders.create())
-        Logger.setLogLevel(Logger.VERBOSE)
-        AndroidSenders.appendCaller(true)
-        AndroidSenders.appendThread(true)
     }
 
     private fun setStrictMode() {
