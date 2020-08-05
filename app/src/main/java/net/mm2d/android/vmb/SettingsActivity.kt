@@ -97,7 +97,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun startFontChooser() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).also {
             it.addCategory(Intent.CATEGORY_OPENABLE)
-            it.type = "font/*"
+            it.type = "*/*"
         }
         startActivityForResult(intent, FONT_REQUEST_CODE)
     }
