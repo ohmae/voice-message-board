@@ -12,7 +12,7 @@ plugins {
 val applicationName = "VoiceMessageBoard"
 val versionMajor = 1
 val versionMinor = 7
-val versionPatch = 2
+val versionPatch = 3
 
 android {
     compileSdkVersion(29)
@@ -63,7 +63,7 @@ android {
 val kotlinVersion: String by project
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.1.0")
+    implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.preference:preference:1.1.1")
