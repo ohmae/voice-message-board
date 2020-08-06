@@ -4,6 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.mm2d.android.vmb"
     >
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
 
     <application
         android:name=".App"
@@ -38,8 +43,4 @@
             android:theme="@style/AppTheme.NoActionBar"
             />
     </application>
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-
 </manifest>
