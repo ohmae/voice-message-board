@@ -60,8 +60,6 @@ android {
     }
 }
 
-val kotlinVersion: String by project
-
 dependencies {
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
@@ -72,24 +70,21 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.2.0")
     implementation("com.google.android.material:material:1.2.0")
     implementation("com.google.android.play:core:1.8.0")
-    implementation("com.google.android.play:core-ktx:1.8.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.8")
+    implementation("com.google.android.play:core-ktx:1.8.1")
+    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
     testImplementation("junit:junit:4.13")
 }
 
-
-fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+fun isStable(version: String): Boolean {
+    val versionUpperCase = version.toUpperCase()
+    val hasStableKeyword = listOf("RELEASE", "FINAL", "GA").any { versionUpperCase.contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
+    return hasStableKeyword || regex.matches(version)
 }
 
-tasks.named("dependencyUpdates", DependencyUpdatesTask::class.java).configure {
-    rejectVersionIf {
-        isNonStable(candidate.version) && !isNonStable(currentVersion)
-    }
+tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
+    rejectVersionIf { !isStable(candidate.version) }
 }

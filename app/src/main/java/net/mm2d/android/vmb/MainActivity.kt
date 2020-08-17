@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(),
                 info.isImmediateUpdateAllowed
             ) {
                 val options = AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
-                manager.startUpdateFlow(info, this@MainActivity, options)
+                manager.startUpdateFlow(info, this, options)
             }
         }
     }
