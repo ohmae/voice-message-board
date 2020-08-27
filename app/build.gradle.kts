@@ -24,7 +24,6 @@ android {
         targetSdkVersion(29)
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
-        resConfigs("en", "ja")
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
         base.archivesBaseName = "${applicationName}-${versionName}"

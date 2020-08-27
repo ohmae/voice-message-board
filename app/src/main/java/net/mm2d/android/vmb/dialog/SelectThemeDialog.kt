@@ -46,7 +46,7 @@ class SelectThemeDialog : DialogFragment() {
             .create()
     }
 
-    private class ThemeListAdapter internal constructor(
+    private class ThemeListAdapter(
         context: Context,
         collection: Collection<Theme>
     ) : BaseListAdapter<Theme>(context, collection) {
