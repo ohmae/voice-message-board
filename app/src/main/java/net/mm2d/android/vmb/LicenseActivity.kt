@@ -28,8 +28,8 @@ class LicenseActivity : AppCompatActivity() {
         webView.loadUrl("file:///android_asset/license.html")
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
             onBackPressed()
         }
         return true

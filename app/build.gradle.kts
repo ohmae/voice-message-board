@@ -15,13 +15,13 @@ val versionMinor = 7
 val versionPatch = 3
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     buildToolsVersion = "29.0.3"
 
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled = true
@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.3.1")
     implementation("androidx.browser:browser:1.2.0")
     implementation("androidx.lifecycle:lifecycle-process:2.2.0")
-    implementation("com.google.android.material:material:1.2.0")
+    implementation("com.google.android.material:material:1.2.1")
     implementation("com.google.android.play:core:1.8.0")
     implementation("com.google.android.play:core-ktx:1.8.1")
     implementation(kotlin("stdlib"))
