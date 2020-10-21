@@ -13,17 +13,16 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
-import kotlinx.android.synthetic.main.dialog_edit.view.*
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.databinding.DialogEditBinding
 import net.mm2d.android.vmb.util.isInActive
 
 class EditStringDialog : DialogFragment() {
-    private lateinit var editText: EditText
     private var eventListener: ConfirmStringListener? = null
+    private lateinit var binding: DialogEditBinding
 
     interface ConfirmStringListener {
         fun onConfirmString(string: String)
@@ -44,8 +43,8 @@ class EditStringDialog : DialogFragment() {
         }
         val inflater = activity.layoutInflater
         val decorView = activity.window.decorView as ViewGroup
-        val view = inflater.inflate(R.layout.dialog_edit, decorView, false)
-        editText = view.editText.apply {
+        binding = DialogEditBinding.inflate(inflater, decorView, false)
+        binding.editText.apply {
             setText(string)
             setSelection(string.length)
             setOnEditorActionListener { _, actionId, event ->
@@ -61,19 +60,19 @@ class EditStringDialog : DialogFragment() {
         }
         return AlertDialog.Builder(activity)
             .setTitle(activity.getString(R.string.dialog_title_edit))
-            .setView(view)
+            .setView(binding.root)
             .setPositiveButton(R.string.ok) { _, _ -> inputText() }
             .create()
     }
 
     private fun inputText() {
-        eventListener?.onConfirmString(editText.text.toString())
+        eventListener?.onConfirmString(binding.editText.text.toString())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // 編集中の文字列を保存
-        arguments?.putString(KEY_STRING, editText.text.toString())
+        arguments?.putString(KEY_STRING, binding.editText.text.toString())
     }
 
     companion object {

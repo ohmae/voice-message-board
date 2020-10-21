@@ -21,7 +21,7 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
-import kotlinx.android.synthetic.main.activity_main.*
+import net.mm2d.android.vmb.databinding.ActivityMainBinding
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
 import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
@@ -51,33 +51,35 @@ class MainActivity : AppCompatActivity(),
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
     private var fontSize: Float = 0.0f
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
         scaleDetector = ScaleGestureDetector(this, ScaleListener())
         gestureDetector = GestureDetector(this, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
-        editFab.setOnClickListener { startEdit() }
+        binding.editFab.setOnClickListener { startEdit() }
         val listener = { _: View, event: MotionEvent ->
             gestureDetector.onTouchEvent(event)
             scaleDetector.onTouchEvent(event)
             false
         }
-        scrollView.setOnTouchListener(listener)
-        textView.setOnTouchListener(listener)
-        themeDelegate = ThemeDelegate(this, scrollView, textView, toolbar?.overflowIcon)
+        binding.scrollView.setOnTouchListener(listener)
+        binding.textView.setOnTouchListener(listener)
+        themeDelegate = ThemeDelegate(this, binding.scrollView, binding.textView, binding.toolbar.overflowIcon)
         themeDelegate.apply()
-        historyDelegate = HistoryDelegate(this, historyFab)
+        historyDelegate = HistoryDelegate(this, binding.historyFab)
         voiceInputDelegate =
             VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
                 setText(it)
             }
         restoreInstanceState(savedInstanceState)
-        ViewUtils.execOnLayout(scrollView) {
+        ViewUtils.execOnLayout(binding.scrollView) {
             updatePadding()
         }
         checkUpdate()
@@ -87,19 +89,19 @@ class MainActivity : AppCompatActivity(),
         if (savedInstanceState == null) {
             // 画面幅に初期文字列が収まる大きさに調整
             val width = resources.displayMetrics.widthPixels
-            val initialText = textView.text.toString()
+            val initialText = binding.textView.text.toString()
             fontSize = if (initialText[0] <= '\u007e') {
                 width.toFloat() / initialText.length * 2
             } else {
                 width.toFloat() / initialText.length
             }
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
         } else {
             // テキストとフォントサイズを復元
             fontSize = savedInstanceState.getFloat(TAG_FONT_SIZE)
             val text = savedInstanceState.getString(TAG_TEXT)
-            textView.text = text
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            binding.textView.text = text
+            binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
         }
     }
 
@@ -107,12 +109,12 @@ class MainActivity : AppCompatActivity(),
         super.onSaveInstanceState(outState)
         // テキストとフォントサイズを保存
         outState.putFloat(TAG_FONT_SIZE, fontSize)
-        outState.putString(TAG_TEXT, textView.text.toString())
+        outState.putString(TAG_TEXT, binding.textView.text.toString())
     }
 
     override fun onStart() {
         super.onStart()
-        FontUtils.setFont(textView, settings)
+        FontUtils.setFont(binding.textView, settings)
     }
 
     override fun onResume() {
@@ -123,7 +125,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        ViewUtils.execOnLayout(scrollView) {
+        ViewUtils.execOnLayout(binding.scrollView) {
             updatePadding()
         }
     }
@@ -159,14 +161,14 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun startEdit() {
-        val string = textView.text.toString()
+        val string = binding.textView.text.toString()
         EditStringDialog.show(this, string)
     }
 
     private fun setText(string: String) {
-        textView.text = string
+        binding.textView.text = string
         historyDelegate.put(string)
-        scrollView.scrollTo(0, 0)
+        binding.scrollView.scrollTo(0, 0)
         updatePadding()
     }
 
@@ -200,7 +202,7 @@ class MainActivity : AppCompatActivity(),
                 historyDelegate.showClearDialog()
             R.id.action_share ->
                 ShareCompat.IntentBuilder.from(this)
-                    .setText(textView.text)
+                    .setText(binding.textView.text)
                     .setType("text/plain")
                     .startChooser()
             else ->
@@ -240,16 +242,16 @@ class MainActivity : AppCompatActivity(),
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             fontSize = (fontSize * detector.scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
             updatePadding()
             return true
         }
     }
 
     private fun updatePadding() {
-        scrollView.post {
-            val diff = scrollView.height - textView.height
-            scrollView.updatePadding(top = if (diff > 0) diff / 2 else 0)
+        binding.scrollView.post {
+            val diff = binding.scrollView.height - binding.textView.height
+            binding.scrollView.updatePadding(top = if (diff > 0) diff / 2 else 0)
         }
     }
 

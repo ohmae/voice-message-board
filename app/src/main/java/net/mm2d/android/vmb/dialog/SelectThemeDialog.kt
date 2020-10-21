@@ -10,13 +10,14 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
-import kotlinx.android.synthetic.main.list_item_theme.view.*
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.databinding.ListItemThemeBinding
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
@@ -50,15 +51,15 @@ class SelectThemeDialog : DialogFragment() {
         context: Context,
         collection: Collection<Theme>
     ) : BaseListAdapter<Theme>(context, collection) {
+        private val inflater = LayoutInflater.from(context)
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val theme = getItem(position)
-            return inflateView(R.layout.list_item_theme, convertView, parent).also {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+            convertView ?: ListItemThemeBinding.inflate(inflater, parent, false).also {
+                val theme = getItem(position)
                 it.textSample.setBackgroundColor(theme.backgroundColor)
                 it.textSample.setTextColor(theme.foregroundColor)
                 it.textTitle.text = theme.name
-            }
-        }
+            }.root
     }
 
     companion object {

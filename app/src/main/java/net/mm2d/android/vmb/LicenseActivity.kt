@@ -12,20 +12,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_license.*
+import net.mm2d.android.vmb.databinding.ActivityLicenseBinding
 
 class LicenseActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLicenseBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_license)
-        setSupportActionBar(toolbar)
+        binding = ActivityLicenseBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setTitle(R.string.pref_title_license)
             setDisplayHomeAsUpEnabled(true)
         }
-        webView.settings.setSupportZoom(false)
-        webView.settings.displayZoomControls = false
-        webView.loadUrl("file:///android_asset/license.html")
+        binding.webView.settings.setSupportZoom(false)
+        binding.webView.settings.displayZoomControls = false
+        binding.webView.loadUrl("file:///android_asset/license.html")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

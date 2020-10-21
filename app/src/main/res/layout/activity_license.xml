@@ -24,7 +24,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <net.mm2d.android.vmb.view.NestedScrollingWebView
-        android:id="@+id/webView"
+        android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="net.mm2d.android.vmb.view.NestedScrollingWebView$Behavior"

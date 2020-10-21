@@ -15,7 +15,7 @@
         >
 
         <TextView
-            android:id="@+id/textSample"
+            android:id="@+id/text_sample"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/layout_margin"
@@ -26,7 +26,7 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/textTitle"
+        android:id="@+id/text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

@@ -4,7 +4,6 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-android-extensions")
     id("kotlin-kapt")
     id("com.github.ben-manes.versions")
 }
@@ -36,7 +35,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
     }
     buildTypes {
         getByName("debug") {

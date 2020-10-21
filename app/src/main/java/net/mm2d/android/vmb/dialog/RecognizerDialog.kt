@@ -15,23 +15,18 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
-import kotlinx.android.synthetic.main.dialog_recognizer.view.*
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.databinding.DialogRecognizerBinding
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.util.isInActive
-import net.mm2d.android.vmb.view.BeatingView
-import net.mm2d.android.vmb.view.WaveView
 import java.util.*
 
 class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null
-    private lateinit var textView: TextView
-    private lateinit var beatingView: BeatingView
-    private lateinit var waveView: WaveView
+    private lateinit var binding: DialogRecognizerBinding
 
     interface RecognizeListener {
         fun onRecognize(results: ArrayList<String>)
@@ -42,13 +37,10 @@ class RecognizerDialog : DialogFragment() {
         startListening()
         val inflater = activity.layoutInflater
         val decorView = activity.window.decorView as ViewGroup
-        val view = inflater.inflate(R.layout.dialog_recognizer, decorView, false)
-        beatingView = view.beating_view
-        beatingView.setOnClickListener { recognizer?.stopListening() }
-        waveView = view.wave_view
-        textView = view.text
+        binding = DialogRecognizerBinding.inflate(inflater, decorView, false)
+        binding.beatingView.setOnClickListener { recognizer?.stopListening() }
         return AlertDialog.Builder(activity)
-            .setView(view)
+            .setView(binding.root)
             .create()
     }
 
@@ -86,8 +78,8 @@ class RecognizerDialog : DialogFragment() {
 
         override fun onRmsChanged(rms: Float) {
             val volume = normalize(rms)
-            beatingView.onVolumeChanged(volume)
-            waveView.onVolumeChanged(volume)
+            binding.beatingView.onVolumeChanged(volume)
+            binding.waveView.onVolumeChanged(volume)
         }
 
         override fun onError(error: Int) {
@@ -98,7 +90,7 @@ class RecognizerDialog : DialogFragment() {
         override fun onPartialResults(results: Bundle?) {
             val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
             if (list.isNotEmpty() && list[0].isNotEmpty()) {
-                textView.text = list[0]
+                binding.text.text = list[0]
             }
         }
 

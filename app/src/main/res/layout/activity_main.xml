@@ -9,14 +9,14 @@
     >
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
         >
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -43,7 +43,7 @@
         >
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/historyFab"
+            android:id="@+id/history_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -53,7 +53,7 @@
             />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/editFab"
+            android:id="@+id/edit_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
