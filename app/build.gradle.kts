@@ -67,11 +67,11 @@ dependencies {
     implementation("androidx.browser:browser:1.2.0")
     implementation("androidx.lifecycle:lifecycle-process:2.2.0")
     implementation("com.google.android.material:material:1.2.1")
-    implementation("com.google.android.play:core:1.8.2")
+    implementation("com.google.android.play:core:1.8.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")
 
     testImplementation("junit:junit:4.13.1")
 }
