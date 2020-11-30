@@ -70,8 +70,8 @@ dependencies {
     implementation("com.google.android.play:core:1.8.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
 
     testImplementation("junit:junit:4.13.1")
 }
