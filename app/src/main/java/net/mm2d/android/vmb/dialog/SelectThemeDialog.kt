@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
@@ -72,9 +73,7 @@ class SelectThemeDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             SelectThemeDialog().also { dialog ->
-                dialog.arguments = Bundle().also {
-                    it.putParcelableArrayList(KEY_THEME_LIST, themes)
-                }
+                dialog.arguments = bundleOf(KEY_THEME_LIST to themes)
             }.show(manager, TAG)
         }
     }

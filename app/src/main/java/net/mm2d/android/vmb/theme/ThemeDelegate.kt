@@ -20,9 +20,6 @@ import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
 
-/**
- * @author <a href="mailto:ryo@mm2d.net">大前良介 (OHMAE Ryosuke)</a>
- */
 class ThemeDelegate(
     private val activity: FragmentActivity,
     private val root: View,

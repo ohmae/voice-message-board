@@ -15,6 +15,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
@@ -64,9 +65,7 @@ class PermissionDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             PermissionDialog().also { dialog ->
-                dialog.arguments = Bundle().also {
-                    it.putInt(TITLE, message)
-                }
+                dialog.arguments = bundleOf(TITLE to message)
             }.show(manager, TAG)
         }
     }

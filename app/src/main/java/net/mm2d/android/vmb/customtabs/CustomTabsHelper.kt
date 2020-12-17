@@ -13,6 +13,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.browser.customtabs.*
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -71,7 +72,7 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
     private fun makeOtherLikelyBundles(urls: List<String>): List<Bundle>? =
         if (urls.size == 1) null
         else urls.subList(1, urls.size)
-            .map { Bundle().apply { putParcelable(CustomTabsService.KEY_URL, Uri.parse(it)) } }
+            .map { bundleOf(CustomTabsService.KEY_URL to Uri.parse(it)) }
 
     fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
 

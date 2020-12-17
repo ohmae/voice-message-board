@@ -14,6 +14,7 @@ import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
@@ -85,9 +86,7 @@ class EditStringDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             EditStringDialog().also { dialog ->
-                dialog.arguments = Bundle().also {
-                    it.putString(KEY_STRING, editString)
-                }
+                dialog.arguments = bundleOf(KEY_STRING to editString)
             }.show(manager, TAG)
         }
     }

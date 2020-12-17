@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.databinding.ListItemStringBinding
@@ -71,10 +72,10 @@ class SelectStringDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             SelectStringDialog().also { dialog ->
-                dialog.arguments = Bundle().also {
-                    it.putInt(KEY_TITLE, title)
-                    it.putStringArrayList(KEY_STRING_LIST, strings)
-                }
+                dialog.arguments = bundleOf(
+                    KEY_TITLE to title,
+                    KEY_STRING_LIST to strings,
+                )
             }.show(manager, TAG)
         }
     }
