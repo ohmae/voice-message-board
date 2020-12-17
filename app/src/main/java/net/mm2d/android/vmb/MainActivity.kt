@@ -7,6 +7,7 @@
 
 package net.mm2d.android.vmb
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -53,6 +54,7 @@ class MainActivity : AppCompatActivity(),
     private var fontSize: Float = 0.0f
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
