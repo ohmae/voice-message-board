@@ -15,7 +15,7 @@ val versionPatch = 1
 
 android {
     compileSdkVersion(30)
-    buildToolsVersion = "29.0.3"
+    buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
@@ -60,7 +60,6 @@ android {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.2.0")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.core:core-ktx:1.3.2")
