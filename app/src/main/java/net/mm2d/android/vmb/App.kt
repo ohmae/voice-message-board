@@ -15,20 +15,20 @@ import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
 
 @Suppress("unused")
-class App : MultiDexApplication() {
+open class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
-        setStrictMode()
+        initializeOverrideWhenDebug()
         Settings.initialize(this)
         CustomTabsHelperHolder.initialize(this)
     }
 
-    private fun setStrictMode() {
-        if (BuildConfig.DEBUG) {
-            StrictMode.enableDefaults()
-        } else {
-            StrictMode.setThreadPolicy(ThreadPolicy.LAX)
-            StrictMode.setVmPolicy(VmPolicy.LAX)
-        }
+    protected open fun initializeOverrideWhenDebug() {
+        setUpStrictMode()
+    }
+
+    private fun setUpStrictMode() {
+        StrictMode.setThreadPolicy(ThreadPolicy.LAX)
+        StrictMode.setVmPolicy(VmPolicy.LAX)
     }
 }
