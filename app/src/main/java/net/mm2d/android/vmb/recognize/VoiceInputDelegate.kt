@@ -103,7 +103,7 @@ class VoiceInputDelegate(
             PermissionHelper.Result.DENIED ->
                 Toaster.show(activity, R.string.toast_should_allow_microphone_permission)
             PermissionHelper.Result.DENIED_ALWAYS ->
-                PermissionDialog.show(activity, R.string.dialog_microphone_permission_message)
+                PermissionDialog.show(activity)
         }
     }
 }

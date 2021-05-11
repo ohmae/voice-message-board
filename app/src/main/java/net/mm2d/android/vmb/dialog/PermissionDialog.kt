@@ -9,27 +9,16 @@ package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.isInActive
 
 class PermissionDialog : DialogFragment() {
-    interface OnCancelListener {
-        fun onCancel()
-    }
-
-    interface OnPositiveClickListener {
-        fun onPositiveClick()
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val context = requireContext()
         return AlertDialog.Builder(context)
@@ -37,14 +26,9 @@ class PermissionDialog : DialogFragment() {
             .setMessage(R.string.dialog_microphone_permission_message)
             .setPositiveButton(R.string.app_info) { _, _ ->
                 startAppInfo(context)
-                (context as? OnPositiveClickListener)?.onPositiveClick()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
             .create()
-    }
-
-    override fun onCancel(dialog: DialogInterface) {
-        (context as? OnCancelListener)?.onCancel()
     }
 
     private fun startAppInfo(context: Context) {
@@ -57,16 +41,13 @@ class PermissionDialog : DialogFragment() {
 
     companion object {
         private const val TAG = "PermissionDialog"
-        private const val TITLE = "TITLE"
 
-        fun show(activity: FragmentActivity, @StringRes message: Int) {
+        fun show(activity: FragmentActivity) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
-            PermissionDialog().also { dialog ->
-                dialog.arguments = bundleOf(TITLE to message)
-            }.show(manager, TAG)
+            PermissionDialog().show(manager, TAG)
         }
     }
 }
