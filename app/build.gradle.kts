@@ -68,16 +68,16 @@ dependencies {
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.play:core:1.10.0")
     implementation("com.google.android.play:core-ktx:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
 
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
-    debugImplementation("com.facebook.flipper:flipper:0.87.0")
+    debugImplementation("com.facebook.flipper:flipper:0.90.2")
     debugImplementation("com.facebook.soloader:soloader:0.10.1")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.87.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.87.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.90.2")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2")
 }
 
 fun isStable(version: String): Boolean {
