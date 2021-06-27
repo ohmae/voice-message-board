@@ -21,8 +21,7 @@
                 android:startX="54"
                 android:startY="47"
                 android:type="linear"
-                >
-            </gradient>
+                ></gradient>
         </aapt:attr>
     </path>
     <path android:pathData="M90.75,61C79.12,61 79.12,45 67.49,45S55.87,61 44.24,61 32.62,45 21,45C10.17,45 9.42,58.85 0,60.77V93H108V46.83C101.86,51 99.93,61 90.75,61Z">
@@ -35,8 +34,7 @@
                 android:startX="54"
                 android:startY="45"
                 android:type="linear"
-                >
-            </gradient>
+                ></gradient>
         </aapt:attr>
     </path>
     <path android:pathData="M106.75,59C95.12,59 95.12,43 83.49,43S71.87,59 60.24,59 48.62,43 37,43 25.37,59 13.74,59C6.55,59 3.8,52.87 0,48.2V91H108V58.93C107.6,59 107.18,59 106.75,59Z">
@@ -49,8 +47,7 @@
                 android:startX="54"
                 android:startY="43"
                 android:type="linear"
-                >
-            </gradient>
+                ></gradient>
         </aapt:attr>
     </path>
 </vector>

@@ -23,8 +23,8 @@
             android:gravity="center"
             android:paddingBottom="@dimen/bottom_padding"
             android:text="@string/initial_string"
-            android:textSize="@dimen/font_size"
             android:textIsSelectable="true"
+            android:textSize="@dimen/font_size"
             />
     </ScrollView>
 
@@ -38,8 +38,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:orientation="horizontal"
         android:alpha="0.9"
+        android:orientation="horizontal"
         >
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -49,6 +49,7 @@
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:contentDescription="@null"
             app:srcCompat="@drawable/ic_history"
             />
 
@@ -57,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:contentDescription="@null"
             app:srcCompat="@drawable/ic_edit"
             />
     </LinearLayout>

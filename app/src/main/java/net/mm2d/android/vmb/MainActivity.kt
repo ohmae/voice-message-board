@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity(),
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         voiceInputDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 

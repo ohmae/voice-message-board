@@ -25,7 +25,7 @@ android {
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
-        base.archivesBaseName = "${applicationName}-${versionName}"
+        base.archivesName.set("${applicationName}-${versionName}")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -74,10 +74,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
-    debugImplementation("com.facebook.flipper:flipper:0.92.0")
+    debugImplementation("com.facebook.flipper:flipper:0.95.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.1")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.92.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.92.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.95.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.95.0")
 }
 
 fun isStable(version: String): Boolean {
