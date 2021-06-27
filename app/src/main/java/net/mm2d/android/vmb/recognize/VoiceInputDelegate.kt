@@ -7,7 +7,6 @@
 
 package net.mm2d.android.vmb.recognize
 
-import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -17,7 +16,7 @@ import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog
-import net.mm2d.android.vmb.permission.PermissionHelper
+import net.mm2d.android.vmb.permission.RecordAudioPermission
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
 import java.util.*
@@ -25,12 +24,11 @@ import java.util.*
 class VoiceInputDelegate(
     private val activity: FragmentActivity,
     private val voiceRequestCode: Int,
-    permissionRequestCode: Int,
     private val setText: (text: String) -> Unit
 ) {
     private val settings = Settings.get()
-    private val permissionHelper =
-        PermissionHelper(activity, Manifest.permission.RECORD_AUDIO, permissionRequestCode)
+    private val launcher =
+        activity.registerForActivityResult(RecordAudioPermission.RequestContract(), ::onPermissionResult)
 
     fun start() {
         if (settings.shouldUseSpeechRecognizer()) {
@@ -41,8 +39,10 @@ class VoiceInputDelegate(
     }
 
     private fun startDialogWithPermission() {
-        if (!permissionHelper.requestPermissionIfNeed()) {
+        if (RecordAudioPermission.hasPermission(activity)) {
             startDialog()
+        } else {
+            launcher.launch(Unit)
         }
     }
 
@@ -91,19 +91,17 @@ class VoiceInputDelegate(
         }
     }
 
-    fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            PermissionHelper.Result.OTHER -> return
-            PermissionHelper.Result.GRANTED ->
+    private fun onPermissionResult(granted: Boolean) {
+        when {
+            granted -> {
                 startDialog()
-            PermissionHelper.Result.DENIED ->
-                Toaster.show(activity, R.string.toast_should_allow_microphone_permission)
-            PermissionHelper.Result.DENIED_ALWAYS ->
+            }
+            RecordAudioPermission.deniedWithoutShowDialog(activity) -> {
                 PermissionDialog.show(activity)
+            }
+            else -> {
+                Toaster.show(activity, R.string.toast_should_allow_microphone_permission)
+            }
         }
     }
 }

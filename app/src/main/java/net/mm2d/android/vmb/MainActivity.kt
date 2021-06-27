@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(),
         themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, binding.historyFab)
         voiceInputDelegate =
-            VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE, PERMISSION_REQUEST_CODE) {
+            VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE) {
                 setText(it)
             }
         restoreInstanceState(savedInstanceState)
@@ -130,15 +130,6 @@ class MainActivity : AppCompatActivity(),
         ViewUtils.execOnLayout(binding.scrollView) {
             updatePadding()
         }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        voiceInputDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onRecognize(results: ArrayList<String>) {
@@ -204,7 +195,7 @@ class MainActivity : AppCompatActivity(),
             R.id.action_clear_history ->
                 historyDelegate.showClearDialog()
             R.id.action_share ->
-                ShareCompat.IntentBuilder.from(this)
+                ShareCompat.IntentBuilder(this)
                     .setText(binding.textView.text)
                     .setType("text/plain")
                     .startChooser()
@@ -263,6 +254,5 @@ class MainActivity : AppCompatActivity(),
         private const val TAG_TEXT = "TAG_TEXT"
         private const val DAYS_FOR_UPDATE: Int = 2
         private const val RECOGNIZER_REQUEST_CODE = 1
-        private const val PERMISSION_REQUEST_CODE = 2
     }
 }
