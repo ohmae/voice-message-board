@@ -76,10 +76,7 @@ class MainActivity : AppCompatActivity(),
         themeDelegate = ThemeDelegate(this, binding.scrollView, binding.textView, binding.toolbar.overflowIcon)
         themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, binding.historyFab)
-        voiceInputDelegate =
-            VoiceInputDelegate(this, RECOGNIZER_REQUEST_CODE) {
-                setText(it)
-            }
+        voiceInputDelegate = VoiceInputDelegate(this, ::setText)
         restoreInstanceState(savedInstanceState)
         ViewUtils.execOnLayout(binding.scrollView) {
             updatePadding()
@@ -134,11 +131,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onRecognize(results: ArrayList<String>) {
         voiceInputDelegate.onRecognize(results)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        voiceInputDelegate.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun checkUpdate() {
@@ -253,6 +245,5 @@ class MainActivity : AppCompatActivity(),
         private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private const val TAG_TEXT = "TAG_TEXT"
         private const val DAYS_FOR_UPDATE: Int = 2
-        private const val RECOGNIZER_REQUEST_CODE = 1
     }
 }
