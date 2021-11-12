@@ -14,13 +14,12 @@ val versionMinor = 8
 val versionPatch = 2
 
 android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+    compileSdk = 31
 
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 31
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled = true
@@ -62,9 +61,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.browser:browser:1.3.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.3.1")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.browser:browser:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.4.0")
     implementation("com.google.android.material:material:1.4.0")
     implementation("com.google.android.play:core:1.10.2")
     implementation("com.google.android.play:core-ktx:1.8.1")
@@ -74,10 +73,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
-    debugImplementation("com.facebook.flipper:flipper:0.115.0")
-    debugImplementation("com.facebook.soloader:soloader:0.10.1")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.115.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.115.0")
+    debugImplementation("com.facebook.flipper:flipper:0.119.0")
+    debugImplementation("com.facebook.soloader:soloader:0.10.3")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.119.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.119.0")
 }
 
 fun isStable(version: String): Boolean {
