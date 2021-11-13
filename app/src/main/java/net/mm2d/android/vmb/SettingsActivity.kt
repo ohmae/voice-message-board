@@ -171,6 +171,5 @@ class SettingsFragment : PreferenceFragmentCompat() {
         private const val SOURCE_CODE_URL = "https://github.com/ohmae/voice-message-board"
         private const val PRIVACY_POLICY_URL =
             "https://github.com/ohmae/voice-message-board/blob/develop/PRIVACY-POLICY.md"
-        private const val FONT_REQUEST_CODE = 1
     }
 }
