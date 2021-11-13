@@ -7,11 +7,8 @@
 
 package net.mm2d.android.vmb.recognize
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.speech.RecognizerIntent
-import androidx.activity.result.contract.ActivityResultContract
+import android.Manifest
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.PermissionDialog
@@ -20,6 +17,7 @@ import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.permission.RecordAudioPermission
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
+import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 
 class VoiceInputDelegate(
     private val activity: FragmentActivity,
@@ -27,15 +25,23 @@ class VoiceInputDelegate(
 ) {
     private val settings = Settings.get()
     private val permissionLauncher =
-        activity.registerForActivityResult(RecordAudioPermission.RequestContract(), ::onPermissionResult)
+        activity.registerForActivityResultWrapper(
+            RequestPermission(),
+            Manifest.permission.RECORD_AUDIO,
+            ::onPermissionResult
+        )
     private val speechLauncher =
-        activity.registerForActivityResult(RecognizeSpeechContract(), ::onRecognize)
+        activity.registerForActivityResultWrapper(
+            RecognizeSpeechContract(),
+            activity.getString(R.string.recognizer_title),
+            ::onRecognize
+        )
 
     fun start() {
         if (settings.shouldUseSpeechRecognizer()) {
             startDialogWithPermission()
         } else {
-            speechLauncher.launch(Unit)
+            speechLauncher.launch()
         }
     }
 
@@ -43,7 +49,7 @@ class VoiceInputDelegate(
         if (RecordAudioPermission.hasPermission(activity)) {
             RecognizerDialog.show(activity)
         } else {
-            permissionLauncher.launch(Unit)
+            permissionLauncher.launch()
         }
     }
 
@@ -70,28 +76,5 @@ class VoiceInputDelegate(
                 Toaster.show(activity, R.string.toast_should_allow_microphone_permission)
             }
         }
-    }
-
-    private class RecognizeSpeechContract : ActivityResultContract<Unit, List<String>>() {
-        override fun createIntent(context: Context, input: Unit?): Intent =
-            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).also {
-                it.putExtra(
-                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-                )
-                it.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-                it.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
-                val packageName = context.packageName
-                it.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
-                val title = context.getString(R.string.recognizer_title)
-                it.putExtra(RecognizerIntent.EXTRA_PROMPT, title)
-            }
-
-        override fun parseResult(resultCode: Int, intent: Intent?): List<String> =
-            if (resultCode != Activity.RESULT_OK) {
-                emptyList()
-            } else {
-                intent?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) ?: emptyList()
-            }
     }
 }

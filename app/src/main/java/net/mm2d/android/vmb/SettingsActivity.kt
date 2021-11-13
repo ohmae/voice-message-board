@@ -7,24 +7,26 @@
 
 package net.mm2d.android.vmb
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.database.getStringOrNull
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Key.Main
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.util.Toaster
+import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
@@ -52,7 +54,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Settings.get()
     }
     private lateinit var fontPathPreference: Preference
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val fontChooserLauncher =
+        registerForActivityResultWrapper(GetContent(), "*/*", ::onSelectFont)
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = settings.preferenceDataSource
@@ -75,15 +78,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setUpFontSetting()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        scope.cancel()
-    }
-
     private fun setUpFontSetting() {
         fontPathPreference = findPreference(Main.FONT_PATH_STRING)!!
         fontPathPreference.setOnPreferenceClickListener {
-            startFontChooser()
+            fontChooserLauncher.launch()
             true
         }
         setFontName()
@@ -95,29 +93,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
         else fontPathPreference.summary = name
     }
 
-    private fun startFontChooser() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).also {
-            it.addCategory(Intent.CATEGORY_OPENABLE)
-            it.type = "*/*"
-        }
-        startActivityForResult(intent, FONT_REQUEST_CODE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != FONT_REQUEST_CODE || resultCode != Activity.RESULT_OK) {
-            return
-        }
-        val uri = data?.data ?: return
+    private fun onSelectFont(uri: Uri) {
         val context = requireContext()
-        scope.launch {
-            val (path, name) = prepareFontFile(context, uri)
-            withContext(Dispatchers.Main) {
-                settings.fontPath = path
-                settings.fontName = name
-                setFontName()
-                if (path.isEmpty()) {
-                    Toaster.show(context, R.string.toast_not_a_valid_font)
-                }
+        lifecycleScope.launchWhenCreated {
+            val (path, name) = withContext(Dispatchers.IO) {
+                prepareFontFile(context, uri)
+            }
+            settings.fontPath = path
+            settings.fontName = name
+            setFontName()
+            if (path.isEmpty()) {
+                Toaster.show(context, R.string.toast_not_a_valid_font)
             }
         }
     }
