@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.database.getStringOrNull
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -122,11 +123,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun prepareFontFile(context: Context, uri: Uri): Pair<String, String> {
-        val name: String = context.contentResolver.query(uri, null, null, null, null)?.use {
-            if (it.moveToFirst()) {
-                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-            } else null
-        } ?: return "" to ""
+        val name: String = context.contentResolver
+            .query(uri, null, null, null, null)
+            ?.use {
+                if (it.moveToFirst()) {
+                    it.getStringOrNull(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                } else null
+            } ?: return "" to ""
 
         val stream = context.contentResolver.openInputStream(uri) ?: return "" to ""
         val data = stream.use { it.readBytes() }

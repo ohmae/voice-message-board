@@ -18,7 +18,6 @@
     <string name="theme_black_white">黒地に白文字</string>
     <string name="theme_black_yellow">黒地に黄文字</string>
     <string name="theme_black_green">黒地に緑文字</string>
-    <string name="toast_can_not_use_voice_input">音声入力が起動できません</string>
     <string name="toast_voice_input_fail">音声認識に失敗しました</string>
     <string name="toast_fail_to_start_voice_input">音声認識サービスとの接続に失敗しました</string>
     <string name="toast_should_allow_microphone_permission">音声認識を利用するには権限を許可してください</string>
