@@ -93,7 +93,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         else fontPathPreference.summary = name
     }
 
-    private fun onSelectFont(uri: Uri) {
+    private fun onSelectFont(uri: Uri?) {
+        uri ?: return
         val context = requireContext()
         lifecycleScope.launchWhenCreated {
             val (path, name) = withContext(Dispatchers.IO) {
