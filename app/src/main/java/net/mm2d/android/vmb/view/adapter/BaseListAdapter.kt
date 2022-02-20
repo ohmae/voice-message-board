@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import java.util.*
 
 abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
     private val inflater = LayoutInflater.from(context)

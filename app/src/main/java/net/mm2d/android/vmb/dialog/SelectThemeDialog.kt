@@ -22,7 +22,6 @@ import net.mm2d.android.vmb.databinding.ListItemThemeBinding
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
-import java.util.*
 
 class SelectThemeDialog : DialogFragment() {
     private var eventListener: SelectThemeListener? = null

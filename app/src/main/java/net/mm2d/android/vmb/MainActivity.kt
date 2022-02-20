@@ -35,7 +35,6 @@ import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.util.ViewUtils
-import java.util.*
 
 class MainActivity : AppCompatActivity(),
     SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {

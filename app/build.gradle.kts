@@ -60,10 +60,10 @@ android {
 dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("androidx.preference:preference-ktx:1.1.1")
+    implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.browser:browser:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.4.1")
     implementation("com.google.android.material:material:1.5.0")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
@@ -73,10 +73,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.8.1")
-    debugImplementation("com.facebook.flipper:flipper:0.129.0")
+    debugImplementation("com.facebook.flipper:flipper:0.135.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.3")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.129.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.129.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.135.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.135.0")
 }
 
 fun isStable(version: String): Boolean {

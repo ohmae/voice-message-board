@@ -22,7 +22,6 @@ import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.databinding.DialogRecognizerBinding
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.util.isInActive
-import java.util.*
 
 class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null

@@ -21,7 +21,6 @@ import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.databinding.ListItemStringBinding
 import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
-import java.util.*
 
 class SelectStringDialog : DialogFragment() {
     private var eventListener: SelectStringListener? = null
