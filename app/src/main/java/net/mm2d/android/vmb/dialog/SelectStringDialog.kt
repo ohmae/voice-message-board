@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,19 +24,6 @@ import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
 class SelectStringDialog : DialogFragment() {
-    private var eventListener: SelectStringListener? = null
-
-    interface SelectStringListener {
-        fun onSelectString(string: String)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SelectStringListener) {
-            eventListener = context
-        }
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity()
         val argument = requireArguments()
@@ -43,7 +31,8 @@ class SelectStringDialog : DialogFragment() {
         return AlertDialog.Builder(activity)
             .setTitle(argument.getInt(KEY_TITLE))
             .setAdapter(StringListAdapter(activity, stringList)) { _, which ->
-                eventListener?.onSelectString(stringList[which])
+                val requestKey = requireArguments().getString(KEY_REQUEST, "")
+                parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to stringList[which]))
             }
             .create()
     }
@@ -64,14 +53,25 @@ class SelectStringDialog : DialogFragment() {
         private const val TAG = "SelectStringDialog"
         private const val KEY_TITLE = "KEY_TITLE"
         private const val KEY_STRING_LIST = "KEY_STRING_LIST"
+        private const val KEY_REQUEST = "KEY_REQUEST"
+        private const val KEY_RESULT = "KEY_RESULT"
 
-        fun show(activity: FragmentActivity, @StringRes title: Int, strings: ArrayList<String>) {
+        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (String) -> Unit) {
+            val manager = activity.supportFragmentManager
+            manager.setFragmentResultListener(requestKey, activity) { _, result ->
+                Log.e("XXXX", "$result")
+                result.getString(KEY_RESULT)?.let(listener)
+            }
+        }
+
+        fun show(activity: FragmentActivity, requestKey: String, @StringRes title: Int, strings: ArrayList<String>) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             SelectStringDialog().also { dialog ->
                 dialog.arguments = bundleOf(
+                    KEY_REQUEST to requestKey,
                     KEY_TITLE to title,
                     KEY_STRING_LIST to strings,
                 )

@@ -24,25 +24,15 @@ import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
 class SelectThemeDialog : DialogFragment() {
-    private var eventListener: SelectThemeListener? = null
-
-    interface SelectThemeListener {
-        fun onSelectTheme(theme: Theme)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        eventListener = context as? SelectThemeListener
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity()
-        val argument = requireArguments()
-        val themeList = argument.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
+        val arguments = requireArguments()
+        val themeList = arguments.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
+        val requestKey = arguments.getString(KEY_REQUEST, "")
         return AlertDialog.Builder(activity)
             .setTitle(activity.getString(R.string.theme_select))
             .setAdapter(ThemeListAdapter(activity, themeList)) { _, which ->
-                eventListener?.onSelectTheme(themeList[which])
+                parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to themeList[which]))
             }
             .create()
     }
@@ -65,14 +55,26 @@ class SelectThemeDialog : DialogFragment() {
     companion object {
         private const val TAG = "SelectThemeDialog"
         private const val KEY_THEME_LIST = "KEY_THEME_LIST"
+        private const val KEY_REQUEST = "KEY_REQUEST"
+        private const val KEY_RESULT = "KEY_RESULT"
 
-        fun show(activity: FragmentActivity, themes: ArrayList<Theme>) {
+        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (Theme) -> Unit) {
+            val manager = activity.supportFragmentManager
+            manager.setFragmentResultListener(requestKey, activity) { _, result ->
+                result.getParcelable<Theme>(KEY_RESULT)?.let(listener)
+            }
+        }
+
+        fun show(activity: FragmentActivity, requestKey: String, themes: ArrayList<Theme>) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             SelectThemeDialog().also { dialog ->
-                dialog.arguments = bundleOf(KEY_THEME_LIST to themes)
+                dialog.arguments = bundleOf(
+                    KEY_REQUEST to requestKey,
+                    KEY_THEME_LIST to themes,
+                )
             }.show(manager, TAG)
         }
     }

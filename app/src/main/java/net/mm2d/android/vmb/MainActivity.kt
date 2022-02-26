@@ -24,20 +24,17 @@ import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import net.mm2d.android.vmb.databinding.ActivityMainBinding
 import net.mm2d.android.vmb.dialog.EditStringDialog
-import net.mm2d.android.vmb.dialog.EditStringDialog.ConfirmStringListener
-import net.mm2d.android.vmb.dialog.RecognizerDialog.RecognizeListener
-import net.mm2d.android.vmb.dialog.SelectStringDialog.SelectStringListener
-import net.mm2d.android.vmb.dialog.SelectThemeDialog.SelectThemeListener
+import net.mm2d.android.vmb.dialog.RecognizerDialog
+import net.mm2d.android.vmb.dialog.SelectStringDialog
+import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.history.HistoryDelegate
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.util.ViewUtils
 
-class MainActivity : AppCompatActivity(),
-    SelectThemeListener, SelectStringListener, ConfirmStringListener, RecognizeListener {
+class MainActivity : AppCompatActivity() {
     private val settings by lazy {
         Settings.get()
     }
@@ -81,6 +78,21 @@ class MainActivity : AppCompatActivity(),
             updatePadding()
         }
         checkUpdate()
+        EditStringDialog.registerListener(this, REQUEST_EDIT) {
+            setText(it)
+        }
+        SelectThemeDialog.registerListener(this, REQUEST_THEME) {
+            themeDelegate.select(it)
+        }
+        SelectStringDialog.registerListener(this, REQUEST_SELECT) {
+            setText(it)
+            if (settings.shouldShowEditorAfterSelect()) {
+                startEdit()
+            }
+        }
+        RecognizerDialog.registerListener(this, REQUEST_RECOGNIZE) {
+            voiceInputDelegate.onRecognize(it)
+        }
     }
 
     private fun restoreInstanceState(savedInstanceState: Bundle?) {
@@ -128,10 +140,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onRecognize(results: ArrayList<String>) {
-        voiceInputDelegate.onRecognize(results)
-    }
-
     private fun checkUpdate() {
         val manager = AppUpdateManagerFactory.create(applicationContext)
         manager.appUpdateInfo.addOnSuccessListener { info ->
@@ -147,7 +155,7 @@ class MainActivity : AppCompatActivity(),
 
     private fun startEdit() {
         val string = binding.textView.text.toString()
-        EditStringDialog.show(this, string)
+        EditStringDialog.show(this, REQUEST_EDIT, string)
     }
 
     private fun setText(string: String) {
@@ -196,21 +204,6 @@ class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onSelectTheme(theme: Theme) {
-        themeDelegate.select(theme)
-    }
-
-    override fun onSelectString(string: String) {
-        setText(string)
-        if (settings.shouldShowEditorAfterSelect()) {
-            startEdit()
-        }
-    }
-
-    override fun onConfirmString(string: String) {
-        setText(string)
-    }
-
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             voiceInputDelegate.start()
@@ -241,6 +234,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     companion object {
+        private const val REQUEST_PREFIX = "MainActivity:"
+        const val REQUEST_EDIT = REQUEST_PREFIX + "REQUEST_EDIT"
+        const val REQUEST_RECOGNIZE = REQUEST_PREFIX + "REQUEST_RECOGNIZE"
+        const val REQUEST_SELECT = REQUEST_PREFIX + "REQUEST_SELECT"
+        const val REQUEST_THEME = REQUEST_PREFIX + "REQUEST_THEME"
         private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
         private const val TAG_TEXT = "TAG_TEXT"
         private const val DAYS_FOR_UPDATE: Int = 2

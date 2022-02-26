@@ -8,7 +8,6 @@
 package net.mm2d.android.vmb.dialog
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -22,26 +21,12 @@ import net.mm2d.android.vmb.databinding.DialogEditBinding
 import net.mm2d.android.vmb.util.isInActive
 
 class EditStringDialog : DialogFragment() {
-    private var eventListener: ConfirmStringListener? = null
     private lateinit var binding: DialogEditBinding
-
-    interface ConfirmStringListener {
-        fun onConfirmString(string: String)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is ConfirmStringListener) {
-            eventListener = context
-        }
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity()
-        val string = arguments?.getString(KEY_STRING) ?: return activity.let {
-            dismiss()
-            AlertDialog.Builder(it).create()
-        }
+        val string = requireArguments().getString(KEY_STRING, "")
+
         val inflater = activity.layoutInflater
         val decorView = activity.window.decorView as ViewGroup
         binding = DialogEditBinding.inflate(inflater, decorView, false)
@@ -67,7 +52,9 @@ class EditStringDialog : DialogFragment() {
     }
 
     private fun inputText() {
-        eventListener?.onConfirmString(binding.editText.text.toString())
+        val requestKey = requireArguments().getString(KEY_REQUEST, "")
+        val result = binding.editText.text.toString()
+        parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to result))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -79,14 +66,26 @@ class EditStringDialog : DialogFragment() {
     companion object {
         private const val TAG = "EditStringDialog"
         private const val KEY_STRING = "KEY_STRING"
+        private const val KEY_REQUEST = "KEY_REQUEST"
+        private const val KEY_RESULT = "KEY_RESULT"
 
-        fun show(activity: FragmentActivity, editString: String) {
+        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (String) -> Unit) {
+            val manager = activity.supportFragmentManager
+            manager.setFragmentResultListener(requestKey, activity) { _, result ->
+                result.getString(KEY_RESULT)?.let(listener)
+            }
+        }
+
+        fun show(activity: FragmentActivity, requestKey: String, editString: String) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             EditStringDialog().also { dialog ->
-                dialog.arguments = bundleOf(KEY_STRING to editString)
+                dialog.arguments = bundleOf(
+                    KEY_REQUEST to requestKey,
+                    KEY_STRING to editString,
+                )
             }.show(manager, TAG)
         }
     }

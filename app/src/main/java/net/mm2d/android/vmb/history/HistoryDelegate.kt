@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.history
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.settings.Settings
@@ -33,7 +34,12 @@ class HistoryDelegate(
 
     fun showSelectDialog() {
         if (history.isEmpty()) return
-        SelectStringDialog.show(activity, R.string.dialog_title_history, ArrayList(history))
+        SelectStringDialog.show(
+            activity,
+            MainActivity.REQUEST_SELECT,
+            R.string.dialog_title_history,
+            ArrayList(history)
+        )
     }
 
     fun showClearDialog() {

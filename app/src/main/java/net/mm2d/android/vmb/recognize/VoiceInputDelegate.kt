@@ -10,6 +10,7 @@ package net.mm2d.android.vmb.recognize
 import android.Manifest
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.fragment.app.FragmentActivity
+import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -47,7 +48,7 @@ class VoiceInputDelegate(
 
     private fun startDialogWithPermission() {
         if (RecordAudioPermission.hasPermission(activity)) {
-            RecognizerDialog.show(activity)
+            RecognizerDialog.show(activity, MainActivity.REQUEST_RECOGNIZE)
         } else {
             permissionLauncher.launch()
         }
@@ -58,7 +59,12 @@ class VoiceInputDelegate(
             return
         }
         if (results.size > 1 && settings.shouldShowCandidateList()) {
-            SelectStringDialog.show(activity, R.string.dialog_title_select, ArrayList(results))
+            SelectStringDialog.show(
+                activity,
+                MainActivity.REQUEST_SELECT,
+                R.string.dialog_title_select,
+                ArrayList(results)
+            )
         } else {
             setText.invoke(results[0])
         }
@@ -67,7 +73,7 @@ class VoiceInputDelegate(
     private fun onPermissionResult(granted: Boolean) {
         when {
             granted -> {
-                RecognizerDialog.show(activity)
+                RecognizerDialog.show(activity, MainActivity.REQUEST_RECOGNIZE)
             }
             RecordAudioPermission.deniedWithoutShowDialog(activity) -> {
                 PermissionDialog.show(activity)

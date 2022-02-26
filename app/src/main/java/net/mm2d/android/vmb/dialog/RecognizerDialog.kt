@@ -16,6 +16,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
@@ -26,10 +27,6 @@ import net.mm2d.android.vmb.util.isInActive
 class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null
     private lateinit var binding: DialogRecognizerBinding
-
-    interface RecognizeListener {
-        fun onRecognize(results: ArrayList<String>)
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity()
@@ -96,7 +93,8 @@ class RecognizerDialog : DialogFragment() {
         override fun onResults(results: Bundle?) {
             dismissAllowingStateLoss()
             val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
-            (activity as? RecognizeListener)?.onRecognize(list)
+            val requestKey = requireArguments().getString(KEY_REQUEST, "")
+            parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to list))
         }
     }
 
@@ -108,17 +106,32 @@ class RecognizerDialog : DialogFragment() {
 
     companion object {
         private const val TAG = "RecognizerDialog"
+        private const val KEY_REQUEST = "KEY_REQUEST"
+        private const val KEY_RESULT = "KEY_RESULT"
+
         private const val RMS_DB_MAX = 10.0f
         private const val RMS_DB_MIN = -2.12f
+
         fun normalize(rms: Float): Float =
             ((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)).coerceIn(0f, 1f)
 
-        fun show(activity: FragmentActivity) {
+        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (List<String>) -> Unit) {
+            val manager = activity.supportFragmentManager
+            manager.setFragmentResultListener(requestKey, activity) { _, result ->
+                result.getStringArrayList(KEY_RESULT)?.let(listener)
+            }
+        }
+
+        fun show(activity: FragmentActivity, requestKey: String) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
-            RecognizerDialog().show(manager, TAG)
+            RecognizerDialog().also {
+                it.arguments = bundleOf(
+                    KEY_REQUEST to requestKey,
+                )
+            }.show(manager, TAG)
         }
     }
 }
