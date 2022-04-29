@@ -171,6 +171,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         private const val MARKET_URL = "market://details?id=net.mm2d.android.vmb"
         private const val SOURCE_CODE_URL = "https://github.com/ohmae/voice-message-board"
         private const val PRIVACY_POLICY_URL =
-            "https://github.com/ohmae/voice-message-board/blob/develop/PRIVACY-POLICY.md"
+            "https://ohmae.github.io/app/voice-message-board/privacy-policy.html"
     }
 }

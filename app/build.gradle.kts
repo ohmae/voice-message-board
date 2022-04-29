@@ -3,10 +3,12 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
+    kotlin("android")
+    kotlin("kapt")
     id("kotlin-parcelize")
     id("com.github.ben-manes.versions")
+
+    // for release
 }
 
 val applicationName = "VoiceMessageBoard"
@@ -68,16 +70,18 @@ dependencies {
     implementation("com.google.android.material:material:1.5.0")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
 
     testImplementation("junit:junit:4.13.2")
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.8.1")
-    debugImplementation("com.facebook.flipper:flipper:0.136.0")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
+    debugImplementation("com.facebook.flipper:flipper:0.144.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.3")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.136.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.136.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.144.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.144.0")
+
+    // for release
 }
 
 fun isStable(version: String): Boolean {
