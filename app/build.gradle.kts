@@ -19,6 +19,7 @@ val versionPatch = 0
 android {
     compileSdk = 31
 
+    namespace = "net.mm2d.android.vmb"
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdk = 21
@@ -67,7 +68,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.lifecycle:lifecycle-process:2.4.1")
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.material:material:1.6.0")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
@@ -76,10 +77,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
-    debugImplementation("com.facebook.flipper:flipper:0.144.0")
+    debugImplementation("com.facebook.flipper:flipper:0.145.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.3")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.144.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.144.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.145.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.145.0")
 
     // for release
 }
