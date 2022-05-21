@@ -21,6 +21,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.mm2d.android.vmb.constant.Constants
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Key.Main
@@ -62,13 +63,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.preferences)
         bindPreference(Main.SCREEN_ORIENTATION_STRING)
         findPreference(Main.PLAY_STORE_SCREEN)?.setOnPreferenceClickListener {
-            openUrl(MARKET_URL)
+            openUrl(Constants.MARKET_URL)
         }
         findPreference(Main.PRIVACY_POLICY_SCREEN)?.setOnPreferenceClickListener {
-            openUrl(PRIVACY_POLICY_URL)
+            openUrl(Constants.PRIVACY_POLICY_URL)
         }
         findPreference(Main.SOURCE_CODE_SCREEN)?.setOnPreferenceClickListener {
-            openUrl(SOURCE_CODE_URL)
+            openUrl(Constants.SOURCE_CODE_URL)
         }
         findPreference(Main.LICENSE_SCREEN)?.setOnPreferenceClickListener {
             LicenseActivity.start(requireContext())
@@ -161,16 +162,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onResume()
         CustomTabsHelperHolder.mayLaunchUrl(
             listOf(
-                PRIVACY_POLICY_URL,
-                SOURCE_CODE_URL
+                Constants.PRIVACY_POLICY_URL,
+                Constants.SOURCE_CODE_URL
             )
         )
-    }
-
-    companion object {
-        private const val MARKET_URL = "market://details?id=net.mm2d.android.vmb"
-        private const val SOURCE_CODE_URL = "https://github.com/ohmae/voice-message-board"
-        private const val PRIVACY_POLICY_URL =
-            "https://ohmae.github.io/app/voice-message-board/privacy-policy.html"
     }
 }
