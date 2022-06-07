@@ -30,6 +30,26 @@ android {
         vectorDrawables.useSupportLibrary = true
         base.archivesName.set("${applicationName}-${versionName}")
     }
+    applicationVariants.all {
+        if (buildType.name == "release") {
+            outputs.all {
+                (this as BaseVariantOutputImpl).outputFileName = "${applicationName}-${versionName}.apk"
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "d"
+            isTestCoverageEnabled = true
+        }
+        release {
+            isShrinkResources = true
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -40,47 +60,34 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    buildTypes {
-        getByName("debug") {
-            isDebuggable = true
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "d"
-        }
-        getByName("release") {
-            isShrinkResources = true
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
+    lint {
+        abortOnError = true
     }
-    applicationVariants.all {
-        if (buildType.name == "release") {
-            outputs.all {
-                (this as BaseVariantOutputImpl).outputFileName = "${applicationName}-${versionName}.apk"
-            }
-        }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.lifecycle:lifecycle-process:2.4.1")
-    implementation("com.google.android.material:material:1.6.0")
+    implementation("com.google.android.material:material:1.6.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2")
 
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
-    debugImplementation("com.facebook.flipper:flipper:0.147.0")
+    debugImplementation("com.facebook.flipper:flipper:0.148.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.3")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.147.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.147.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.148.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.148.0")
 
     // for release
 }
