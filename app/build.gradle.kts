@@ -78,16 +78,16 @@ dependencies {
     implementation("com.google.android.material:material:1.6.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3")
 
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
-    debugImplementation("com.facebook.flipper:flipper:0.148.0")
+    debugImplementation("com.facebook.flipper:flipper:0.150.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.3")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.148.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.148.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.150.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.150.0")
 
     // for release
 }

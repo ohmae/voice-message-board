@@ -63,6 +63,7 @@ class GridDrawable(context: Context) : Drawable() {
         paint.colorFilter = cf
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith("PixelFormat.OPAQUE", "android.graphics.PixelFormat"))
     override fun getOpacity(): Int = PixelFormat.OPAQUE
 
     companion object {
