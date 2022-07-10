@@ -17,13 +17,13 @@ val versionMinor = 10
 val versionPatch = 1
 
 android {
-    compileSdk = 31
+    compileSdk = 33
 
     namespace = "net.mm2d.android.vmb"
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 33
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
         multiDexEnabled = true
