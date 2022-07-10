@@ -10,7 +10,6 @@ package net.mm2d.android.vmb
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import net.mm2d.android.vmb.databinding.ActivityLicenseBinding
 
@@ -31,10 +30,8 @@ class LicenseActivity : AppCompatActivity() {
         binding.webView.loadUrl("file:///android_asset/license.html")
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
         return true
     }
 
