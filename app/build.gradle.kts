@@ -74,6 +74,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.browser:browser:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-process:2.5.1")
     implementation("com.google.android.material:material:1.6.1")
     implementation("com.google.android.play:core:1.10.3")

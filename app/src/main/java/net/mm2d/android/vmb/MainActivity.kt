@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (historyDelegate.exist()) {
             showHistoryMenu.isEnabled = true
             clearHistoryMenu.isEnabled = true
