@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.databinding.ListItemThemeBinding
 import net.mm2d.android.vmb.theme.Theme
+import net.mm2d.android.vmb.util.getParcelableArrayListSafely
+import net.mm2d.android.vmb.util.getParcelableSafely
 import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
@@ -27,7 +29,7 @@ class SelectThemeDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity()
         val arguments = requireArguments()
-        val themeList = arguments.getParcelableArrayList<Theme>(KEY_THEME_LIST)!!
+        val themeList = arguments.getParcelableArrayListSafely<Theme>(KEY_THEME_LIST)!!
         val requestKey = arguments.getString(KEY_REQUEST, "")
         return AlertDialog.Builder(activity)
             .setTitle(activity.getString(R.string.theme_select))
@@ -61,7 +63,7 @@ class SelectThemeDialog : DialogFragment() {
         fun registerListener(activity: FragmentActivity, requestKey: String, listener: (Theme) -> Unit) {
             val manager = activity.supportFragmentManager
             manager.setFragmentResultListener(requestKey, activity) { _, result ->
-                result.getParcelable<Theme>(KEY_RESULT)?.let(listener)
+                result.getParcelableSafely<Theme>(KEY_RESULT)?.let(listener)
             }
         }
 

@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2022 大前良介 (OHMAE Ryosuke)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/MIT
+ */
+
+package net.mm2d.android.vmb.util
+
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.ResolveInfoFlags
+import android.content.pm.ResolveInfo
+import android.os.Build
+
+fun PackageManager.queryIntentActivitiesCompat(intent: Intent, flags: Int): List<ResolveInfo> =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        queryIntentActivities(intent, ResolveInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION")
+        queryIntentActivities(intent, flags)
+    }
+
+fun PackageManager.queryIntentServicesCompat(intent: Intent, flags: Int): List<ResolveInfo> =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        queryIntentServices(intent, ResolveInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION")
+        queryIntentServices(intent, flags)
+    }
+
+fun PackageManager.resolveActivityCompat(intent: Intent, flags: Int): ResolveInfo? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        resolveActivity(intent, ResolveInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION")
+        resolveActivity(intent, flags)
+    }

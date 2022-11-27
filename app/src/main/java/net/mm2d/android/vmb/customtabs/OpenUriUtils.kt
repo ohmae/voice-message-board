@@ -12,20 +12,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import net.mm2d.android.vmb.util.queryIntentActivitiesCompat
+import net.mm2d.android.vmb.util.resolveActivityCompat
 
 internal object OpenUriUtils {
     fun getBrowserPackages(context: Context): Set<String> {
         val flags =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PackageManager.MATCH_ALL else 0
         return context.packageManager
-            .queryIntentActivities(makeBrowserTestIntent(), flags)
-            .mapNotNull { it?.activityInfo?.packageName }
+            .queryIntentActivitiesCompat(makeBrowserTestIntent(), flags)
+            .mapNotNull { it.activityInfo?.packageName }
             .toSet()
     }
 
     fun getDefaultBrowserPackage(context: Context): String? {
         val packageName = context.packageManager
-            .resolveActivity(makeBrowserTestIntent(), 0)
+            .resolveActivityCompat(makeBrowserTestIntent(), 0)
             ?.activityInfo
             ?.packageName
             ?: return null
@@ -44,12 +46,12 @@ internal object OpenUriUtils {
     ): Boolean {
         val packageManager = context.packageManager
         val intent = makeBrowseIntent(uri)
-        val packageName = packageManager.resolveActivity(intent, 0)
+        val packageName = packageManager.resolveActivityCompat(intent, 0)
             ?.activityInfo?.packageName ?: return false
         if (getBrowserPackages(context).contains(packageName)) {
             return false
         }
-        return packageManager.queryIntentActivities(intent, 0)
-            .any { it?.activityInfo?.packageName == packageName }
+        return packageManager.queryIntentActivitiesCompat(intent, 0)
+            .any { it.activityInfo?.packageName == packageName }
     }
 }

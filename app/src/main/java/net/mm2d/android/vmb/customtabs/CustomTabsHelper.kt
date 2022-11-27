@@ -15,11 +15,12 @@ import android.os.Bundle
 import androidx.browser.customtabs.*
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import net.mm2d.android.vmb.util.queryIntentServicesCompat
 
-class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), LifecycleObserver {
+class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), LifecycleEventObserver {
     private val appContext: Context = context.applicationContext
     private var bound: Boolean = false
     private var session: CustomTabsSession? = null
@@ -30,9 +31,19 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
             .addObserver(this)
     }
 
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun bind() {
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_START -> {
+                bind()
+            }
+            Lifecycle.Event.ON_STOP -> {
+                unbind()
+            }
+            else -> Unit
+        }
+    }
+
+    private fun bind() {
         if (bound) return
         val packageName = findPackageNameToUse(appContext) ?: return
         bound = CustomTabsClient.bindCustomTabsService(
@@ -42,9 +53,7 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
         )
     }
 
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun unbind() {
+    private fun unbind() {
         if (!bound) return
         appContext.unbindService(this)
         bound = false
@@ -95,8 +104,8 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
         private fun findPackageNameToUse(context: Context): String? {
             val browsers = OpenUriUtils.getBrowserPackages(context)
             val candidate = context.packageManager
-                .queryIntentServices(Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION), 0)
-                .mapNotNull { it?.serviceInfo?.packageName }
+                .queryIntentServicesCompat(Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION), 0)
+                .mapNotNull { it.serviceInfo?.packageName }
                 .filter { browsers.contains(it) }
             if (candidate.isEmpty()) return null
             if (candidate.size == 1) return candidate[0]

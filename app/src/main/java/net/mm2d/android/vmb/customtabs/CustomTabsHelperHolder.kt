@@ -16,6 +16,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.util.AttrUtils
 
@@ -42,7 +43,11 @@ object CustomTabsHelperHolder {
         }
         val builder = customTabsHelper.createCustomTabsIntent()
             .setShowTitle(true)
-            .setToolbarColor(AttrUtils.resolveColor(context, R.attr.colorPrimary, Color.BLACK))
+            .setDefaultColorSchemeParams(
+                CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(AttrUtils.resolveColor(context, R.attr.colorPrimary, Color.BLACK))
+                    .build()
+            )
         AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
             ?.toBitmap()
             ?.let { builder.setCloseButtonIcon(it) }
