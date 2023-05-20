@@ -14,11 +14,14 @@ import android.provider.OpenableColumns
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.database.getStringOrNull
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mm2d.android.vmb.constant.Constants
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
@@ -93,15 +96,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun onSelectFont(uri: Uri?) {
         uri ?: return
         val context = requireContext()
-        lifecycleScope.launchWhenCreated {
-            val (path, name) = withContext(Dispatchers.IO) {
-                prepareFontFile(context, uri)
-            }
-            settings.fontPath = path
-            settings.fontName = name
-            setFontName()
-            if (path.isEmpty()) {
-                Toaster.show(context, R.string.toast_not_a_valid_font)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                val (path, name) = withContext(Dispatchers.IO) {
+                    prepareFontFile(context, uri)
+                }
+                settings.fontPath = path
+                settings.fontName = name
+                setFontName()
+                if (path.isEmpty()) {
+                    Toaster.show(context, R.string.toast_not_a_valid_font)
+                }
             }
         }
     }
