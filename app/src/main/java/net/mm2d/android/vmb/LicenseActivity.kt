@@ -27,7 +27,16 @@ class LicenseActivity : AppCompatActivity() {
         }
         binding.webView.settings.setSupportZoom(false)
         binding.webView.settings.displayZoomControls = false
-        binding.webView.loadUrl("file:///android_asset/license.html")
+        if (savedInstanceState == null) {
+            binding.webView.loadUrl("file:///android_asset/license.html")
+        } else {
+            binding.webView.restoreState(savedInstanceState)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.webView.saveState(outState)
     }
 
     override fun onSupportNavigateUp(): Boolean {
