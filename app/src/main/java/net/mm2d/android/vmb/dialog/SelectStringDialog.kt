@@ -39,7 +39,7 @@ class SelectStringDialog : DialogFragment() {
 
     class StringListAdapter(
         context: Context,
-        collection: Collection<String>
+        collection: Collection<String>,
     ) : BaseListAdapter<String>(context, collection) {
         private val inflater = LayoutInflater.from(context)
 

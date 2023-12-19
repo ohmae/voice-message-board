@@ -49,7 +49,7 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
         bound = CustomTabsClient.bindCustomTabsService(
             appContext,
             packageName,
-            this
+            this,
         )
     }
 
@@ -79,9 +79,12 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
     }
 
     private fun makeOtherLikelyBundles(urls: List<String>): List<Bundle>? =
-        if (urls.size == 1) null
-        else urls.subList(1, urls.size)
-            .map { bundleOf(CustomTabsService.KEY_URL to Uri.parse(it)) }
+        if (urls.size == 1) {
+            null
+        } else {
+            urls.subList(1, urls.size)
+                .map { bundleOf(CustomTabsService.KEY_URL to Uri.parse(it)) }
+        }
 
     fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
 
@@ -98,7 +101,7 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
             "com.chrome.beta", // Chrome Beta
             "com.chrome.dev", // Chrome Dev
             "com.chrome.canary", // Chrome Canary
-            "com.google.android.apps.chrome" // Chrome Local
+            "com.google.android.apps.chrome", // Chrome Local
         )
 
         private fun findPackageNameToUse(context: Context): String? {

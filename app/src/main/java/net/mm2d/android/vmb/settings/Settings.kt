@@ -14,7 +14,7 @@ import androidx.preference.PreferenceDataStore
 import net.mm2d.android.vmb.settings.Key.Main
 
 class Settings private constructor(
-    private val preferences: Preferences<Main>
+    private val preferences: Preferences<Main>,
 ) {
     val preferenceDataSource: PreferenceDataStore
         get() = preferences.dataStore

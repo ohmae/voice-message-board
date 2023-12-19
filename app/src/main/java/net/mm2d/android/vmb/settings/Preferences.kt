@@ -13,12 +13,12 @@ import kotlin.reflect.KClass
 
 class Preferences<K>(
     context: Context,
-    kClass: KClass<K>
+    kClass: KClass<K>,
 ) where K : Enum<*>,
-        K : Key {
+          K : Key {
     val dataStore: SharedPreferenceDataStore =
         SharedPreferenceDataStore(
-            context.getSharedPreferences(BuildConfig.APPLICATION_ID + "." + kClass.simpleName, Context.MODE_PRIVATE)
+            context.getSharedPreferences(BuildConfig.APPLICATION_ID + "." + kClass.simpleName, Context.MODE_PRIVATE),
         )
 
     operator fun contains(key: K): Boolean =

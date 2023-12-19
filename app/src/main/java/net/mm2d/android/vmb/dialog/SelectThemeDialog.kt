@@ -41,7 +41,7 @@ class SelectThemeDialog : DialogFragment() {
 
     private class ThemeListAdapter(
         context: Context,
-        collection: Collection<Theme>
+        collection: Collection<Theme>,
     ) : BaseListAdapter<Theme>(context, collection) {
         private val inflater = LayoutInflater.from(context)
 

@@ -22,20 +22,20 @@ import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 
 class VoiceInputDelegate(
     private val activity: FragmentActivity,
-    private val setText: (text: String) -> Unit
+    private val setText: (text: String) -> Unit,
 ) {
     private val settings = Settings.get()
     private val permissionLauncher =
         activity.registerForActivityResultWrapper(
             RequestPermission(),
             Manifest.permission.RECORD_AUDIO,
-            ::onPermissionResult
+            ::onPermissionResult,
         )
     private val speechLauncher =
         activity.registerForActivityResultWrapper(
             RecognizeSpeechContract(),
             activity.getString(R.string.recognizer_title),
-            ::onRecognize
+            ::onRecognize,
         )
 
     fun start() {
@@ -63,7 +63,7 @@ class VoiceInputDelegate(
                 activity,
                 MainActivity.REQUEST_SELECT,
                 R.string.dialog_title_select,
-                ArrayList(results)
+                ArrayList(results),
             )
         } else {
             setText.invoke(results[0])

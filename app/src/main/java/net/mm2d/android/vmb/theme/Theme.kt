@@ -14,5 +14,5 @@ import kotlinx.parcelize.Parcelize
 data class Theme(
     val name: String,
     val backgroundColor: Int,
-    val foregroundColor: Int
+    val foregroundColor: Int,
 ) : Parcelable

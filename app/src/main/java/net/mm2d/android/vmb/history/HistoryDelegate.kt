@@ -18,7 +18,7 @@ import java.util.*
 
 class HistoryDelegate(
     private val activity: FragmentActivity,
-    private val historyFab: FloatingActionButton
+    private val historyFab: FloatingActionButton,
 ) {
     private val settings = Settings.get()
     private val history = LinkedList(settings.history)
@@ -38,7 +38,7 @@ class HistoryDelegate(
             activity,
             MainActivity.REQUEST_SELECT,
             R.string.dialog_title_history,
-            ArrayList(history)
+            ArrayList(history),
         )
     }
 

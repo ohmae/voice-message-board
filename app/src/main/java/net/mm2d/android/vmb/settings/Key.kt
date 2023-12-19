@@ -52,7 +52,7 @@ private val SUFFIXES =
         SUFFIX_FLOAT,
         SUFFIX_STRING,
         SUFFIX_SET,
-        SUFFIX_SCREEN
+        SUFFIX_SCREEN,
     )
 
 internal fun Array<out Enum<*>>.checkSuffix() {

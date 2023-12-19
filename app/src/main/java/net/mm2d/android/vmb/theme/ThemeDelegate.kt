@@ -25,13 +25,13 @@ class ThemeDelegate(
     private val activity: FragmentActivity,
     private val root: View,
     private val textView: TextView,
-    private val icon: Drawable?
+    private val icon: Drawable?,
 ) {
     private val themes = arrayListOf(
         Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
         Theme(activity.getString(R.string.theme_black_white), Color.BLACK, Color.WHITE),
         Theme(activity.getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW),
-        Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN)
+        Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN),
     )
     private val settings = Settings.get()
     private val gridDrawable = GridDrawable(activity)

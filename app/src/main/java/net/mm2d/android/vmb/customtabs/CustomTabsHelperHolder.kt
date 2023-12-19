@@ -46,7 +46,7 @@ object CustomTabsHelperHolder {
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
                     .setToolbarColor(AttrUtils.resolveColor(context, androidx.appcompat.R.attr.colorPrimary, Color.BLACK))
-                    .build()
+                    .build(),
             )
         AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
             ?.toBitmap()
@@ -65,12 +65,15 @@ object CustomTabsHelperHolder {
     }
 
     private fun Drawable.toBitmap(): Bitmap =
-        if (this is BitmapDrawable) bitmap
-        else Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
-            .also { bitmap ->
-                Canvas(bitmap).also {
-                    setBounds(0, 0, it.width, it.height)
-                    draw(it)
+        if (this is BitmapDrawable) {
+            bitmap
+        } else {
+            Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
+                .also { bitmap ->
+                    Canvas(bitmap).also {
+                        setBounds(0, 0, it.width, it.height)
+                        draw(it)
+                    }
                 }
-            }
+        }
 }

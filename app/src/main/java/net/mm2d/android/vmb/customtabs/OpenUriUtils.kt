@@ -42,7 +42,7 @@ internal object OpenUriUtils {
 
     fun hasDefaultAppOtherThanBrowser(
         context: Context,
-        uri: String
+        uri: String,
     ): Boolean {
         val packageManager = context.packageManager
         val intent = makeBrowseIntent(uri)

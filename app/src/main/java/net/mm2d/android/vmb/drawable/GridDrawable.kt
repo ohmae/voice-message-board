@@ -19,7 +19,9 @@ import androidx.annotation.ColorInt
 class GridDrawable(context: Context) : Drawable() {
     private val paint: Paint = Paint()
     private var gridSize: Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, GRID_SIZE, context.resources.displayMetrics
+        TypedValue.COMPLEX_UNIT_DIP,
+        GRID_SIZE,
+        context.resources.displayMetrics,
     )
     private var gridColor: Int = 0
 

@@ -16,20 +16,20 @@ import androidx.fragment.app.FragmentActivity
 fun <I, O> Fragment.registerForActivityResultWrapper(
     contract: ActivityResultContract<I, O>,
     input: I,
-    callback: ActivityResultCallback<O>
+    callback: ActivityResultCallback<O>,
 ): ActivityResultLauncherWrapper<I> =
     ActivityResultLauncherWrapper(registerForActivityResult(contract, callback), input)
 
 fun <I, O> FragmentActivity.registerForActivityResultWrapper(
     contract: ActivityResultContract<I, O>,
     input: I,
-    callback: ActivityResultCallback<O>
+    callback: ActivityResultCallback<O>,
 ): ActivityResultLauncherWrapper<I> =
     ActivityResultLauncherWrapper(registerForActivityResult(contract, callback), input)
 
 class ActivityResultLauncherWrapper<I>(
     private val launcher: ActivityResultLauncher<I>,
-    private val input: I
+    private val input: I,
 ) {
     fun launch() = launcher.launch(input)
 }

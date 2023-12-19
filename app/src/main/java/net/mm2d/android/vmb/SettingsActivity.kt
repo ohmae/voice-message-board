@@ -89,8 +89,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun setFontName() {
         val name = settings.fontName
-        if (name.isEmpty()) fontPathPreference.setSummary(R.string.pref_description_font_path)
-        else fontPathPreference.summary = name
+        if (name.isEmpty()) {
+            fontPathPreference.setSummary(R.string.pref_description_font_path)
+        } else {
+            fontPathPreference.summary = name
+        }
     }
 
     private fun onSelectFont(uri: Uri?) {
@@ -117,7 +120,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             ?.use {
                 if (it.moveToFirst()) {
                     it.getStringOrNull(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                } else null
+                } else {
+                    null
+                }
             } ?: return "" to ""
 
         val stream = context.contentResolver.openInputStream(uri) ?: return "" to ""
@@ -164,8 +169,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         CustomTabsHelperHolder.mayLaunchUrl(
             listOf(
                 Constants.PRIVACY_POLICY_URL,
-                Constants.SOURCE_CODE_URL
-            )
+                Constants.SOURCE_CODE_URL,
+            ),
         )
     }
 }

@@ -75,7 +75,7 @@ internal object Maintainer {
 
     private class Migrator(
         private val sharedPreferences: SharedPreferences,
-        private val preferences: Preferences<Main>
+        private val preferences: Preferences<Main>,
     ) {
         fun boolean(oldKey: OldKey, key: Main) {
             if (sharedPreferences.contains(oldKey.name)) {

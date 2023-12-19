@@ -25,15 +25,15 @@ android {
         minSdk = 21
         targetSdk = 33
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
-        versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionName = "$versionMajor.$versionMinor.$versionPatch"
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
-        base.archivesName.set("${applicationName}-${versionName}")
+        base.archivesName.set("$applicationName-$versionName")
     }
     applicationVariants.all {
         if (buildType.name == "release") {
             outputs.all {
-                (this as BaseVariantOutputImpl).outputFileName = "${applicationName}-${versionName}.apk"
+                (this as BaseVariantOutputImpl).outputFileName = "$applicationName-$versionName.apk"
             }
         }
     }
@@ -71,6 +71,8 @@ android {
     }
 }
 
+val ktlint by configurations.creating
+
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.multidex:multidex:2.0.1")
@@ -79,7 +81,7 @@ dependencies {
     implementation("androidx.browser:browser:1.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-process:2.6.2")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -88,12 +90,50 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
-    debugImplementation("com.facebook.flipper:flipper:0.240.0")
+    debugImplementation("com.facebook.flipper:flipper:0.242.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.5")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.240.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.240.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.242.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.242.0")
+
+    ktlint("com.pinterest.ktlint:ktlint-cli:1.0.1") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
 
     // for release
+}
+
+val ktlintCheck by tasks.registering(JavaExec::class) {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Check Kotlin code style"
+    classpath = ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    args(
+        "**/src/**/*.kt",
+        "**.kts",
+        "!**/build/**",
+    )
+    isIgnoreExitValue = true
+}
+
+tasks.named<DefaultTask>("check") {
+    dependsOn(ktlintCheck)
+}
+
+tasks.register<JavaExec>("ktlintFormat") {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Check Kotlin code style and format"
+    classpath = ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
+    args(
+        "-F",
+        "**/src/**/*.kt",
+        "**.kts",
+        "!**/build/**",
+    )
+    isIgnoreExitValue = true
 }
 
 fun isStable(version: String): Boolean {
