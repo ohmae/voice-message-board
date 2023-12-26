@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         multiDexEnabled = true
@@ -62,10 +62,12 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
     lint {
         abortOnError = true
     }
+    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
@@ -90,12 +92,12 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
-    debugImplementation("com.facebook.flipper:flipper:0.242.0")
+    debugImplementation("com.facebook.flipper:flipper:0.243.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.5")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.242.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.242.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.243.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.243.0")
 
-    ktlint("com.pinterest.ktlint:ktlint-cli:1.0.1") {
+    ktlint("com.pinterest.ktlint:ktlint-cli:1.1.0") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
         }
@@ -104,7 +106,7 @@ dependencies {
     // for release
 }
 
-val ktlintCheck by tasks.registering(JavaExec::class) {
+tasks.register<JavaExec>("ktlint") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     description = "Check Kotlin code style"
     classpath = ktlint
@@ -115,10 +117,6 @@ val ktlintCheck by tasks.registering(JavaExec::class) {
         "!**/build/**",
     )
     isIgnoreExitValue = true
-}
-
-tasks.named<DefaultTask>("check") {
-    dependsOn(ktlintCheck)
 }
 
 tasks.register<JavaExec>("ktlintFormat") {

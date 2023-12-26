@@ -12,7 +12,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.browser.customtabs.*
+import androidx.browser.customtabs.CustomTabsClient
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.CustomTabsService
+import androidx.browser.customtabs.CustomTabsServiceConnection
+import androidx.browser.customtabs.CustomTabsSession
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -97,11 +101,16 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
 
     companion object {
         private val PREFERRED_PACKAGES = listOf(
-            "com.android.chrome", // Chrome
-            "com.chrome.beta", // Chrome Beta
-            "com.chrome.dev", // Chrome Dev
-            "com.chrome.canary", // Chrome Canary
-            "com.google.android.apps.chrome", // Chrome Local
+            // Chrome
+            "com.android.chrome",
+            // Chrome Beta
+            "com.chrome.beta",
+            // Chrome Dev
+            "com.chrome.dev",
+            // Chrome Canary
+            "com.chrome.canary",
+            // Chrome Local
+            "com.google.android.apps.chrome",
         )
 
         private fun findPackageNameToUse(context: Context): String? {
