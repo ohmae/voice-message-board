@@ -40,9 +40,11 @@ class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), Lifecy
             Lifecycle.Event.ON_START -> {
                 bind()
             }
+
             Lifecycle.Event.ON_STOP -> {
                 unbind()
             }
+
             else -> Unit
         }
     }

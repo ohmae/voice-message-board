@@ -192,17 +192,22 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))
+
             R.id.action_theme ->
                 themeDelegate.showDialog()
+
             R.id.action_show_history ->
                 historyDelegate.showSelectDialog()
+
             R.id.action_clear_history ->
                 historyDelegate.showClearDialog()
+
             R.id.action_share ->
                 ShareCompat.IntentBuilder(this)
                     .setText(binding.textView.text)
                     .setType("text/plain")
                     .startChooser()
+
             else ->
                 return super.onOptionsItemSelected(item)
         }

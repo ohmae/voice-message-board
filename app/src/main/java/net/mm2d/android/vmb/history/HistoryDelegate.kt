@@ -14,7 +14,7 @@ import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.settings.Settings
-import java.util.*
+import java.util.LinkedList
 
 class HistoryDelegate(
     private val activity: FragmentActivity,

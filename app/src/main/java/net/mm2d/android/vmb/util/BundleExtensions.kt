@@ -7,22 +7,12 @@
 
 package net.mm2d.android.vmb.util
 
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.os.BundleCompat
 
 inline fun <reified T : Parcelable> Bundle.getParcelableSafely(key: String): T? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        getParcelable(key, T::class.java)
-    } else {
-        @Suppress("DEPRECATION")
-        getParcelable(key)
-    }
+    BundleCompat.getParcelable(this, key, T::class.java)
 
 inline fun <reified T : Parcelable> Bundle.getParcelableArrayListSafely(key: String): ArrayList<T>? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        getParcelableArrayList(key, T::class.java)
-    } else {
-        @Suppress("DEPRECATION")
-        getParcelableArrayList(key)
-    }
+    BundleCompat.getParcelableArrayList(this, key, T::class.java)

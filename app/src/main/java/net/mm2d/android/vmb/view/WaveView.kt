@@ -19,7 +19,7 @@ import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import net.mm2d.android.vmb.R
-import java.util.*
+import java.util.LinkedList
 
 class WaveView
 @JvmOverloads

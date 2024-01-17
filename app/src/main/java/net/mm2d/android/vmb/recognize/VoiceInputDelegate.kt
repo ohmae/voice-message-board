@@ -75,9 +75,11 @@ class VoiceInputDelegate(
             granted -> {
                 RecognizerDialog.show(activity, MainActivity.REQUEST_RECOGNIZE)
             }
+
             RecordAudioPermission.deniedWithoutShowDialog(activity) -> {
                 PermissionDialog.show(activity)
             }
+
             else -> {
                 Toaster.show(activity, R.string.toast_should_allow_microphone_permission)
             }

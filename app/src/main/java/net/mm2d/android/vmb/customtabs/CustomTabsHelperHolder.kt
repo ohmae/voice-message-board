@@ -45,7 +45,13 @@ object CustomTabsHelperHolder {
             .setShowTitle(true)
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(AttrUtils.resolveColor(context, androidx.appcompat.R.attr.colorPrimary, Color.BLACK))
+                    .setToolbarColor(
+                        AttrUtils.resolveColor(
+                            context,
+                            androidx.appcompat.R.attr.colorPrimary,
+                            Color.BLACK,
+                        ),
+                    )
                     .build(),
             )
         AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
