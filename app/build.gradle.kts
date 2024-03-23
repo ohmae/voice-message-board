@@ -50,15 +50,12 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-    kotlin {
-        jvmToolchain(11)
-    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         viewBinding = true
@@ -78,7 +75,7 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.browser:browser:1.7.0")
+    implementation("androidx.browser:browser:1.8.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-process:2.7.0")
     implementation("com.google.android.material:material:1.11.0")
@@ -90,10 +87,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.13")
-    debugImplementation("com.facebook.flipper:flipper:0.247.0")
+    debugImplementation("com.facebook.flipper:flipper:0.250.0")
     debugImplementation("com.facebook.soloader:soloader:0.11.0")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.247.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.247.0")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.250.0")
+    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.250.0")
 
     // for release
 }
