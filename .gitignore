@@ -1,8 +1,10 @@
 *.iml
 .gradle
 /local.properties
+/.idea/appInsightsSettings.xml
 /.idea/caches
 /.idea/copyright
+/.idea/copilot
 /.idea/deploymentTargetDropDown.xml
 /.idea/dictionaries
 /.idea/libraries
@@ -10,6 +12,7 @@
 /.idea/kotlinc.xml
 /.idea/misc.xml
 /.idea/gradle.xml
+/.idea/migrations.xml
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml

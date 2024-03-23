@@ -2,11 +2,10 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
     id("kotlin-parcelize")
-    id("com.github.ben-manes.versions")
+    alias(libs.plugins.gradleVersions)
 
     // for release
 }
@@ -71,26 +70,21 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.multidex:multidex:2.0.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.browser:browser:1.8.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.play:core-ktx:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+    implementation(libs.kotlinStdlib)
+    implementation(libs.kotlinxCoroutinesAndroid)
 
-    testImplementation("junit:junit:4.13.2")
+    implementation(libs.androidxAppCompat)
+    implementation(libs.androidxPreferences)
+    implementation(libs.androidxCore)
+    implementation(libs.androidxBrowser)
+    implementation(libs.androidxLifecycleViewModel)
+    implementation(libs.androidxLifecycleProcess)
+    implementation(libs.material)
+    implementation(libs.playCore)
+    implementation(libs.playCoreKtx)
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.13")
-    debugImplementation("com.facebook.flipper:flipper:0.250.0")
-    debugImplementation("com.facebook.soloader:soloader:0.11.0")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.250.0")
-    debugImplementation("com.facebook.flipper:flipper-leakcanary2-plugin:0.250.0")
+    debugImplementation(libs.leakcanary)
+    debugImplementation(libs.bundles.flipper)
 
     // for release
 }

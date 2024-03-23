@@ -7,15 +7,15 @@
 
 package net.mm2d.android.vmb
 
+import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
-import androidx.multidex.MultiDexApplication
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
 
 @Suppress("unused")
-open class App : MultiDexApplication() {
+open class App : Application() {
     override fun onCreate() {
         super.onCreate()
         initializeOverrideWhenDebug()
