@@ -18,8 +18,13 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.widget.FrameLayout
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -58,8 +63,16 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(left = systemBars.left, right = systemBars.right)
+            binding.toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = systemBars.top }
+            binding.fabLayout.updateLayoutParams<FrameLayout.LayoutParams> { bottomMargin = systemBars.bottom }
+            insets
+        }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
         scaleDetector = ScaleGestureDetector(this, ScaleListener())
