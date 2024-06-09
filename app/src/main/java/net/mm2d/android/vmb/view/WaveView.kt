@@ -23,8 +23,11 @@ import java.util.LinkedList
 
 class WaveView
 @JvmOverloads
-constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    FrameLayout(context, attrs, defStyleAttr) {
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : FrameLayout(context, attrs, defStyleAttr) {
     @ColorInt
     private val wave1Color: Int
 

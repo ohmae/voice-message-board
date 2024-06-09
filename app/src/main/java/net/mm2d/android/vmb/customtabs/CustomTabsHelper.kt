@@ -24,7 +24,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import net.mm2d.android.vmb.util.queryIntentServicesCompat
 
-class CustomTabsHelper(context: Context) : CustomTabsServiceConnection(), LifecycleEventObserver {
+class CustomTabsHelper(context: Context) :
+    CustomTabsServiceConnection(),
+    LifecycleEventObserver {
     private val appContext: Context = context.applicationContext
     private var bound: Boolean = false
     private var session: CustomTabsSession? = null

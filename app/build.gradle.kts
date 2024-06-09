@@ -80,8 +80,7 @@ dependencies {
     implementation(libs.androidxLifecycleViewModel)
     implementation(libs.androidxLifecycleProcess)
     implementation(libs.material)
-    implementation(libs.playCore)
-    implementation(libs.playCoreKtx)
+    implementation(libs.playAppUpdate)
 
     debugImplementation(libs.leakcanary)
     debugImplementation(libs.bundles.flipper)
