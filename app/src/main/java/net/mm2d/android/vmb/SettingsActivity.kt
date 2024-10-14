@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mm2d.android.vmb.constant.Constants
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
+import net.mm2d.android.vmb.databinding.ActivitySettingsBinding
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Key.Main
 import net.mm2d.android.vmb.settings.Settings
@@ -39,15 +40,19 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        val binding = ActivitySettingsBinding.inflate(layoutInflater)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            view.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            binding.appbar.setPadding(0, systemBars.top, 0, 0)
             insets
         }
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(android.R.id.content, SettingsFragment())
+                .add(binding.fragmentContainer.id, SettingsFragment())
                 .commit()
         }
     }

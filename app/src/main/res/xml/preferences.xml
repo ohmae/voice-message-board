@@ -3,7 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-    <PreferenceCategory android:title="@string/pref_header_general">
+    <PreferenceCategory
+        android:title="@string/pref_header_general"
+        app:iconSpaceReserved="false"
+        >
         <ListPreference
             android:defaultValue="-1"
             android:entries="@array/pref_screen_orientation_titles"
@@ -48,7 +51,10 @@
             app:iconSpaceReserved="false"
             />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_header_display">
+    <PreferenceCategory
+        android:title="@string/pref_header_display"
+        app:iconSpaceReserved="false"
+        >
         <SwitchPreference
             android:defaultValue="false"
             android:key="USE_FONT_BOOLEAN"
@@ -65,7 +71,10 @@
             app:iconSpaceReserved="false"
             />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_header_information">
+    <PreferenceCategory
+        android:title="@string/pref_header_information"
+        app:iconSpaceReserved="false"
+        >
         <Preference
             android:key="VERSION_NUMBER_SCREEN"
             android:title="@string/pref_title_version_number"

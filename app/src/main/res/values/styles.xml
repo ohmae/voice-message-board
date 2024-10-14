@@ -5,7 +5,6 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="preferenceTheme">@style/PreferenceCompatTheme</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -16,12 +15,4 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="PreferenceCompatTheme" parent="@style/PreferenceThemeOverlay">
-        <item name="preferenceCategoryStyle">@style/PreferenceCategoryCompat</item>
-    </style>
-
-    <style name="PreferenceCategoryCompat" parent="@style/Preference.Category">
-        <item name="android:layout">@layout/preference_category_compat</item>
-    </style>
 </resources>
