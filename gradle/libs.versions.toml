@@ -14,7 +14,7 @@ playAppUpdate = "2.1.0"
 
 # debug
 leakcanary = "2.14"
-flipper = "0.272.0"
+flipper = "0.273.0"
 soloader = "0.12.1"
 
 ktlint = "1.4.1"
