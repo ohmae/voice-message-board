@@ -11,7 +11,10 @@ import android.view.View
 import android.view.ViewTreeObserver
 
 object ViewUtils {
-    fun execOnLayout(view: View, block: () -> Unit) {
+    fun execOnLayout(
+        view: View,
+        block: () -> Unit,
+    ) {
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)

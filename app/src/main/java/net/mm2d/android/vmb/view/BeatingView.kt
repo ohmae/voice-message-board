@@ -44,13 +44,18 @@ class BeatingView
         radiusMax = resources.getDimension(R.dimen.recognizer_icon_area_size) / 2f
     }
 
-    fun onVolumeChanged(volume: Float) {
+    fun onVolumeChanged(
+        volume: Float,
+    ) {
         for (i in 0 until 3) {
             startAnimation(i, volume)
         }
     }
 
-    private fun startAnimation(index: Int, volume: Float) {
+    private fun startAnimation(
+        index: Int,
+        volume: Float,
+    ) {
         if (radius[index] < volume) {
             radius[index] = volume
         }
@@ -79,7 +84,9 @@ class BeatingView
         }
     }
 
-    override fun dispatchDraw(canvas: Canvas) {
+    override fun dispatchDraw(
+        canvas: Canvas,
+    ) {
         val cx = canvas.width / 2f
         val cy = canvas.height / 2f
         var radius = radiusMin

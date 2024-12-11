@@ -26,7 +26,9 @@ import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
 class SelectThemeDialog : DialogFragment() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialog(
+        savedInstanceState: Bundle?,
+    ): Dialog {
         val activity = requireActivity()
         val arguments = requireArguments()
         val themeList = arguments.getParcelableArrayListSafely<Theme>(KEY_THEME_LIST)!!
@@ -45,7 +47,11 @@ class SelectThemeDialog : DialogFragment() {
     ) : BaseListAdapter<Theme>(context, collection) {
         private val inflater = LayoutInflater.from(context)
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+        override fun getView(
+            position: Int,
+            convertView: View?,
+            parent: ViewGroup,
+        ): View =
             convertView ?: ListItemThemeBinding.inflate(inflater, parent, false).also {
                 val theme = getItem(position)
                 it.textSample.setBackgroundColor(theme.backgroundColor)
@@ -60,14 +66,22 @@ class SelectThemeDialog : DialogFragment() {
         private const val KEY_REQUEST = "KEY_REQUEST"
         private const val KEY_RESULT = "KEY_RESULT"
 
-        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (Theme) -> Unit) {
+        fun registerListener(
+            activity: FragmentActivity,
+            requestKey: String,
+            listener: (Theme) -> Unit,
+        ) {
             val manager = activity.supportFragmentManager
             manager.setFragmentResultListener(requestKey, activity) { _, result ->
                 result.getParcelableSafely<Theme>(KEY_RESULT)?.let(listener)
             }
         }
 
-        fun show(activity: FragmentActivity, requestKey: String, themes: ArrayList<Theme>) {
+        fun show(
+            activity: FragmentActivity,
+            requestKey: String,
+            themes: ArrayList<Theme>,
+        ) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return

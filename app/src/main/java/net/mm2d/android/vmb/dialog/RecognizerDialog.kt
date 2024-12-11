@@ -28,7 +28,9 @@ class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null
     private lateinit var binding: DialogRecognizerBinding
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialog(
+        savedInstanceState: Bundle?,
+    ): Dialog {
         val activity = requireActivity()
         startListening()
         val inflater = activity.layoutInflater
@@ -65,40 +67,60 @@ class RecognizerDialog : DialogFragment() {
             it.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context?.packageName)
         }
 
-    private fun createRecognitionListener(): RecognitionListener = object : RecognitionListener {
-        override fun onReadyForSpeech(params: Bundle?) = Unit
-        override fun onBeginningOfSpeech() = Unit
-        override fun onBufferReceived(buffer: ByteArray?) = Unit
-        override fun onEndOfSpeech() = Unit
-        override fun onEvent(eventType: Int, params: Bundle?) = Unit
+    private fun createRecognitionListener(): RecognitionListener =
+        object : RecognitionListener {
+            override fun onReadyForSpeech(
+                params: Bundle?,
+            ) = Unit
 
-        override fun onRmsChanged(rms: Float) {
-            val volume = normalize(rms)
-            binding.beatingView.onVolumeChanged(volume)
-            binding.waveView.onVolumeChanged(volume)
-        }
+            override fun onBeginningOfSpeech() = Unit
+            override fun onBufferReceived(
+                buffer: ByteArray?,
+            ) = Unit
 
-        override fun onError(error: Int) {
-            Toaster.show(context, R.string.toast_voice_input_fail)
-            dismissAllowingStateLoss()
-        }
+            override fun onEndOfSpeech() = Unit
+            override fun onEvent(
+                eventType: Int,
+                params: Bundle?,
+            ) = Unit
 
-        override fun onPartialResults(results: Bundle?) {
-            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
-            if (list.isNotEmpty() && list[0].isNotEmpty()) {
-                binding.text.text = list[0]
+            override fun onRmsChanged(
+                rms: Float,
+            ) {
+                val volume = normalize(rms)
+                binding.beatingView.onVolumeChanged(volume)
+                binding.waveView.onVolumeChanged(volume)
+            }
+
+            override fun onError(
+                error: Int,
+            ) {
+                Toaster.show(context, R.string.toast_voice_input_fail)
+                dismissAllowingStateLoss()
+            }
+
+            override fun onPartialResults(
+                results: Bundle?,
+            ) {
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
+                if (list.isNotEmpty() && list[0].isNotEmpty()) {
+                    binding.text.text = list[0]
+                }
+            }
+
+            override fun onResults(
+                results: Bundle?,
+            ) {
+                dismissAllowingStateLoss()
+                val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
+                val requestKey = requireArguments().getString(KEY_REQUEST, "")
+                parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to list))
             }
         }
 
-        override fun onResults(results: Bundle?) {
-            dismissAllowingStateLoss()
-            val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
-            val requestKey = requireArguments().getString(KEY_REQUEST, "")
-            parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to list))
-        }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
+    override fun onDismiss(
+        dialog: DialogInterface,
+    ) {
         super.onDismiss(dialog)
         runCatching { recognizer?.destroy() }
         recognizer = null
@@ -112,17 +134,25 @@ class RecognizerDialog : DialogFragment() {
         private const val RMS_DB_MAX = 10.0f
         private const val RMS_DB_MIN = -2.12f
 
-        fun normalize(rms: Float): Float =
-            ((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)).coerceIn(0f, 1f)
+        fun normalize(
+            rms: Float,
+        ): Float = ((rms - RMS_DB_MIN) / (RMS_DB_MAX - RMS_DB_MIN)).coerceIn(0f, 1f)
 
-        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (List<String>) -> Unit) {
+        fun registerListener(
+            activity: FragmentActivity,
+            requestKey: String,
+            listener: (List<String>) -> Unit,
+        ) {
             val manager = activity.supportFragmentManager
             manager.setFragmentResultListener(requestKey, activity) { _, result ->
                 result.getStringArrayList(KEY_RESULT)?.let(listener)
             }
         }
 
-        fun show(activity: FragmentActivity, requestKey: String) {
+        fun show(
+            activity: FragmentActivity,
+            requestKey: String,
+        ) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return

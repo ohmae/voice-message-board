@@ -54,7 +54,9 @@ class VoiceInputDelegate(
         }
     }
 
-    fun onRecognize(results: List<String>) {
+    fun onRecognize(
+        results: List<String>,
+    ) {
         if (results.isEmpty()) {
             return
         }
@@ -70,7 +72,9 @@ class VoiceInputDelegate(
         }
     }
 
-    private fun onPermissionResult(granted: Boolean) {
+    private fun onPermissionResult(
+        granted: Boolean,
+    ) {
         when {
             granted -> {
                 RecognizerDialog.show(activity, MainActivity.REQUEST_RECOGNIZE)

@@ -23,7 +23,9 @@ import net.mm2d.android.vmb.util.isInActive
 class EditStringDialog : DialogFragment() {
     private lateinit var binding: DialogEditBinding
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialog(
+        savedInstanceState: Bundle?,
+    ): Dialog {
         val activity = requireActivity()
         val string = requireArguments().getString(KEY_STRING, "")
 
@@ -57,7 +59,9 @@ class EditStringDialog : DialogFragment() {
         parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to result))
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(
+        outState: Bundle,
+    ) {
         super.onSaveInstanceState(outState)
         // 編集中の文字列を保存
         arguments?.putString(KEY_STRING, binding.editText.text.toString())
@@ -69,14 +73,22 @@ class EditStringDialog : DialogFragment() {
         private const val KEY_REQUEST = "KEY_REQUEST"
         private const val KEY_RESULT = "KEY_RESULT"
 
-        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (String) -> Unit) {
+        fun registerListener(
+            activity: FragmentActivity,
+            requestKey: String,
+            listener: (String) -> Unit,
+        ) {
             val manager = activity.supportFragmentManager
             manager.setFragmentResultListener(requestKey, activity) { _, result ->
                 result.getString(KEY_RESULT)?.let(listener)
             }
         }
 
-        fun show(activity: FragmentActivity, requestKey: String, editString: String) {
+        fun show(
+            activity: FragmentActivity,
+            requestKey: String,
+            editString: String,
+        ) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return

@@ -20,7 +20,9 @@ import androidx.annotation.ColorInt
 /**
  * グリッド模様付き背景を描画するDrawable
  */
-class GridDrawable(context: Context) : Drawable() {
+class GridDrawable(
+    context: Context,
+) : Drawable() {
     private val paint: Paint = Paint()
     private var gridSize: Float = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
@@ -32,7 +34,9 @@ class GridDrawable(context: Context) : Drawable() {
     @ColorInt
     private var backgroundColor: Int = 0
 
-    fun setColor(background: Int) {
+    fun setColor(
+        background: Int,
+    ) {
         val hsv = FloatArray(3)
         Color.RGBToHSV(Color.red(background), Color.green(background), Color.blue(background), hsv)
         if (hsv[2] > 0.5f) {
@@ -45,7 +49,9 @@ class GridDrawable(context: Context) : Drawable() {
         paint.color = gridColor
     }
 
-    override fun draw(canvas: Canvas) {
+    override fun draw(
+        canvas: Canvas,
+    ) {
         val width = bounds.width().toFloat()
         val height = bounds.height().toFloat()
         canvas.drawColor(backgroundColor)
@@ -61,11 +67,15 @@ class GridDrawable(context: Context) : Drawable() {
         }
     }
 
-    override fun setAlpha(alpha: Int) {
+    override fun setAlpha(
+        alpha: Int,
+    ) {
         paint.alpha = alpha
     }
 
-    override fun setColorFilter(cf: ColorFilter?) {
+    override fun setColorFilter(
+        cf: ColorFilter?,
+    ) {
         paint.colorFilter = cf
     }
 

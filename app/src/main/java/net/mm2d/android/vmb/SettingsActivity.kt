@@ -37,7 +37,9 @@ import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?,
+    ) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
@@ -71,7 +73,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val fontChooserLauncher =
         registerForActivityResultWrapper(GetContent(), "*/*", ::onSelectFont)
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         preferenceManager.preferenceDataStore = settings.preferenceDataSource
         addPreferencesFromResource(R.xml.preferences)
         bindPreference(Main.SCREEN_ORIENTATION_STRING)
@@ -110,7 +115,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun onSelectFont(uri: Uri?) {
+    private fun onSelectFont(
+        uri: Uri?,
+    ) {
         uri ?: return
         val context = requireContext()
         lifecycleScope.launch {
@@ -128,7 +135,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun prepareFontFile(context: Context, uri: Uri): Pair<String, String> {
+    private fun prepareFontFile(
+        context: Context,
+        uri: Uri,
+    ): Pair<String, String> {
         val name: String = context.contentResolver
             .query(uri, null, null, null, null)
             ?.use {
@@ -153,16 +163,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun findPreference(key: Main): Preference? = super.findPreference(key.name)
+    private fun findPreference(
+        key: Main,
+    ): Preference? = super.findPreference(key.name)
 
-    private fun bindPreference(key: Main) {
+    private fun bindPreference(
+        key: Main,
+    ) {
         val preference = findPreference(key) ?: return
         preference.setOnPreferenceChangeListener(this::bindPreference)
         val value = preferenceManager.preferenceDataStore?.getString(key.name, "") ?: ""
         bindPreference(preference, value)
     }
 
-    private fun bindPreference(preference: Preference, value: Any): Boolean {
+    private fun bindPreference(
+        preference: Preference,
+        value: Any,
+    ): Boolean {
         val stringValue = value.toString()
         if (preference is ListPreference) {
             val index = preference.findIndexOfValue(stringValue)
@@ -173,7 +190,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         return true
     }
 
-    private fun openUrl(url: String): Boolean {
+    private fun openUrl(
+        url: String,
+    ): Boolean {
         CustomTabsHelperHolder.openUrl(requireContext(), url)
         return true
     }

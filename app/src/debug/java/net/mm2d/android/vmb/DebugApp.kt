@@ -37,21 +37,22 @@ class DebugApp : App() {
         StrictMode.setVmPolicy(VmPolicy.Builder().detectDefault().penaltyLog().build())
     }
 
-    private fun VmPolicy.Builder.detectDefault(): VmPolicy.Builder = apply {
-        detectActivityLeaks()
-        detectLeakedClosableObjects()
-        detectLeakedRegistrationObjects()
-        detectFileUriExposure()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            detectCleartextNetwork()
+    private fun VmPolicy.Builder.detectDefault(): VmPolicy.Builder =
+        apply {
+            detectActivityLeaks()
+            detectLeakedClosableObjects()
+            detectLeakedRegistrationObjects()
+            detectFileUriExposure()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                detectCleartextNetwork()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                detectContentUriWithoutPermission()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                detectCredentialProtectedWhileLocked()
+            }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            detectContentUriWithoutPermission()
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            detectCredentialProtectedWhileLocked()
-        }
-    }
 
     private fun setUpFlipper() {
         LeakCanary.config = LeakCanary.config.run {

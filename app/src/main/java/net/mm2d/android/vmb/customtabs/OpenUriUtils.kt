@@ -16,7 +16,9 @@ import net.mm2d.android.vmb.util.queryIntentActivitiesCompat
 import net.mm2d.android.vmb.util.resolveActivityCompat
 
 internal object OpenUriUtils {
-    fun getBrowserPackages(context: Context): Set<String> {
+    fun getBrowserPackages(
+        context: Context,
+    ): Set<String> {
         val flags =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PackageManager.MATCH_ALL else 0
         return context.packageManager
@@ -25,7 +27,9 @@ internal object OpenUriUtils {
             .toSet()
     }
 
-    fun getDefaultBrowserPackage(context: Context): String? {
+    fun getDefaultBrowserPackage(
+        context: Context,
+    ): String? {
         val packageName = context.packageManager
             .resolveActivityCompat(makeBrowserTestIntent(), 0)
             ?.activityInfo
@@ -34,9 +38,12 @@ internal object OpenUriUtils {
         return if (getBrowserPackages(context).contains(packageName)) packageName else null
     }
 
-    fun makeBrowseIntent(uri: String): Intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri)).apply {
-        addCategory(Intent.CATEGORY_BROWSABLE)
-    }
+    fun makeBrowseIntent(
+        uri: String,
+    ): Intent =
+        Intent(Intent.ACTION_VIEW, Uri.parse(uri)).apply {
+            addCategory(Intent.CATEGORY_BROWSABLE)
+        }
 
     private fun makeBrowserTestIntent(): Intent = makeBrowseIntent("http://www.example.com/")
 

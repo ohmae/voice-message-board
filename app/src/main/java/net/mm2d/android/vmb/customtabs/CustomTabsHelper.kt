@@ -24,8 +24,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import net.mm2d.android.vmb.util.queryIntentServicesCompat
 
-class CustomTabsHelper(context: Context) :
-    CustomTabsServiceConnection(),
+class CustomTabsHelper(
+    context: Context,
+) : CustomTabsServiceConnection(),
     LifecycleEventObserver {
     private val appContext: Context = context.applicationContext
     private var bound: Boolean = false
@@ -37,7 +38,10 @@ class CustomTabsHelper(context: Context) :
             .addObserver(this)
     }
 
-    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+    override fun onStateChanged(
+        source: LifecycleOwner,
+        event: Lifecycle.Event,
+    ) {
         when (event) {
             Lifecycle.Event.ON_START -> {
                 bind()
@@ -68,25 +72,36 @@ class CustomTabsHelper(context: Context) :
         session = null
     }
 
-    override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
+    override fun onCustomTabsServiceConnected(
+        name: ComponentName,
+        client: CustomTabsClient,
+    ) {
         client.warmup(0)
         session = client.newSession(null)
     }
 
-    override fun onServiceDisconnected(name: ComponentName) {
+    override fun onServiceDisconnected(
+        name: ComponentName,
+    ) {
         session = null
     }
 
-    fun mayLaunchUrl(url: String) {
+    fun mayLaunchUrl(
+        url: String,
+    ) {
         session?.mayLaunchUrl(Uri.parse(url), null, null)
     }
 
-    fun mayLaunchUrl(urls: List<String>) {
+    fun mayLaunchUrl(
+        urls: List<String>,
+    ) {
         if (urls.isEmpty()) return
         session?.mayLaunchUrl(Uri.parse(urls[0]), null, makeOtherLikelyBundles(urls))
     }
 
-    private fun makeOtherLikelyBundles(urls: List<String>): List<Bundle>? =
+    private fun makeOtherLikelyBundles(
+        urls: List<String>,
+    ): List<Bundle>? =
         if (urls.size == 1) {
             null
         } else {
@@ -96,7 +111,11 @@ class CustomTabsHelper(context: Context) :
 
     fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
 
-    fun launchUrl(context: Context, customTabsIntent: CustomTabsIntent, url: String): Boolean {
+    fun launchUrl(
+        context: Context,
+        customTabsIntent: CustomTabsIntent,
+        url: String,
+    ): Boolean {
         if (session == null) {
             customTabsIntent.intent.setPackage(findPackageNameToUse(context))
         }
@@ -117,7 +136,9 @@ class CustomTabsHelper(context: Context) :
             "com.google.android.apps.chrome",
         )
 
-        private fun findPackageNameToUse(context: Context): String? {
+        private fun findPackageNameToUse(
+            context: Context,
+        ): String? {
             val browsers = OpenUriUtils.getBrowserPackages(context)
             val candidate = context.packageManager
                 .queryIntentServicesCompat(Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION), 0)

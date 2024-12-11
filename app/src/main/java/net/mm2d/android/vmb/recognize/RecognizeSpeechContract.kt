@@ -14,7 +14,10 @@ import android.speech.RecognizerIntent
 import androidx.activity.result.contract.ActivityResultContract
 
 class RecognizeSpeechContract : ActivityResultContract<String, List<String>>() {
-    override fun createIntent(context: Context, input: String): Intent =
+    override fun createIntent(
+        context: Context,
+        input: String,
+    ): Intent =
         Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).also {
             it.putExtra(
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -26,7 +29,10 @@ class RecognizeSpeechContract : ActivityResultContract<String, List<String>>() {
             it.putExtra(RecognizerIntent.EXTRA_PROMPT, input)
         }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): List<String> =
+    override fun parseResult(
+        resultCode: Int,
+        intent: Intent?,
+    ): List<String> =
         if (resultCode != Activity.RESULT_OK) {
             emptyList()
         } else {

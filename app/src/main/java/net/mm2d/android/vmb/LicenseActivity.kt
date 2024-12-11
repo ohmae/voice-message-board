@@ -20,7 +20,9 @@ import net.mm2d.android.vmb.databinding.ActivityLicenseBinding
 class LicenseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLicenseBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?,
+    ) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityLicenseBinding.inflate(layoutInflater)
@@ -45,7 +47,9 @@ class LicenseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(
+        outState: Bundle,
+    ) {
         super.onSaveInstanceState(outState)
         binding.webView.saveState(outState)
     }
@@ -56,7 +60,9 @@ class LicenseActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun start(context: Context) {
+        fun start(
+            context: Context,
+        ) {
             context.startActivity(Intent(context, LicenseActivity::class.java))
         }
     }

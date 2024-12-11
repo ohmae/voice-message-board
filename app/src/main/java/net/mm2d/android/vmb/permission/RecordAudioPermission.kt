@@ -17,10 +17,12 @@ import androidx.core.content.ContextCompat
 object RecordAudioPermission {
     private const val PERMISSION = Manifest.permission.RECORD_AUDIO
 
-    fun deniedWithoutShowDialog(activity: Activity): Boolean =
-        !ActivityCompat.shouldShowRequestPermissionRationale(activity, PERMISSION)
+    fun deniedWithoutShowDialog(
+        activity: Activity,
+    ): Boolean = !ActivityCompat.shouldShowRequestPermissionRationale(activity, PERMISSION)
 
-    fun hasPermission(context: Context) =
-        ContextCompat.checkSelfPermission(context, PERMISSION) ==
-            PackageManager.PERMISSION_GRANTED
+    fun hasPermission(
+        context: Context,
+    ) = ContextCompat.checkSelfPermission(context, PERMISSION) ==
+        PackageManager.PERMISSION_GRANTED
 }

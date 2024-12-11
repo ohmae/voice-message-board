@@ -24,7 +24,9 @@ import net.mm2d.android.vmb.util.isInActive
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
 class SelectStringDialog : DialogFragment() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialog(
+        savedInstanceState: Bundle?,
+    ): Dialog {
         val activity = requireActivity()
         val argument = requireArguments()
         val stringList = argument.getStringArrayList(KEY_STRING_LIST)!!
@@ -43,7 +45,11 @@ class SelectStringDialog : DialogFragment() {
     ) : BaseListAdapter<String>(context, collection) {
         private val inflater = LayoutInflater.from(context)
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+        override fun getView(
+            position: Int,
+            convertView: View?,
+            parent: ViewGroup,
+        ): View =
             convertView ?: ListItemStringBinding.inflate(inflater, parent, false).also {
                 it.textView.text = getItem(position)
             }.root
@@ -56,7 +62,11 @@ class SelectStringDialog : DialogFragment() {
         private const val KEY_REQUEST = "KEY_REQUEST"
         private const val KEY_RESULT = "KEY_RESULT"
 
-        fun registerListener(activity: FragmentActivity, requestKey: String, listener: (String) -> Unit) {
+        fun registerListener(
+            activity: FragmentActivity,
+            requestKey: String,
+            listener: (String) -> Unit,
+        ) {
             val manager = activity.supportFragmentManager
             manager.setFragmentResultListener(requestKey, activity) { _, result ->
                 Log.e("XXXX", "$result")
@@ -64,7 +74,12 @@ class SelectStringDialog : DialogFragment() {
             }
         }
 
-        fun show(activity: FragmentActivity, requestKey: String, @StringRes title: Int, strings: ArrayList<String>) {
+        fun show(
+            activity: FragmentActivity,
+            requestKey: String,
+            @StringRes title: Int,
+            strings: ArrayList<String>,
+        ) {
             if (activity.isInActive()) return
             val manager = activity.supportFragmentManager
             if (manager.isStateSaved) return

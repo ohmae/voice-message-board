@@ -66,13 +66,20 @@ constructor(
         wave3Scale = 15.0f * density
     }
 
-    fun onVolumeChanged(volume: Float) {
+    fun onVolumeChanged(
+        volume: Float,
+    ) {
         if (volume > amplitude) {
             amplitude = volume
         }
     }
 
-    private fun drawWave(canvas: Canvas, cy: Float, offset: Float, scale: Float) {
+    private fun drawWave(
+        canvas: Canvas,
+        cy: Float,
+        offset: Float,
+        scale: Float,
+    ) {
         val width = canvas.width.toFloat()
         val height = canvas.height.toFloat()
         val waveLength = width / (2f + offset * 2f)
@@ -99,7 +106,9 @@ constructor(
         canvas.drawPath(path, paint)
     }
 
-    private fun drawWaveEffect(canvas: Canvas) {
+    private fun drawWaveEffect(
+        canvas: Canvas,
+    ) {
         val height = canvas.height
         paint.color = wave3Color
         drawWave(canvas, height - wave3CenterFromBottom, 1.0f, wave3Scale)
@@ -109,7 +118,9 @@ constructor(
         drawWave(canvas, height - wave1CenterFromBottom, 0.0f, wave1Scale)
     }
 
-    override fun dispatchDraw(canvas: Canvas) {
+    override fun dispatchDraw(
+        canvas: Canvas,
+    ) {
         drawWaveEffect(canvas)
         super.dispatchDraw(canvas)
     }

@@ -40,7 +40,10 @@ class ThemeDelegate(
         apply(settings.backgroundColor, settings.foregroundColor)
     }
 
-    private fun apply(background: Int, foreground: Int) {
+    private fun apply(
+        background: Int,
+        foreground: Int,
+    ) {
         gridDrawable.setColor(background)
         ViewCompat.setBackground(root, gridDrawable)
         root.invalidate()
@@ -50,7 +53,9 @@ class ThemeDelegate(
         }
     }
 
-    fun select(theme: Theme) {
+    fun select(
+        theme: Theme,
+    ) {
         settings.backgroundColor = theme.backgroundColor
         settings.foregroundColor = theme.foregroundColor
         apply()
@@ -62,13 +67,18 @@ class ThemeDelegate(
 
     companion object {
         @ColorInt
-        private fun getIconColor(@ColorInt background: Int): Int =
-            if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
+        private fun getIconColor(
+            @ColorInt background: Int,
+        ): Int = if (getBrightness(background) < 128) Color.WHITE else Color.BLACK
 
-        private fun getBrightness(@ColorInt color: Int): Int =
-            getBrightness(Color.red(color), Color.green(color), Color.blue(color))
+        private fun getBrightness(
+            @ColorInt color: Int,
+        ): Int = getBrightness(Color.red(color), Color.green(color), Color.blue(color))
 
-        private fun getBrightness(r: Int, g: Int, b: Int): Int =
-            (r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt().coerceIn(0, 255)
+        private fun getBrightness(
+            r: Int,
+            g: Int,
+            b: Int,
+        ): Int = (r * 0.299 + g * 0.587 + b * 0.114 + 0.5).toInt().coerceIn(0, 255)
     }
 }

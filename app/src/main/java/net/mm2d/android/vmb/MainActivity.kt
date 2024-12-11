@@ -61,7 +61,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?,
+    ) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -113,7 +115,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun restoreInstanceState(savedInstanceState: Bundle?) {
+    private fun restoreInstanceState(
+        savedInstanceState: Bundle?,
+    ) {
         if (savedInstanceState == null) {
             // 画面幅に初期文字列が収まる大きさに調整
             val width = resources.displayMetrics.widthPixels
@@ -133,7 +137,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(
+        outState: Bundle,
+    ) {
         super.onSaveInstanceState(outState)
         // テキストとフォントサイズを保存
         outState.putFloat(TAG_FONT_SIZE, fontSize)
@@ -151,7 +157,9 @@ class MainActivity : AppCompatActivity() {
         updatePadding()
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    override fun onConfigurationChanged(
+        newConfig: Configuration,
+    ) {
         super.onConfigurationChanged(newConfig)
         ViewUtils.execOnLayout(binding.scrollView) {
             updatePadding()
@@ -176,21 +184,27 @@ class MainActivity : AppCompatActivity() {
         EditStringDialog.show(this, REQUEST_EDIT, string)
     }
 
-    private fun setText(string: String) {
+    private fun setText(
+        string: String,
+    ) {
         binding.textView.text = string
         historyDelegate.put(string)
         binding.scrollView.scrollTo(0, 0)
         updatePadding()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onCreateOptionsMenu(
+        menu: Menu,
+    ): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         showHistoryMenu = menu.findItem(R.id.action_show_history)
         clearHistoryMenu = menu.findItem(R.id.action_clear_history)
         return true
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+    override fun onPrepareOptionsMenu(
+        menu: Menu,
+    ): Boolean {
         if (historyDelegate.exist()) {
             showHistoryMenu.isEnabled = true
             clearHistoryMenu.isEnabled = true
@@ -201,7 +215,9 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(
+        item: MenuItem,
+    ): Boolean {
         when (item.itemId) {
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))
@@ -228,12 +244,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
+        override fun onSingleTapUp(
+            e: MotionEvent,
+        ): Boolean {
             voiceInputDelegate.start()
             return true
         }
 
-        override fun onLongPress(e: MotionEvent) {
+        override fun onLongPress(
+            e: MotionEvent,
+        ) {
             if (settings.shouldShowEditorWhenLongTap()) {
                 startEdit()
             }
@@ -241,7 +261,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
+        override fun onScale(
+            detector: ScaleGestureDetector,
+        ): Boolean {
             fontSize = (fontSize * detector.scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
             binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
             updatePadding()

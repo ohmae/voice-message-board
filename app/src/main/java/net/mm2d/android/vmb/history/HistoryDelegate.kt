@@ -51,7 +51,9 @@ class HistoryDelegate(
             .show()
     }
 
-    fun put(string: String) {
+    fun put(
+        string: String,
+    ) {
         history.remove(string)
         history.addFirst(string)
         while (history.size > MAX_HISTORY) {

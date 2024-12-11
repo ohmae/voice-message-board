@@ -12,7 +12,10 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 
 object Toaster {
-    fun show(context: Context?, @StringRes text: Int) {
+    fun show(
+        context: Context?,
+        @StringRes text: Int,
+    ) {
         context ?: return
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }

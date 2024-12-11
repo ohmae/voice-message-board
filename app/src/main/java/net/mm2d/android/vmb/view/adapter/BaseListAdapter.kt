@@ -13,7 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 
-abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
+abstract class BaseListAdapter<T>(
+    context: Context,
+) : BaseAdapter() {
     private val inflater = LayoutInflater.from(context)
     private val list: MutableList<T> = ArrayList()
 
@@ -21,12 +23,19 @@ abstract class BaseListAdapter<T>(context: Context) : BaseAdapter() {
         list.addAll(collection)
     }
 
-    protected fun inflateView(layout: Int, convertView: View?, parent: ViewGroup): View =
-        convertView ?: inflater.inflate(layout, parent, false)
+    protected fun inflateView(
+        layout: Int,
+        convertView: View?,
+        parent: ViewGroup,
+    ): View = convertView ?: inflater.inflate(layout, parent, false)
 
     override fun getCount(): Int = list.size
 
-    override fun getItem(position: Int): T = list[position]
+    override fun getItem(
+        position: Int,
+    ): T = list[position]
 
-    override fun getItemId(position: Int): Long = position.toLong()
+    override fun getItemId(
+        position: Int,
+    ): Long = position.toLong()
 }

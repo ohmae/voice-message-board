@@ -13,21 +13,30 @@ import android.content.pm.PackageManager.ResolveInfoFlags
 import android.content.pm.ResolveInfo
 import android.os.Build
 
-fun PackageManager.queryIntentActivitiesCompat(intent: Intent, flags: Int): List<ResolveInfo> =
+fun PackageManager.queryIntentActivitiesCompat(
+    intent: Intent,
+    flags: Int,
+): List<ResolveInfo> =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentActivities(intent, ResolveInfoFlags.of(flags.toLong()))
     } else {
         queryIntentActivities(intent, flags)
     }
 
-fun PackageManager.queryIntentServicesCompat(intent: Intent, flags: Int): List<ResolveInfo> =
+fun PackageManager.queryIntentServicesCompat(
+    intent: Intent,
+    flags: Int,
+): List<ResolveInfo> =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentServices(intent, ResolveInfoFlags.of(flags.toLong()))
     } else {
         queryIntentServices(intent, flags)
     }
 
-fun PackageManager.resolveActivityCompat(intent: Intent, flags: Int): ResolveInfo? =
+fun PackageManager.resolveActivityCompat(
+    intent: Intent,
+    flags: Int,
+): ResolveInfo? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         resolveActivity(intent, ResolveInfoFlags.of(flags.toLong()))
     } else {

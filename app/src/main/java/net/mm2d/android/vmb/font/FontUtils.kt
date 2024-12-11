@@ -15,11 +15,17 @@ import net.mm2d.android.vmb.util.Toaster
 import java.io.File
 
 object FontUtils {
-    fun isValidFontFile(file: File): Boolean = runCatching {
-        Typeface.createFromFile(file) != Typeface.DEFAULT
-    }.getOrNull() ?: false
+    fun isValidFontFile(
+        file: File,
+    ): Boolean =
+        runCatching {
+            Typeface.createFromFile(file) != Typeface.DEFAULT
+        }.getOrNull() ?: false
 
-    fun setFont(textView: TextView, settings: Settings) {
+    fun setFont(
+        textView: TextView,
+        settings: Settings,
+    ) {
         if (settings.fontPathToUse.isEmpty()) {
             textView.typeface = Typeface.DEFAULT
             return

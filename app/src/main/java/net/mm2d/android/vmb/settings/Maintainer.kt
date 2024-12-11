@@ -20,7 +20,10 @@ internal object Maintainer {
     // 1 : 1.7.0-
     private const val SETTINGS_VERSION = 1
 
-    fun maintain(context: Context, preferences: Preferences<Main>) {
+    fun maintain(
+        context: Context,
+        preferences: Preferences<Main>,
+    ) {
         Main.values().checkSuffix()
         if (preferences.readInt(Main.APP_VERSION_AT_LAST_LAUNCHED_INT, 0) != BuildConfig.VERSION_CODE) {
             preferences.writeInt(Main.APP_VERSION_AT_LAST_LAUNCHED_INT, BuildConfig.VERSION_CODE)
@@ -43,7 +46,9 @@ internal object Maintainer {
         writeDefaultValue(preferences)
     }
 
-    private fun writeDefaultValue(preferences: Preferences<Main>) {
+    private fun writeDefaultValue(
+        preferences: Preferences<Main>,
+    ) {
         preferences.writeInt(Main.BACKGROUND_INT, Color.WHITE)
         preferences.writeInt(Main.FOREGROUND_INT, Color.BLACK)
         preferences.writeStringSet(Main.HISTORY_SET, emptySet())
@@ -57,7 +62,10 @@ internal object Maintainer {
         preferences.writeString(Main.FONT_NAME_STRING, "")
     }
 
-    private fun migrateFromVersion0(sharedPreferences: SharedPreferences, preferences: Preferences<Main>) {
+    private fun migrateFromVersion0(
+        sharedPreferences: SharedPreferences,
+        preferences: Preferences<Main>,
+    ) {
         Migrator(sharedPreferences, preferences).apply {
             int(OldKey.KEY_BACKGROUND, Main.BACKGROUND_INT)
             int(OldKey.KEY_FOREGROUND, Main.FOREGROUND_INT)
@@ -77,25 +85,37 @@ internal object Maintainer {
         private val sharedPreferences: SharedPreferences,
         private val preferences: Preferences<Main>,
     ) {
-        fun boolean(oldKey: OldKey, key: Main) {
+        fun boolean(
+            oldKey: OldKey,
+            key: Main,
+        ) {
             if (sharedPreferences.contains(oldKey.name)) {
                 preferences.writeBoolean(key, sharedPreferences.getBoolean(oldKey.name, false))
             }
         }
 
-        fun int(oldKey: OldKey, key: Main) {
+        fun int(
+            oldKey: OldKey,
+            key: Main,
+        ) {
             if (sharedPreferences.contains(oldKey.name)) {
                 preferences.writeInt(key, sharedPreferences.getInt(oldKey.name, 0))
             }
         }
 
-        fun string(oldKey: OldKey, key: Main) {
+        fun string(
+            oldKey: OldKey,
+            key: Main,
+        ) {
             if (sharedPreferences.contains(oldKey.name)) {
                 preferences.writeString(key, sharedPreferences.getString(oldKey.name, "")!!)
             }
         }
 
-        fun set(oldKey: OldKey, key: Main) {
+        fun set(
+            oldKey: OldKey,
+            key: Main,
+        ) {
             if (sharedPreferences.contains(oldKey.name)) {
                 preferences.writeStringSet(key, sharedPreferences.getStringSet(oldKey.name, emptySet())!!)
             }

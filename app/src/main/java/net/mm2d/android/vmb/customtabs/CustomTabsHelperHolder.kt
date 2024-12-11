@@ -23,20 +23,29 @@ import net.mm2d.android.vmb.util.AttrUtils
 object CustomTabsHelperHolder {
     private lateinit var customTabsHelper: CustomTabsHelper
 
-    fun initialize(application: Application) {
+    fun initialize(
+        application: Application,
+    ) {
         customTabsHelper = CustomTabsHelper(application)
     }
 
     @Suppress("unused")
-    fun mayLaunchUrl(url: String) {
+    fun mayLaunchUrl(
+        url: String,
+    ) {
         customTabsHelper.mayLaunchUrl(url)
     }
 
-    fun mayLaunchUrl(urls: List<String>) {
+    fun mayLaunchUrl(
+        urls: List<String>,
+    ) {
         customTabsHelper.mayLaunchUrl(urls)
     }
 
-    fun openUrl(context: Context, url: String) {
+    fun openUrl(
+        context: Context,
+        url: String,
+    ) {
         if (OpenUriUtils.hasDefaultAppOtherThanBrowser(context, url)) {
             openByNormalIntent(context, url)
             return
@@ -63,7 +72,10 @@ object CustomTabsHelperHolder {
         openByNormalIntent(context, url)
     }
 
-    private fun openByNormalIntent(context: Context, url: String) {
+    private fun openByNormalIntent(
+        context: Context,
+        url: String,
+    ) {
         try {
             context.startActivity(OpenUriUtils.makeBrowseIntent(url))
         } catch (ignored: ActivityNotFoundException) {

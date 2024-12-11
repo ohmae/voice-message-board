@@ -48,17 +48,14 @@ class Settings private constructor(
     val fontPathToUse: String
         get() = if (useFont) fontPath else ""
 
-    fun shouldUseSpeechRecognizer(): Boolean =
-        preferences.readBoolean(Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN, false)
+    fun shouldUseSpeechRecognizer(): Boolean = preferences.readBoolean(Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN, false)
 
-    fun shouldShowCandidateList(): Boolean =
-        preferences.readBoolean(Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN, false)
+    fun shouldShowCandidateList(): Boolean = preferences.readBoolean(Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN, false)
 
     fun shouldShowEditorWhenLongTap(): Boolean =
         preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN, false)
 
-    fun shouldShowEditorAfterSelect(): Boolean =
-        preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_BOOLEAN, false)
+    fun shouldShowEditorAfterSelect(): Boolean = preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_BOOLEAN, false)
 
     var history: Set<String>
         get() = preferences.readStringSet(Main.HISTORY_SET, emptySet())
@@ -67,7 +64,9 @@ class Settings private constructor(
     companion object {
         private lateinit var settings: Settings
 
-        fun initialize(context: Context) {
+        fun initialize(
+            context: Context,
+        ) {
             Preferences(context, Main::class).also {
                 Maintainer.maintain(context, it)
                 settings = Settings(it)
