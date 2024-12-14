@@ -22,12 +22,10 @@ android {
     namespace = "net.mm2d.android.vmb"
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 35
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
-        multiDexEnabled = true
-        vectorDrawables.useSupportLibrary = true
         base.archivesName.set("$applicationName-$versionName")
     }
     applicationVariants.all {
