@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     id("kotlin-parcelize")
     alias(libs.plugins.gradleVersions)
+    alias(libs.plugins.dependencyGuard)
 
     // for release
 }
@@ -65,7 +66,6 @@ android {
     lint {
         abortOnError = true
     }
-    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
@@ -88,6 +88,10 @@ dependencies {
     debugImplementation(libs.bundles.flipper)
 
     // for release
+}
+
+dependencyGuard {
+    configuration("releaseRuntimeClasspath")
 }
 
 fun isStable(
