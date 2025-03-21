@@ -72,11 +72,11 @@ com.google.android.play:app-update:2.1.0
 com.google.android.play:core-common:2.0.3
 com.google.errorprone:error_prone_annotations:2.15.0
 com.google.guava:listenablefuture:1.0
-org.jetbrains.kotlin:kotlin-android-extensions-runtime:2.1.10
+org.jetbrains.kotlin:kotlin-android-extensions-runtime:2.1.20
 org.jetbrains.kotlin:kotlin-bom:1.8.22
-org.jetbrains.kotlin:kotlin-parcelize-runtime:2.1.10
+org.jetbrains.kotlin:kotlin-parcelize-runtime:2.1.20
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22
-org.jetbrains.kotlin:kotlin-stdlib:2.1.10
+org.jetbrains.kotlin:kotlin-stdlib:2.1.20
 org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1
 org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.10.1
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1
