@@ -74,7 +74,6 @@ android {
 dependencies {
     coreLibraryDesugaring(libs.desugarJdkLibs)
 
-    implementation(libs.kotlinStdlib)
     implementation(libs.kotlinxCoroutinesAndroid)
 
     implementation(libs.androidxAppCompat)
