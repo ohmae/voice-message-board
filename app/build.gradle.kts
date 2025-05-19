@@ -86,7 +86,6 @@ dependencies {
     implementation(libs.playAppUpdate)
 
     debugImplementation(libs.leakcanary)
-    debugImplementation(libs.bundles.flipper)
 
     // for release
 }
