@@ -1,6 +1,5 @@
 [versions]
 androidGradlePlugin = "8.11.1"
-desugarJdkLibs = "2.1.5"
 kotlin = "2.2.0"
 gradleVersionsPlugin = "0.52.0"
 kotlinxCoroutines = "1.10.2"
@@ -22,8 +21,6 @@ ktlint = "1.7.0"
 # for release
 
 [libraries]
-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
-
 kotlinxCoroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 
 androidxCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
