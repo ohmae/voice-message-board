@@ -9,7 +9,7 @@ dependencyGuard = "0.5.0"
 androidxCore = "1.16.0"
 androidxAppCompat = "1.7.1"
 androidxBrowser = "1.8.0"
-androidxLifecycle = "2.9.1"
+androidxLifecycle = "2.9.2"
 androidxPreferences = "1.2.1"
 material = "1.12.0"
 playAppUpdate = "2.1.0"
@@ -17,7 +17,7 @@ playAppUpdate = "2.1.0"
 # debug
 leakcanary = "2.14"
 
-ktlint = "1.6.0"
+ktlint = "1.7.0"
 
 # for release
 
