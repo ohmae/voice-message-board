@@ -16,7 +16,7 @@ playAppUpdate = "2.1.0"
 # debug
 leakcanary = "2.14"
 
-ktlint = "1.7.0"
+ktlint = "1.7.1"
 
 # for release
 
