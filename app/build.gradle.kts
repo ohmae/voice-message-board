@@ -82,8 +82,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.playAppUpdate)
 
-    debugImplementation(libs.leakcanary)
-
     // for release
 }
 
