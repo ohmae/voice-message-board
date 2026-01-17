@@ -1,10 +1,9 @@
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import com.android.build.api.variant.impl.VariantOutputImpl
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     id("kotlin-parcelize")
     alias(libs.plugins.gradleVersions)
     alias(libs.plugins.dependencyGuard)
@@ -29,13 +28,6 @@ android {
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         base.archivesName.set("$applicationName-$versionName")
     }
-    applicationVariants.all {
-        if (buildType.name == "release") {
-            outputs.all {
-                (this as BaseVariantOutputImpl).outputFileName = "$applicationName-$versionName.apk"
-            }
-        }
-    }
     buildTypes {
         debug {
             isDebuggable = true
@@ -56,11 +48,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-        }
-    }
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -70,6 +57,20 @@ android {
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true
+    }
+}
+
+androidComponents {
+    onVariants(selector().withBuildType("release")) { variant ->
+        variant.outputs.forEach {
+            (it as VariantOutputImpl).outputFileName.set("$applicationName-${it.versionName.get()}.apk")
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
     }
 }
 
