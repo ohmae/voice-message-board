@@ -13,7 +13,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
@@ -45,7 +44,7 @@ class ThemeDelegate(
         foreground: Int,
     ) {
         gridDrawable.setColor(background)
-        ViewCompat.setBackground(root, gridDrawable)
+        root.background = gridDrawable
         root.invalidate()
         textView.setTextColor(foreground)
         icon?.let {
