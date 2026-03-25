@@ -16,11 +16,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.databinding.ListItemStringBinding
+import net.mm2d.android.vmb.util.buildBundle
 import net.mm2d.android.vmb.util.isInActive
+import net.mm2d.android.vmb.util.stringBundle
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
 class SelectStringDialog : DialogFragment() {
@@ -34,7 +35,7 @@ class SelectStringDialog : DialogFragment() {
             .setTitle(argument.getInt(KEY_TITLE))
             .setAdapter(StringListAdapter(activity, stringList)) { _, which ->
                 val requestKey = requireArguments().getString(KEY_REQUEST, "")
-                parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to stringList[which]))
+                parentFragmentManager.setFragmentResult(requestKey, stringBundle(KEY_RESULT, stringList[which]))
             }
             .create()
     }
@@ -85,11 +86,11 @@ class SelectStringDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             SelectStringDialog().also { dialog ->
-                dialog.arguments = bundleOf(
-                    KEY_REQUEST to requestKey,
-                    KEY_TITLE to title,
-                    KEY_STRING_LIST to strings,
-                )
+                dialog.arguments = buildBundle {
+                    putString(KEY_REQUEST, requestKey)
+                    putInt(KEY_TITLE, title)
+                    putStringArrayList(KEY_STRING_LIST, strings)
+                }
             }.show(manager, TAG)
         }
     }

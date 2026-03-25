@@ -16,13 +16,14 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.databinding.DialogRecognizerBinding
 import net.mm2d.android.vmb.util.Toaster
+import net.mm2d.android.vmb.util.buildBundle
 import net.mm2d.android.vmb.util.isInActive
+import net.mm2d.android.vmb.util.stringBundle
 
 class RecognizerDialog : DialogFragment() {
     private var recognizer: SpeechRecognizer? = null
@@ -114,7 +115,10 @@ class RecognizerDialog : DialogFragment() {
                 dismissAllowingStateLoss()
                 val list = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
                 val requestKey = requireArguments().getString(KEY_REQUEST, "")
-                parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to list))
+                parentFragmentManager.setFragmentResult(
+                    requestKey,
+                    buildBundle { putStringArrayList(KEY_RESULT, list) },
+                )
             }
         }
 
@@ -158,9 +162,7 @@ class RecognizerDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             RecognizerDialog().also {
-                it.arguments = bundleOf(
-                    KEY_REQUEST to requestKey,
-                )
+                it.arguments = stringBundle(KEY_REQUEST, requestKey)
             }.show(manager, TAG)
         }
     }

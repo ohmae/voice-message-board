@@ -10,18 +10,18 @@ package net.mm2d.android.vmb.customtabs
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsService
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import net.mm2d.android.vmb.util.parcelableBundle
 import net.mm2d.android.vmb.util.queryIntentServicesCompat
 
 class CustomTabsHelper(
@@ -89,14 +89,14 @@ class CustomTabsHelper(
     fun mayLaunchUrl(
         url: String,
     ) {
-        session?.mayLaunchUrl(Uri.parse(url), null, null)
+        session?.mayLaunchUrl(url.toUri(), null, null)
     }
 
     fun mayLaunchUrl(
         urls: List<String>,
     ) {
         if (urls.isEmpty()) return
-        session?.mayLaunchUrl(Uri.parse(urls[0]), null, makeOtherLikelyBundles(urls))
+        session?.mayLaunchUrl(urls[0].toUri(), null, makeOtherLikelyBundles(urls))
     }
 
     private fun makeOtherLikelyBundles(
@@ -106,7 +106,7 @@ class CustomTabsHelper(
             null
         } else {
             urls.subList(1, urls.size)
-                .map { bundleOf(CustomTabsService.KEY_URL to Uri.parse(it)) }
+                .map { parcelableBundle(CustomTabsService.KEY_URL, it.toUri()) }
         }
 
     fun createCustomTabsIntent(): CustomTabsIntent.Builder = CustomTabsIntent.Builder(session)
@@ -119,7 +119,7 @@ class CustomTabsHelper(
         if (session == null) {
             customTabsIntent.intent.setPackage(findPackageNameToUse(context))
         }
-        return runCatching { customTabsIntent.launchUrl(context, Uri.parse(url)) }.isSuccess
+        return runCatching { customTabsIntent.launchUrl(context, url.toUri()) }.isSuccess
     }
 
     companion object {

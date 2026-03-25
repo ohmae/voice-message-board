@@ -13,12 +13,13 @@ import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.databinding.DialogEditBinding
+import net.mm2d.android.vmb.util.buildBundle
 import net.mm2d.android.vmb.util.isInActive
+import net.mm2d.android.vmb.util.stringBundle
 
 class EditStringDialog : DialogFragment() {
     private lateinit var binding: DialogEditBinding
@@ -56,7 +57,7 @@ class EditStringDialog : DialogFragment() {
     private fun inputText() {
         val requestKey = requireArguments().getString(KEY_REQUEST, "")
         val result = binding.editText.text.toString()
-        parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to result))
+        parentFragmentManager.setFragmentResult(requestKey, stringBundle(KEY_RESULT, result))
     }
 
     override fun onSaveInstanceState(
@@ -94,10 +95,10 @@ class EditStringDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             EditStringDialog().also { dialog ->
-                dialog.arguments = bundleOf(
-                    KEY_REQUEST to requestKey,
-                    KEY_STRING to editString,
-                )
+                dialog.arguments = buildBundle {
+                    putString(KEY_REQUEST, requestKey)
+                    putString(KEY_STRING, editString)
+                }
             }.show(manager, TAG)
         }
     }

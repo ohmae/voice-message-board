@@ -10,22 +10,18 @@ package net.mm2d.android.vmb.customtabs
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
+import androidx.core.net.toUri
 import net.mm2d.android.vmb.util.queryIntentActivitiesCompat
 import net.mm2d.android.vmb.util.resolveActivityCompat
 
 internal object OpenUriUtils {
     fun getBrowserPackages(
         context: Context,
-    ): Set<String> {
-        val flags =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PackageManager.MATCH_ALL else 0
-        return context.packageManager
-            .queryIntentActivitiesCompat(makeBrowserTestIntent(), flags)
+    ): Set<String> =
+        context.packageManager
+            .queryIntentActivitiesCompat(makeBrowserTestIntent(), PackageManager.MATCH_ALL)
             .mapNotNull { it.activityInfo?.packageName }
             .toSet()
-    }
 
     fun getDefaultBrowserPackage(
         context: Context,
@@ -41,7 +37,7 @@ internal object OpenUriUtils {
     fun makeBrowseIntent(
         uri: String,
     ): Intent =
-        Intent(Intent.ACTION_VIEW, Uri.parse(uri)).apply {
+        Intent(Intent.ACTION_VIEW, uri.toUri()).apply {
             addCategory(Intent.CATEGORY_BROWSABLE)
         }
 

@@ -14,15 +14,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.databinding.ListItemThemeBinding
 import net.mm2d.android.vmb.theme.Theme
+import net.mm2d.android.vmb.util.buildBundle
 import net.mm2d.android.vmb.util.getParcelableArrayListSafely
 import net.mm2d.android.vmb.util.getParcelableSafely
 import net.mm2d.android.vmb.util.isInActive
+import net.mm2d.android.vmb.util.parcelableBundle
 import net.mm2d.android.vmb.view.adapter.BaseListAdapter
 
 class SelectThemeDialog : DialogFragment() {
@@ -36,7 +37,7 @@ class SelectThemeDialog : DialogFragment() {
         return AlertDialog.Builder(activity)
             .setTitle(activity.getString(R.string.theme_select))
             .setAdapter(ThemeListAdapter(activity, themeList)) { _, which ->
-                parentFragmentManager.setFragmentResult(requestKey, bundleOf(KEY_RESULT to themeList[which]))
+                parentFragmentManager.setFragmentResult(requestKey, parcelableBundle(KEY_RESULT, themeList[which]))
             }
             .create()
     }
@@ -87,10 +88,10 @@ class SelectThemeDialog : DialogFragment() {
             if (manager.isStateSaved) return
             if (manager.findFragmentByTag(TAG) != null) return
             SelectThemeDialog().also { dialog ->
-                dialog.arguments = bundleOf(
-                    KEY_REQUEST to requestKey,
-                    KEY_THEME_LIST to themes,
-                )
+                dialog.arguments = buildBundle {
+                    putString(KEY_REQUEST, requestKey)
+                    putParcelableArrayList(KEY_THEME_LIST, themes)
+                }
             }.show(manager, TAG)
         }
     }
