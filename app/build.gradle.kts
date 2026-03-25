@@ -12,7 +12,7 @@ plugins {
 val applicationName = "VoiceMessageBoard"
 val versionMajor = 1
 val versionMinor = 12
-val versionPatch = 3
+val versionPatch = 4
 
 android {
     compileSdk = 36
