@@ -47,7 +47,6 @@ androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.10.0
 androidx.lifecycle:lifecycle-viewmodel-savedstate:2.10.0
 androidx.lifecycle:lifecycle-viewmodel:2.10.0
 androidx.loader:loader:1.0.0
-androidx.preference:preference-ktx:1.2.1
 androidx.preference:preference:1.2.1
 androidx.profileinstaller:profileinstaller:1.4.0
 androidx.recyclerview:recyclerview:1.2.1
