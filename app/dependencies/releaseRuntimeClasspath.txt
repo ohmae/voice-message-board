@@ -13,14 +13,14 @@ androidx.collection:collection-jvm:1.4.2
 androidx.collection:collection-ktx:1.4.2
 androidx.collection:collection:1.4.2
 androidx.concurrent:concurrent-futures:1.1.0
-androidx.constraintlayout:constraintlayout-core:1.0.0
-androidx.constraintlayout:constraintlayout:2.1.0
+androidx.constraintlayout:constraintlayout-core:1.1.1
+androidx.constraintlayout:constraintlayout:2.2.1
 androidx.coordinatorlayout:coordinatorlayout:1.1.0
 androidx.core:core-ktx:1.18.0
 androidx.core:core-viewtree:1.0.0
 androidx.core:core:1.18.0
 androidx.cursoradapter:cursoradapter:1.0.0
-androidx.customview:customview:1.1.0
+androidx.customview:customview:1.2.0
 androidx.databinding:viewbinding:9.2.1
 androidx.drawerlayout:drawerlayout:1.1.1
 androidx.dynamicanimation:dynamicanimation:1.1.0
@@ -66,7 +66,7 @@ androidx.viewpager:viewpager:1.0.0
 androidx.window:window:1.0.0
 com.google.android.gms:play-services-basement:18.1.0
 com.google.android.gms:play-services-tasks:18.0.2
-com.google.android.material:material:1.13.0
+com.google.android.material:material:1.14.0
 com.google.android.play:app-update-ktx:2.1.0
 com.google.android.play:app-update:2.1.0
 com.google.android.play:core-common:2.0.3
