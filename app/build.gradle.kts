@@ -15,9 +15,11 @@ val versionMinor = 12
 val versionPatch = 4
 
 android {
-    compileSdk = 36
-
     namespace = "net.mm2d.android.vmb"
+    compileSdk {
+        version = release(37)
+    }
+
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdk = 26
