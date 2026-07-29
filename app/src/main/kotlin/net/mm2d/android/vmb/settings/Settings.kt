@@ -10,15 +10,11 @@ package net.mm2d.android.vmb.settings
 import android.content.Context
 import android.content.pm.ActivityInfo
 import androidx.annotation.ColorInt
-import androidx.preference.PreferenceDataStore
 import net.mm2d.android.vmb.settings.Key.Main
 
 class Settings private constructor(
     private val preferences: Preferences<Main>,
 ) {
-    val preferenceDataSource: PreferenceDataStore
-        get() = preferences.dataStore
-
     var backgroundColor: Int
         @ColorInt
         get() = preferences.readInt(Main.BACKGROUND_INT, 0)
@@ -29,8 +25,12 @@ class Settings private constructor(
         get() = preferences.readInt(Main.FOREGROUND_INT, 0)
         set(@ColorInt color) = preferences.writeInt(Main.FOREGROUND_INT, color)
 
+    var screenOrientationString: String
+        get() = preferences.readString(Main.SCREEN_ORIENTATION_STRING, "-1")
+        set(value) = preferences.writeString(Main.SCREEN_ORIENTATION_STRING, value)
+
     val screenOrientation: Int
-        get() = preferences.readString(Main.SCREEN_ORIENTATION_STRING, "").toIntOrNull()
+        get() = screenOrientationString.toIntOrNull()
             ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     var useFont: Boolean
@@ -48,14 +48,29 @@ class Settings private constructor(
     val fontPathToUse: String
         get() = if (useFont) fontPath else ""
 
-    fun shouldUseSpeechRecognizer(): Boolean = preferences.readBoolean(Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN, false)
+    var shouldUseSpeechRecognizer: Boolean
+        get() = preferences.readBoolean(Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN, true)
+        set(value) = preferences.writeBoolean(Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN, value)
 
-    fun shouldShowCandidateList(): Boolean = preferences.readBoolean(Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN, false)
+    fun shouldUseSpeechRecognizer(): Boolean = shouldUseSpeechRecognizer
 
-    fun shouldShowEditorWhenLongTap(): Boolean =
-        preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN, false)
+    var shouldShowCandidateList: Boolean
+        get() = preferences.readBoolean(Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN, false)
+        set(value) = preferences.writeBoolean(Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN, value)
 
-    fun shouldShowEditorAfterSelect(): Boolean = preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_BOOLEAN, false)
+    fun shouldShowCandidateList(): Boolean = shouldShowCandidateList
+
+    var shouldShowEditorWhenLongTap: Boolean
+        get() = preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN, true)
+        set(value) = preferences.writeBoolean(Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN, value)
+
+    fun shouldShowEditorWhenLongTap(): Boolean = shouldShowEditorWhenLongTap
+
+    var shouldShowEditorAfterSelect: Boolean
+        get() = preferences.readBoolean(Main.SHOULD_SHOW_EDITOR_BOOLEAN, false)
+        set(value) = preferences.writeBoolean(Main.SHOULD_SHOW_EDITOR_BOOLEAN, value)
+
+    fun shouldShowEditorAfterSelect(): Boolean = shouldShowEditorAfterSelect
 
     var history: Set<String>
         get() = preferences.readStringSet(Main.HISTORY_SET, emptySet())

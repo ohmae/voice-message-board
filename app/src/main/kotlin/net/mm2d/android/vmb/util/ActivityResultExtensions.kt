@@ -8,19 +8,11 @@
 package net.mm2d.android.vmb.util
 
 import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 
-fun <I, O> Fragment.registerForActivityResultWrapper(
-    contract: ActivityResultContract<I, O>,
-    input: I,
-    callback: ActivityResultCallback<O>,
-): ActivityResultLauncherWrapper<I> =
-    ActivityResultLauncherWrapper(registerForActivityResult(contract, callback), input)
-
-fun <I, O> FragmentActivity.registerForActivityResultWrapper(
+fun <I, O> ActivityResultCaller.registerForActivityResultWrapper(
     contract: ActivityResultContract<I, O>,
     input: I,
     callback: ActivityResultCallback<O>,

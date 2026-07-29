@@ -11,107 +11,49 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.database.getStringOrNull
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mm2d.android.vmb.constant.Constants
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
-import net.mm2d.android.vmb.databinding.ActivitySettingsBinding
 import net.mm2d.android.vmb.font.FontUtils
-import net.mm2d.android.vmb.settings.Key.Main
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.ui.settings.SettingsScreen
+import net.mm2d.android.vmb.ui.theme.AppTheme
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 import java.io.File
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : ComponentActivity() {
+    private val settings by lazy {
+        Settings.get()
+    }
+    private val fontChooserLauncher =
+        registerForActivityResultWrapper(GetContent(), "*/*", ::onSelectFont)
+
     override fun onCreate(
         savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val binding = ActivitySettingsBinding.inflate(layoutInflater)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
-            binding.appbar.setPadding(0, systemBars.top, 0, 0)
-            insets
-        }
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .add(binding.fragmentContainer.id, SettingsFragment())
-                .commit()
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        finish()
-        return true
-    }
-}
-
-class SettingsFragment : PreferenceFragmentCompat() {
-    private val settings by lazy {
-        Settings.get()
-    }
-    private lateinit var fontPathPreference: Preference
-    private val fontChooserLauncher =
-        registerForActivityResultWrapper(GetContent(), "*/*", ::onSelectFont)
-
-    override fun onCreatePreferences(
-        savedInstanceState: Bundle?,
-        rootKey: String?,
-    ) {
-        preferenceManager.preferenceDataStore = settings.preferenceDataSource
-        addPreferencesFromResource(R.xml.preferences)
-        bindPreference(Main.SCREEN_ORIENTATION_STRING)
-        findPreference(Main.PLAY_STORE_SCREEN)?.setOnPreferenceClickListener {
-            openUrl(Constants.MARKET_URL)
-        }
-        findPreference(Main.PRIVACY_POLICY_SCREEN)?.setOnPreferenceClickListener {
-            openUrl(Constants.PRIVACY_POLICY_URL)
-        }
-        findPreference(Main.SOURCE_CODE_SCREEN)?.setOnPreferenceClickListener {
-            openUrl(Constants.SOURCE_CODE_URL)
-        }
-        findPreference(Main.LICENSE_SCREEN)?.setOnPreferenceClickListener {
-            LicenseActivity.start(requireContext())
-            true
-        }
-        findPreference(Main.VERSION_NUMBER_SCREEN)?.summary = BuildConfig.VERSION_NAME
-        setUpFontSetting()
-    }
-
-    private fun setUpFontSetting() {
-        fontPathPreference = findPreference(Main.FONT_PATH_STRING)!!
-        fontPathPreference.setOnPreferenceClickListener {
-            fontChooserLauncher.launch()
-            true
-        }
-        setFontName()
-    }
-
-    private fun setFontName() {
-        val name = settings.fontName
-        if (name.isEmpty()) {
-            fontPathPreference.setSummary(R.string.pref_description_font_path)
-        } else {
-            fontPathPreference.summary = name
+        enableEdgeToEdge()
+        setContent {
+            AppTheme {
+                SettingsScreen(
+                    onBackClick = { finish() },
+                    onSelectFontClick = { fontChooserLauncher.launch() },
+                    onOpenUrl = { url -> openUrl(url) },
+                    onOpenLicense = { LicenseActivity.start(this) },
+                    settings = settings,
+                )
+            }
         }
     }
 
@@ -119,17 +61,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
         uri: Uri?,
     ) {
         uri ?: return
-        val context = requireContext()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 val (path, name) = withContext(Dispatchers.IO) {
-                    prepareFontFile(context, uri)
+                    prepareFontFile(this@SettingsActivity, uri)
                 }
                 settings.fontPath = path
                 settings.fontName = name
-                setFontName()
                 if (path.isEmpty()) {
-                    Toaster.show(context, R.string.toast_not_a_valid_font)
+                    Toaster.show(this@SettingsActivity, R.string.toast_not_a_valid_font)
+                } else {
+                    recreate()
                 }
             }
         }
@@ -163,38 +105,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun findPreference(
-        key: Main,
-    ): Preference? = super.findPreference(key.name)
-
-    private fun bindPreference(
-        key: Main,
-    ) {
-        val preference = findPreference(key) ?: return
-        preference.setOnPreferenceChangeListener(this::bindPreference)
-        val value = preferenceManager.preferenceDataStore?.getString(key.name, "") ?: ""
-        bindPreference(preference, value)
-    }
-
-    private fun bindPreference(
-        preference: Preference,
-        value: Any,
-    ): Boolean {
-        val stringValue = value.toString()
-        if (preference is ListPreference) {
-            val index = preference.findIndexOfValue(stringValue)
-            preference.summary = if (index >= 0) preference.entries[index] else null
-        } else {
-            preference.summary = stringValue
-        }
-        return true
-    }
-
     private fun openUrl(
         url: String,
-    ): Boolean {
-        CustomTabsHelperHolder.openUrl(requireContext(), url)
-        return true
+    ) {
+        CustomTabsHelperHolder.openUrl(this, url)
     }
 
     override fun onResume() {

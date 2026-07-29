@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     id("kotlin-parcelize")
     alias(libs.plugins.dependencyGuard)
+    alias(libs.plugins.kotlinCompose)
 
     // for release
 }
@@ -52,6 +53,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
     lint {
         abortOnError = true
@@ -77,6 +79,16 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring(libs.desugarJdkLibs)
+
+    implementation(platform(libs.androidxComposeBom))
+    implementation(libs.androidxActivityCompose)
+    implementation(libs.androidxComposeUi)
+    implementation(libs.androidxComposeUiGraphics)
+    implementation(libs.androidxComposeUiToolingPreview)
+    implementation(libs.androidxComposeMaterial3)
+    implementation(libs.androidxComposeMaterialIcons)
+    implementation(libs.androidxLifecycleRuntimeCompose)
+    debugImplementation(libs.androidxComposeUiTooling)
 
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.androidxAppCompat)

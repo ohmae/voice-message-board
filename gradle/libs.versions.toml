@@ -11,6 +11,8 @@ androidxAppCompat = "1.7.1"
 androidxBrowser = "1.10.0"
 androidxLifecycle = "2.11.0"
 androidxPreferences = "1.2.1"
+androidxActivity = "1.13.0"
+composeBom = "2026.06.01"
 material = "1.14.0"
 playAppUpdate = "2.1.0"
 
@@ -30,7 +32,16 @@ androidxAppCompat = { group = "androidx.appcompat", name = "appcompat", version.
 androidxBrowser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidxLifecycleProcess = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidxLifecycle" }
 androidxLifecycleViewModel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidxLifecycle" }
+androidxLifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidxPreferences = { group = "androidx.preference", name = "preference", version.ref = "androidxPreferences" }
+androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidxComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidxComposeUi = { group = "androidx.compose.ui", name = "ui" }
+androidxComposeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidxComposeUiToolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidxComposeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidxComposeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
+androidxComposeMaterialIcons = { group = "androidx.compose.material", name = "material-icons-core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 playAppUpdate = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 
@@ -42,6 +53,7 @@ ktlint = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "k
 androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
+kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 # for release
 
