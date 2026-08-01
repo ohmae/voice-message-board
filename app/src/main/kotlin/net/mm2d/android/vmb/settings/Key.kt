@@ -7,20 +7,27 @@
 
 package net.mm2d.android.vmb.settings
 
+import android.content.Context
+import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import net.mm2d.android.vmb.BuildConfig
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KClass
 
 interface Key {
     enum class Main : Key {
-        PREFERENCES_VERSION_INT,
+        DATA_VERSION_INT,
         APP_VERSION_AT_INSTALL_INT,
         APP_VERSION_AT_LAST_LAUNCHED_INT,
-
-        VERSION_NUMBER_SCREEN,
-        PLAY_STORE_SCREEN,
-        PRIVACY_POLICY_SCREEN,
-        SOURCE_CODE_SCREEN,
-        LICENSE_SCREEN,
-        COPYRIGHT_SCREEN,
 
         BACKGROUND_INT,
         FOREGROUND_INT,
@@ -36,55 +43,87 @@ interface Key {
     }
 }
 
-private const val SUFFIX_BOOLEAN = "_BOOLEAN"
-private const val SUFFIX_INT = "_INT"
-private const val SUFFIX_LONG = "_LONG"
-private const val SUFFIX_FLOAT = "_FLOAT"
-private const val SUFFIX_STRING = "_STRING"
-private const val SUFFIX_SET = "_SET"
-private const val SUFFIX_SCREEN = "_SCREEN"
+enum class DataStoreFile {
+    MAIN,
+    ;
 
-private val SUFFIXES =
-    listOf(
-        SUFFIX_BOOLEAN,
-        SUFFIX_INT,
-        SUFFIX_LONG,
-        SUFFIX_FLOAT,
-        SUFFIX_STRING,
-        SUFFIX_SET,
-        SUFFIX_SCREEN,
-    )
-
-internal fun Array<out Enum<*>>.checkSuffix() {
-    if (!BuildConfig.DEBUG) return
-    forEach { key ->
-        require(SUFFIXES.any { key.name.endsWith(it) }) { "$key has no type suffix." }
-    }
+    fun fileName(): String = BuildConfig.APPLICATION_ID + "." + name.lowercase()
 }
 
+fun preferences(
+    file: DataStoreFile,
+    produceMigrations: (Context) -> List<DataMigration<Preferences>> = { emptyList() },
+): ReadOnlyProperty<Context, DataStore<Preferences>> =
+    preferencesDataStore(
+        name = file.fileName(),
+        corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+        produceMigrations = produceMigrations,
+    )
+
+fun Preferences.edit(
+    editor: (preferences: MutablePreferences) -> Unit,
+): Preferences = toMutablePreferences().also(editor).toPreferences()
+
+fun <K> K.intKey(): Preferences.Key<Int>
+    where K : Enum<*>,
+          K : Key {
+    if (BuildConfig.DEBUG) {
+        checkSuffix(Int::class)
+    }
+    return intPreferencesKey(name)
+}
+
+fun <K> K.stringKey(): Preferences.Key<String>
+    where K : Enum<*>,
+          K : Key {
+    if (BuildConfig.DEBUG) {
+        checkSuffix(String::class)
+    }
+    return stringPreferencesKey(name)
+}
+
+fun <K> K.booleanKey(): Preferences.Key<Boolean>
+    where K : Enum<*>,
+          K : Key {
+    if (BuildConfig.DEBUG) {
+        checkSuffix(Boolean::class)
+    }
+    return booleanPreferencesKey(name)
+}
+
+fun <K> K.setKey(): Preferences.Key<Set<String>>
+    where K : Enum<*>,
+          K : Key {
+    if (BuildConfig.DEBUG) {
+        checkSuffix(Set::class)
+    }
+    return stringSetPreferencesKey(name)
+}
+
+private const val SUFFIX_BOOLEAN = "_BOOLEAN"
+private const val SUFFIX_INT = "_INT"
+private const val SUFFIX_STRING = "_STRING"
+private const val SUFFIX_SET = "_SET"
+
 internal fun Enum<*>.checkSuffix(
-    value: Any,
+    value: KClass<*>,
 ) {
     if (!BuildConfig.DEBUG) return
     when (value) {
-        is Boolean -> require(name.endsWith(SUFFIX_BOOLEAN)) {
+        Boolean::class -> require(name.endsWith(SUFFIX_BOOLEAN)) {
             "$this is used for Boolean, suffix \"$SUFFIX_BOOLEAN\" is required."
         }
 
-        is Int -> require(name.endsWith(SUFFIX_INT)) {
+        Int::class -> require(name.endsWith(SUFFIX_INT)) {
             "$this is used for Int, suffix \"$SUFFIX_INT\" is required."
         }
 
-        is Long -> require(name.endsWith(SUFFIX_LONG)) {
-            "$this is used for Long, suffix \"$SUFFIX_LONG\" is required."
-        }
-
-        is Float -> require(name.endsWith(SUFFIX_FLOAT)) {
-            "$this is used for Float, suffix \"$SUFFIX_FLOAT\" is required."
-        }
-
-        is String -> require(name.endsWith(SUFFIX_STRING)) {
+        String::class -> require(name.endsWith(SUFFIX_STRING)) {
             "$this is used for String, suffix \"$SUFFIX_STRING\" is required."
+        }
+
+        Set::class -> require(name.endsWith(SUFFIX_SET)) {
+            "$this is used for Set<String>, suffix \"$SUFFIX_SET\" is required."
         }
     }
 }

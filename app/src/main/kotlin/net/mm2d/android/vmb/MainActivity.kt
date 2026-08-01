@@ -26,12 +26,16 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
+import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.databinding.ActivityMainBinding
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
@@ -41,6 +45,7 @@ import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.history.HistoryDelegate
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.util.ViewUtils
 
@@ -48,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     private val settings by lazy {
         Settings.get()
     }
+    private var currentSettingsData: SettingsData = SettingsData()
+
     private lateinit var themeDelegate: ThemeDelegate
     private lateinit var historyDelegate: HistoryDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
@@ -90,7 +97,6 @@ class MainActivity : AppCompatActivity() {
         binding.scrollView.setOnTouchListener(listener)
         binding.textView.setOnTouchListener(listener)
         themeDelegate = ThemeDelegate(this, binding.scrollView, binding.textView, binding.toolbar.overflowIcon)
-        themeDelegate.apply()
         historyDelegate = HistoryDelegate(this, binding.historyFab)
         voiceInputDelegate = VoiceInputDelegate(this, ::setText)
         restoreInstanceState(savedInstanceState)
@@ -101,17 +107,37 @@ class MainActivity : AppCompatActivity() {
         EditStringDialog.registerListener(this, REQUEST_EDIT) {
             setText(it)
         }
-        SelectThemeDialog.registerListener(this, REQUEST_THEME) {
-            themeDelegate.select(it)
+        SelectThemeDialog.registerListener(this, REQUEST_THEME) { theme ->
+            lifecycleScope.launch {
+                themeDelegate.select(theme)
+            }
         }
         SelectStringDialog.registerListener(this, REQUEST_SELECT) {
             setText(it)
-            if (settings.shouldShowEditorAfterSelect()) {
+            if (currentSettingsData.shouldShowEditorAfterSelect) {
                 startEdit()
             }
         }
         RecognizerDialog.registerListener(this, REQUEST_RECOGNIZE) {
             voiceInputDelegate.onRecognize(it)
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settings.settingsFlow.collect { data ->
+                    currentSettingsData = data
+                    themeDelegate.apply(data)
+                    historyDelegate.updateHistory(data)
+                    voiceInputDelegate.updateSettings(data)
+                    FontUtils.setFont(binding.textView, data) {
+                        lifecycleScope.launch {
+                            settings.resetFont()
+                        }
+                    }
+                    requestedOrientation = data.screenOrientation
+                    invalidateOptionsMenu()
+                }
+            }
         }
     }
 
@@ -146,14 +172,8 @@ class MainActivity : AppCompatActivity() {
         outState.putString(TAG_TEXT, binding.textView.text.toString())
     }
 
-    override fun onStart() {
-        super.onStart()
-        FontUtils.setFont(binding.textView, settings)
-    }
-
     override fun onResume() {
         super.onResume()
-        requestedOrientation = settings.screenOrientation
         updatePadding()
     }
 
@@ -188,7 +208,9 @@ class MainActivity : AppCompatActivity() {
         string: String,
     ) {
         binding.textView.text = string
-        historyDelegate.put(string)
+        lifecycleScope.launch {
+            historyDelegate.put(string)
+        }
         binding.scrollView.scrollTo(0, 0)
         updatePadding()
     }
@@ -254,7 +276,7 @@ class MainActivity : AppCompatActivity() {
         override fun onLongPress(
             e: MotionEvent,
         ) {
-            if (settings.shouldShowEditorWhenLongTap()) {
+            if (currentSettingsData.shouldShowEditorWhenLongTap) {
                 startEdit()
             }
         }

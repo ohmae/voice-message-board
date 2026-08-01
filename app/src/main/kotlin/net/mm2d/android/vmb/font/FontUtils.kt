@@ -10,7 +10,7 @@ package net.mm2d.android.vmb.font
 import android.graphics.Typeface
 import android.widget.TextView
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.util.Toaster
 import java.io.File
 
@@ -24,20 +24,19 @@ object FontUtils {
 
     fun setFont(
         textView: TextView,
-        settings: Settings,
+        settingsData: SettingsData,
+        onInvalidFont: () -> Unit = {},
     ) {
-        if (settings.fontPathToUse.isEmpty()) {
+        if (settingsData.fontPathToUse.isEmpty()) {
             textView.typeface = Typeface.DEFAULT
             return
         }
-        runCatching { Typeface.createFromFile(settings.fontPath) }.getOrNull()
+        runCatching { Typeface.createFromFile(settingsData.fontPath) }.getOrNull()
             ?.let {
                 textView.setTypeface(it, Typeface.NORMAL)
                 return
             }
-        settings.useFont = false
-        settings.fontPath = ""
-        settings.fontName = ""
+        onInvalidFont()
         textView.typeface = Typeface.DEFAULT
         Toaster.show(textView.context, R.string.toast_failed_to_load_font)
     }

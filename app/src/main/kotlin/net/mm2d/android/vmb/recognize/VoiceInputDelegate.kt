@@ -16,7 +16,7 @@ import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.permission.RecordAudioPermission
-import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 
@@ -24,7 +24,8 @@ class VoiceInputDelegate(
     private val activity: FragmentActivity,
     private val setText: (text: String) -> Unit,
 ) {
-    private val settings = Settings.get()
+    private var settingsData: SettingsData = SettingsData()
+
     private val permissionLauncher =
         activity.registerForActivityResultWrapper(
             RequestPermission(),
@@ -38,8 +39,14 @@ class VoiceInputDelegate(
             ::onRecognize,
         )
 
+    fun updateSettings(
+        data: SettingsData,
+    ) {
+        settingsData = data
+    }
+
     fun start() {
-        if (settings.shouldUseSpeechRecognizer()) {
+        if (settingsData.shouldUseSpeechRecognizer) {
             startDialogWithPermission()
         } else {
             speechLauncher.launch()
@@ -60,7 +67,7 @@ class VoiceInputDelegate(
         if (results.isEmpty()) {
             return
         }
-        if (results.size > 1 && settings.shouldShowCandidateList()) {
+        if (results.size > 1 && settingsData.shouldShowCandidateList) {
             SelectStringDialog.show(
                 activity,
                 MainActivity.REQUEST_SELECT,

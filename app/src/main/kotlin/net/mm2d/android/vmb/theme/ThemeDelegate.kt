@@ -19,12 +19,14 @@ import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.drawable.GridDrawable
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.settings.SettingsData
 
 class ThemeDelegate(
     private val activity: FragmentActivity,
     private val root: View,
     private val textView: TextView,
     private val icon: Drawable?,
+    private val settings: Settings = Settings.get(),
 ) {
     private val themes = arrayListOf(
         Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
@@ -32,14 +34,15 @@ class ThemeDelegate(
         Theme(activity.getString(R.string.theme_black_yellow), Color.BLACK, Color.YELLOW),
         Theme(activity.getString(R.string.theme_black_green), Color.BLACK, Color.GREEN),
     )
-    private val settings = Settings.get()
     private val gridDrawable = GridDrawable(activity)
 
-    fun apply() {
-        apply(settings.backgroundColor, settings.foregroundColor)
+    fun apply(
+        settingsData: SettingsData,
+    ) {
+        apply(settingsData.backgroundColor, settingsData.foregroundColor)
     }
 
-    private fun apply(
+    fun apply(
         background: Int,
         foreground: Int,
     ) {
@@ -52,12 +55,10 @@ class ThemeDelegate(
         }
     }
 
-    fun select(
+    suspend fun select(
         theme: Theme,
     ) {
-        settings.backgroundColor = theme.backgroundColor
-        settings.foregroundColor = theme.foregroundColor
-        apply()
+        settings.updateTheme(theme.backgroundColor, theme.foregroundColor)
     }
 
     fun showDialog() {

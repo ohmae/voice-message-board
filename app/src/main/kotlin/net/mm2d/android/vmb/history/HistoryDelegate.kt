@@ -9,28 +9,41 @@ package net.mm2d.android.vmb.history
 
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.settings.SettingsData
 import java.util.LinkedList
 
 class HistoryDelegate(
     private val activity: FragmentActivity,
     private val historyFab: FloatingActionButton,
+    private val settings: Settings = Settings.get(),
 ) {
-    private val settings = Settings.get()
-    private val history = LinkedList(settings.history)
+    private val history = LinkedList<String>()
 
     init {
-        if (history.isEmpty()) {
-            historyFab.hide()
-        }
+        historyFab.hide()
         historyFab.setOnClickListener { showSelectDialog() }
     }
 
-    fun exist(): Boolean = !history.isEmpty()
+    fun updateHistory(
+        settingsData: SettingsData,
+    ) {
+        history.clear()
+        history.addAll(settingsData.history)
+        if (history.isEmpty()) {
+            historyFab.hide()
+        } else {
+            historyFab.show()
+        }
+    }
+
+    fun exist(): Boolean = history.isNotEmpty()
 
     fun showSelectDialog() {
         if (history.isEmpty()) return
@@ -46,12 +59,16 @@ class HistoryDelegate(
         AlertDialog.Builder(activity)
             .setTitle(R.string.dialog_title_clear_history)
             .setMessage(R.string.dialog_message_clear_history)
-            .setPositiveButton(R.string.ok) { _, _ -> clear() }
+            .setPositiveButton(R.string.ok) { _, _ ->
+                activity.lifecycleScope.launch {
+                    clear()
+                }
+            }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
-    fun put(
+    suspend fun put(
         string: String,
     ) {
         history.remove(string)
@@ -59,14 +76,12 @@ class HistoryDelegate(
         while (history.size > MAX_HISTORY) {
             history.removeLast()
         }
-        settings.history = HashSet(history)
-        historyFab.show()
+        settings.updateHistory(history.toSet())
     }
 
-    private fun clear() {
+    suspend fun clear() {
         history.clear()
-        settings.history = HashSet(history)
-        historyFab.hide()
+        settings.updateHistory(emptySet())
     }
 
     companion object {
