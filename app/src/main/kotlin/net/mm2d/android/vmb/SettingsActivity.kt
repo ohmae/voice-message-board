@@ -15,6 +15,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.activity.viewModels
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,15 +28,14 @@ import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.ui.settings.SettingsScreen
+import net.mm2d.android.vmb.ui.settings.SettingsViewModel
 import net.mm2d.android.vmb.ui.theme.AppTheme
 import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 import java.io.File
 
 class SettingsActivity : ComponentActivity() {
-    private val settings by lazy {
-        Settings.get()
-    }
+    private val viewModel: SettingsViewModel by viewModels()
     private val fontChooserLauncher =
         registerForActivityResultWrapper(GetContent(), "*/*", ::onSelectFont)
 
@@ -51,7 +51,7 @@ class SettingsActivity : ComponentActivity() {
                     onSelectFontClick = { fontChooserLauncher.launch() },
                     onOpenUrl = { url -> openUrl(url) },
                     onOpenLicense = { LicenseActivity.start(this) },
-                    settings = settings,
+                    viewModel = viewModel,
                 )
             }
         }
@@ -66,8 +66,10 @@ class SettingsActivity : ComponentActivity() {
                 val (path, name) = withContext(Dispatchers.IO) {
                     prepareFontFile(this@SettingsActivity, uri)
                 }
+                val settings = Settings.get()
                 settings.fontPath = path
                 settings.fontName = name
+                viewModel.updateFontName(name)
                 if (path.isEmpty()) {
                     Toaster.show(this@SettingsActivity, R.string.toast_not_a_valid_font)
                 } else {

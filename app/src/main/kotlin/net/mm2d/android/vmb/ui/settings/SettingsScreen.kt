@@ -32,10 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,36 +43,54 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import net.mm2d.android.vmb.BuildConfig
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.constant.Constants
-import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.ui.settings.SettingsViewModel.UiEffect
+import net.mm2d.android.vmb.ui.settings.SettingsViewModel.UiEvent
+import net.mm2d.android.vmb.ui.settings.SettingsViewModel.UiState
 import net.mm2d.android.vmb.ui.theme.AppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
     onSelectFontClick: () -> Unit,
     onOpenUrl: (String) -> Unit,
     onOpenLicense: () -> Unit,
-    settings: Settings = Settings.get(),
+    viewModel: SettingsViewModel = viewModel(),
 ) {
-    var screenOrientation by remember { mutableStateOf(settings.screenOrientationString) }
-    var shouldUseSpeechRecognizer by remember { mutableStateOf(settings.shouldUseSpeechRecognizer) }
-    var shouldShowCandidateList by remember { mutableStateOf(settings.shouldShowCandidateList) }
-    var shouldShowEditorAfterSelect by remember { mutableStateOf(settings.shouldShowEditorAfterSelect) }
-    var shouldShowEditorWhenLongTap by remember { mutableStateOf(settings.shouldShowEditorWhenLongTap) }
-    var useFont by remember { mutableStateOf(settings.useFont) }
-    var fontName by remember { mutableStateOf(settings.fontName) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var showOrientationDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffect.collect { effect ->
+            when (effect) {
+                UiEffect.NavigateBack -> onBackClick()
+                UiEffect.LaunchFontChooser -> onSelectFontClick()
+                is UiEffect.OpenUrl -> onOpenUrl(effect.url)
+                UiEffect.NavigateToLicense -> onOpenLicense()
+            }
+        }
+    }
 
+    SettingsScreen(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreen(
+    uiState: UiState,
+    onEvent: (UiEvent) -> Unit,
+) {
     val orientationTitles = stringArrayResource(R.array.pref_screen_orientation_titles)
     val orientationValues = stringArrayResource(R.array.pref_screen_orientation_values)
 
-    val currentOrientationTitle = remember(screenOrientation, orientationTitles, orientationValues) {
-        val index = orientationValues.indexOf(screenOrientation)
+    val currentOrientationTitle = remember(uiState.screenOrientation, orientationTitles, orientationValues) {
+        val index = orientationValues.indexOf(uiState.screenOrientation)
         if (index >= 0 && index < orientationTitles.size) orientationTitles[index] else orientationTitles[0]
     }
 
@@ -82,7 +99,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = { Text(text = stringResource(R.string.title_activity_settings)) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = { onEvent(UiEvent.OnBackClick) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
@@ -104,67 +121,63 @@ fun SettingsScreen(
                 PreferenceClickableItem(
                     title = stringResource(R.string.pref_title_screen_orientation),
                     summary = currentOrientationTitle,
-                    onClick = { showOrientationDialog = true },
+                    onClick = { onEvent(UiEvent.OnSelectOrientationClick) },
                 )
             }
             item {
                 PreferenceSwitchItem(
                     title = stringResource(R.string.pref_title_speech_recognizer),
-                    summary = if (shouldUseSpeechRecognizer) {
+                    summary = if (uiState.shouldUseSpeechRecognizer) {
                         stringResource(R.string.pref_description_speech_recognizer_on)
                     } else {
                         stringResource(R.string.pref_description_speech_recognizer_off)
                     },
-                    checked = shouldUseSpeechRecognizer,
+                    checked = uiState.shouldUseSpeechRecognizer,
                     onCheckedChange = { checked ->
-                        shouldUseSpeechRecognizer = checked
-                        settings.shouldUseSpeechRecognizer = checked
+                        onEvent(UiEvent.OnChangeSpeechRecognizer(checked))
                     },
                 )
             }
             item {
                 PreferenceSwitchItem(
                     title = stringResource(R.string.pref_title_candidate_list),
-                    summary = if (shouldShowCandidateList) {
+                    summary = if (uiState.shouldShowCandidateList) {
                         stringResource(R.string.pref_description_candidate_list_on)
                     } else {
                         stringResource(R.string.pref_description_candidate_list_off)
                     },
-                    checked = shouldShowCandidateList,
+                    checked = uiState.shouldShowCandidateList,
                     onCheckedChange = { checked ->
-                        shouldShowCandidateList = checked
-                        settings.shouldShowCandidateList = checked
+                        onEvent(UiEvent.OnChangeCandidateList(checked))
                     },
                 )
             }
             item {
                 PreferenceSwitchItem(
                     title = stringResource(R.string.pref_title_list_edit),
-                    summary = if (shouldShowEditorAfterSelect) {
+                    summary = if (uiState.shouldShowEditorAfterSelect) {
                         stringResource(R.string.pref_description_list_edit_on)
                     } else {
                         stringResource(R.string.pref_description_list_edit_off)
                     },
-                    checked = shouldShowEditorAfterSelect,
-                    enabled = shouldShowCandidateList,
+                    checked = uiState.shouldShowEditorAfterSelect,
+                    enabled = uiState.shouldShowCandidateList,
                     onCheckedChange = { checked ->
-                        shouldShowEditorAfterSelect = checked
-                        settings.shouldShowEditorAfterSelect = checked
+                        onEvent(UiEvent.OnChangeEditorAfterSelect(checked))
                     },
                 )
             }
             item {
                 PreferenceSwitchItem(
                     title = stringResource(R.string.pref_title_long_tap_edit),
-                    summary = if (shouldShowEditorWhenLongTap) {
+                    summary = if (uiState.shouldShowEditorWhenLongTap) {
                         stringResource(R.string.pref_description_long_tap_edit_on)
                     } else {
                         stringResource(R.string.pref_description_long_tap_edit_off)
                     },
-                    checked = shouldShowEditorWhenLongTap,
+                    checked = uiState.shouldShowEditorWhenLongTap,
                     onCheckedChange = { checked ->
-                        shouldShowEditorWhenLongTap = checked
-                        settings.shouldShowEditorWhenLongTap = checked
+                        onEvent(UiEvent.OnChangeEditorWhenLongTap(checked))
                     },
                 )
             }
@@ -175,24 +188,23 @@ fun SettingsScreen(
             item {
                 PreferenceSwitchItem(
                     title = stringResource(R.string.pref_title_use_font),
-                    summary = if (useFont) {
+                    summary = if (uiState.useFont) {
                         stringResource(R.string.pref_description_use_font_on)
                     } else {
                         stringResource(R.string.pref_description_use_font_off)
                     },
-                    checked = useFont,
+                    checked = uiState.useFont,
                     onCheckedChange = { checked ->
-                        useFont = checked
-                        settings.useFont = checked
+                        onEvent(UiEvent.OnChangeUseFont(checked))
                     },
                 )
             }
             item {
                 PreferenceClickableItem(
                     title = stringResource(R.string.pref_title_font_path),
-                    summary = fontName.ifEmpty { stringResource(R.string.pref_description_font_path) },
-                    enabled = useFont,
-                    onClick = onSelectFontClick,
+                    summary = uiState.fontName.ifEmpty { stringResource(R.string.pref_description_font_path) },
+                    enabled = uiState.useFont,
+                    onClick = { onEvent(UiEvent.OnSelectFontClick) },
                 )
             }
 
@@ -209,28 +221,28 @@ fun SettingsScreen(
                 PreferenceClickableItem(
                     title = stringResource(R.string.pref_title_play_store),
                     summary = stringResource(R.string.pref_description_play_store),
-                    onClick = { onOpenUrl(Constants.MARKET_URL) },
+                    onClick = { onEvent(UiEvent.OnOpenUrl(Constants.MARKET_URL)) },
                 )
             }
             item {
                 PreferenceClickableItem(
                     title = stringResource(R.string.pref_title_privacy_policy),
                     summary = stringResource(R.string.pref_description_privacy_policy),
-                    onClick = { onOpenUrl(Constants.PRIVACY_POLICY_URL) },
+                    onClick = { onEvent(UiEvent.OnOpenUrl(Constants.PRIVACY_POLICY_URL)) },
                 )
             }
             item {
                 PreferenceClickableItem(
                     title = stringResource(R.string.pref_title_source_code),
                     summary = stringResource(R.string.pref_description_source_code),
-                    onClick = { onOpenUrl(Constants.SOURCE_CODE_URL) },
+                    onClick = { onEvent(UiEvent.OnOpenUrl(Constants.SOURCE_CODE_URL)) },
                 )
             }
             item {
                 PreferenceClickableItem(
                     title = stringResource(R.string.pref_title_license),
                     summary = stringResource(R.string.pref_description_license),
-                    onClick = onOpenLicense,
+                    onClick = { onEvent(UiEvent.OnOpenLicense) },
                 )
             }
             item {
@@ -242,9 +254,9 @@ fun SettingsScreen(
         }
     }
 
-    if (showOrientationDialog) {
+    if (uiState.showOrientationDialog) {
         AlertDialog(
-            onDismissRequest = { showOrientationDialog = false },
+            onDismissRequest = { onEvent(UiEvent.OnDismissOrientationDialog) },
             title = { Text(text = stringResource(R.string.pref_title_screen_orientation)) },
             text = {
                 Column {
@@ -255,18 +267,16 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .selectable(
-                                    selected = (screenOrientation == value),
+                                    selected = (uiState.screenOrientation == value),
                                     onClick = {
-                                        screenOrientation = value
-                                        settings.screenOrientationString = value
-                                        showOrientationDialog = false
+                                        onEvent(UiEvent.OnSelectScreenOrientation(value))
                                     },
                                     role = Role.RadioButton,
                                 )
                                 .padding(vertical = 12.dp),
                         ) {
                             RadioButton(
-                                selected = (screenOrientation == value),
+                                selected = (uiState.screenOrientation == value),
                                 onClick = null,
                             )
                             Spacer(modifier = Modifier.width(16.dp))
@@ -277,7 +287,7 @@ fun SettingsScreen(
             },
             confirmButton = {},
             dismissButton = {
-                TextButton(onClick = { showOrientationDialog = false }) {
+                TextButton(onClick = { onEvent(UiEvent.OnDismissOrientationDialog) }) {
                     Text(text = stringResource(android.R.string.cancel))
                 }
             },
@@ -366,10 +376,8 @@ private fun PreferenceClickableItem(
 private fun SettingsScreenPreview() {
     AppTheme {
         SettingsScreen(
-            onBackClick = {},
-            onSelectFontClick = {},
-            onOpenUrl = {},
-            onOpenLicense = {},
+            uiState = UiState(),
+            onEvent = {},
         )
     }
 }

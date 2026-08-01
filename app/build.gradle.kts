@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.androidxCore)
     implementation(libs.androidxBrowser)
     implementation(libs.androidxLifecycleViewModel)
+    implementation(libs.androidxLifecycleViewModelCompose)
     implementation(libs.androidxLifecycleProcess)
     implementation(libs.material)
     implementation(libs.playAppUpdate)
