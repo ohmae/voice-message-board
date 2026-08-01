@@ -5,22 +5,17 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.android.vmb.view
+package net.mm2d.android.vmb.ui.license
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewConfiguration
-import android.view.ViewGroup
 import android.webkit.WebView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingChildHelper
 import androidx.core.view.ViewCompat
-import androidx.core.view.forEach
-import com.google.android.material.appbar.AppBarLayout
 import kotlin.math.abs
 
 class NestedScrollingWebView
@@ -31,29 +26,15 @@ class NestedScrollingWebView
 ) : WebView(context, attrs, defStyleAttr),
     NestedScrollingChild {
     private val helper: NestedScrollingChildHelper = NestedScrollingChildHelper(this)
-    private val touchSlop: Int
+    private val touchSlop: Int = ViewConfiguration.get(context).scaledTouchSlop
     private val buffer = IntArray(2)
     private var startY: Float = 0f
     private var prevY: Float = 0f
     private var scrolling: Boolean = false
-    private var appBarLayout: AppBarLayout? = null
-    private var behavior: Behavior? = null
 
     init {
         isNestedScrollingEnabled = true
-        touchSlop = ViewConfiguration.get(context).scaledTouchSlop
         setBackgroundColor(0)
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        behavior = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? Behavior
-        (parent as? ViewGroup)?.forEach {
-            if (it is AppBarLayout) {
-                appBarLayout = it
-                return
-            }
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -61,13 +42,16 @@ class NestedScrollingWebView
         event: MotionEvent,
     ): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> startY = event.rawY
+            MotionEvent.ACTION_DOWN -> {
+                startY = event.rawY
+                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL)
+            }
 
             MotionEvent.ACTION_MOVE -> onTouchMove(event)
 
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL,
-            -> onTouchEnd()
+                -> onTouchEnd()
         }
         prevY = event.rawY
         return super.onTouchEvent(event)
@@ -83,7 +67,8 @@ class NestedScrollingWebView
             val dy = (prevY - event.rawY).toInt()
             val consumed: IntArray = buffer
             dispatchNestedPreScroll(0, dy, consumed, null)
-            dispatchNestedScroll(0, consumed[1], 0, dy - consumed[1], null)
+            val unconsumedDy = dy - consumed[1]
+            dispatchNestedScroll(0, consumed[1], 0, unconsumedDy, null)
             return
         }
         if (abs(startY - event.rawY) > touchSlop) {
@@ -97,8 +82,6 @@ class NestedScrollingWebView
             stopNestedScroll()
             scrolling = false
         }
-        val appBar = appBarLayout ?: return
-        appBar.setExpanded(appBar.bottom > appBar.height / 2)
     }
 
     override fun setNestedScrollingEnabled(
@@ -111,13 +94,9 @@ class NestedScrollingWebView
 
     override fun startNestedScroll(
         axes: Int,
-    ): Boolean {
-        behavior?.scrollByUser = true
-        return helper.startNestedScroll(axes)
-    }
+    ): Boolean = helper.startNestedScroll(axes)
 
     override fun stopNestedScroll() {
-        behavior?.scrollByUser = false
         helper.stopNestedScroll()
     }
 
@@ -155,25 +134,4 @@ class NestedScrollingWebView
         velocityX: Float,
         velocityY: Float,
     ): Boolean = helper.dispatchNestedPreFling(velocityX, velocityY)
-
-    class Behavior(
-        context: Context,
-        attrs: AttributeSet?,
-    ) : AppBarLayout.ScrollingViewBehavior(context, attrs) {
-        var scrollByUser = true
-        private var prevBottom = 0
-
-        override fun onDependentViewChanged(
-            parent: CoordinatorLayout,
-            child: View,
-            dependency: View,
-        ): Boolean {
-            if (!scrollByUser) {
-                val dy = dependency.bottom - prevBottom
-                child.scrollBy(0, dy)
-            }
-            prevBottom = dependency.bottom
-            return super.onDependentViewChanged(parent, child, dependency)
-        }
-    }
 }
