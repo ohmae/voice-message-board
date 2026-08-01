@@ -7,8 +7,14 @@
 
 package net.mm2d.android.vmb.ui.settings
 
+import android.content.Context
+import android.net.Uri
+import android.provider.OpenableColumns
+import androidx.annotation.StringRes
+import androidx.core.database.getStringOrNull
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +22,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
+import java.io.File
 
 class SettingsViewModel(
     private val settings: Settings = Settings.get(),
@@ -68,6 +78,11 @@ class SettingsViewModel(
         ) : UiEvent
 
         data object OnSelectFontClick : UiEvent
+        data class OnSelectFontResult(
+            val context: Context,
+            val uri: Uri,
+        ) : UiEvent
+
         data class OnOpenUrl(
             val url: String,
         ) : UiEvent
@@ -83,6 +98,9 @@ class SettingsViewModel(
         ) : UiEffect
 
         data object NavigateToLicense : UiEffect
+        data class ShowToast(
+            @StringRes val resId: Int,
+        ) : UiEffect
     }
 
     private val _uiState = MutableStateFlow(
@@ -104,27 +122,18 @@ class SettingsViewModel(
     private val _uiEffect = Channel<UiEffect>(Channel.BUFFERED)
     val uiEffect = _uiEffect.receiveAsFlow()
 
-    fun updateFontName(
-        name: String,
-    ) {
-        _uiState.update { it.copy(fontName = name) }
-    }
-
     fun onEvent(
         event: UiEvent,
     ) {
         when (event) {
-            UiEvent.OnBackClick -> {
+            UiEvent.OnBackClick ->
                 sendEffect(UiEffect.NavigateBack)
-            }
 
-            UiEvent.OnSelectOrientationClick -> {
+            UiEvent.OnSelectOrientationClick ->
                 _dialogUiState.value = DialogUiState.Orientation(_uiState.value.screenOrientation)
-            }
 
-            UiEvent.OnDismissOrientationDialog -> {
+            UiEvent.OnDismissOrientationDialog ->
                 _dialogUiState.value = DialogUiState.None
-            }
 
             is UiEvent.OnSelectScreenOrientation -> {
                 settings.screenOrientationString = event.value
@@ -161,17 +170,61 @@ class SettingsViewModel(
                 _uiState.update { it.copy(useFont = event.checked) }
             }
 
-            UiEvent.OnSelectFontClick -> {
+            UiEvent.OnSelectFontClick ->
                 sendEffect(UiEffect.LaunchFontChooser)
-            }
 
-            is UiEvent.OnOpenUrl -> {
+            is UiEvent.OnSelectFontResult ->
+                onSelectFontResult(event)
+
+            is UiEvent.OnOpenUrl ->
                 sendEffect(UiEffect.OpenUrl(event.url))
-            }
 
-            UiEvent.OnOpenLicense -> {
+            UiEvent.OnOpenLicense ->
                 sendEffect(UiEffect.NavigateToLicense)
+        }
+    }
+
+    private fun onSelectFontResult(
+        event: UiEvent.OnSelectFontResult,
+    ) {
+        viewModelScope.launch {
+            val (path, name) = withContext(Dispatchers.IO) {
+                prepareFontFile(event.context, event.uri)
             }
+            settings.fontPath = path
+            settings.fontName = name
+            _uiState.update { it.copy(fontName = name) }
+            if (path.isEmpty()) {
+                sendEffect(UiEffect.ShowToast(R.string.toast_not_a_valid_font))
+            }
+        }
+    }
+
+    private fun prepareFontFile(
+        context: Context,
+        uri: Uri,
+    ): Pair<String, String> {
+        val name: String = context.contentResolver
+            .query(uri, null, null, null, null)
+            ?.use {
+                if (it.moveToFirst()) {
+                    it.getStringOrNull(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                } else {
+                    null
+                }
+            } ?: return "" to ""
+
+        val stream = context.contentResolver.openInputStream(uri) ?: return "" to ""
+        val data = stream.use { it.readBytes() }
+        val file = File(context.filesDir, "font").also {
+            if (it.exists()) it.delete()
+        }
+        file.writeBytes(data)
+        return if (FontUtils.isValidFontFile(file)) {
+            file.absolutePath to name
+        } else {
+            file.delete()
+            "" to ""
         }
     }
 

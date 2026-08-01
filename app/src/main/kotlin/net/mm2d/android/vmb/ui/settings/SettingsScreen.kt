@@ -7,6 +7,9 @@
 
 package net.mm2d.android.vmb.ui.settings
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,42 +43,57 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.mm2d.android.vmb.BuildConfig
+import net.mm2d.android.vmb.LicenseActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.constant.Constants
+import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.ui.settings.SettingsViewModel.DialogUiState
 import net.mm2d.android.vmb.ui.settings.SettingsViewModel.UiEffect
 import net.mm2d.android.vmb.ui.settings.SettingsViewModel.UiEvent
 import net.mm2d.android.vmb.ui.settings.SettingsViewModel.UiState
 import net.mm2d.android.vmb.ui.theme.AppTheme
+import net.mm2d.android.vmb.util.Toaster
+
+private val URLS = listOf(
+    Constants.PRIVACY_POLICY_URL,
+    Constants.SOURCE_CODE_URL,
+)
 
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
-    onSelectFontClick: () -> Unit,
-    onOpenUrl: (String) -> Unit,
-    onOpenLicense: () -> Unit,
     viewModel: SettingsViewModel = viewModel(),
 ) {
-    val currentOnBackClick by rememberUpdatedState(onBackClick)
-    val currentOnSelectFontClick by rememberUpdatedState(onSelectFontClick)
-    val currentOnOpenUrl by rememberUpdatedState(onOpenUrl)
-    val currentOnOpenLicense by rememberUpdatedState(onOpenLicense)
+    LifecycleResumeEffect(Unit) {
+        CustomTabsHelperHolder.mayLaunchUrl(URLS)
+        onPauseOrDispose {}
+    }
 
-    LaunchedEffect(viewModel) {
+    val context = LocalContext.current
+    val fontChooserLauncher = rememberLauncherForActivityResult(GetContent()) { uri: Uri? ->
+        uri?.let { viewModel.onEvent(UiEvent.OnSelectFontResult(context, it)) }
+    }
+
+    val currentOnBackClick by rememberUpdatedState(onBackClick)
+
+    LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 UiEffect.NavigateBack -> currentOnBackClick()
-                UiEffect.LaunchFontChooser -> currentOnSelectFontClick()
-                is UiEffect.OpenUrl -> currentOnOpenUrl(effect.url)
-                UiEffect.NavigateToLicense -> currentOnOpenLicense()
+                UiEffect.LaunchFontChooser -> fontChooserLauncher.launch("*/*")
+                is UiEffect.OpenUrl -> CustomTabsHelperHolder.openUrl(context, effect.url)
+                UiEffect.NavigateToLicense -> LicenseActivity.start(context)
+                is UiEffect.ShowToast -> Toaster.show(context, effect.resId)
             }
         }
     }
@@ -145,7 +163,7 @@ private fun LazyListScope.settingsItems(
     onEvent: (UiEvent) -> Unit,
 ) {
     item {
-        PreferenceCategoryHeader(title = stringResource(R.string.pref_header_general))
+        CategoryHeader(title = stringResource(R.string.pref_header_general))
     }
     item {
         val orientationTitles = stringArrayResource(R.array.pref_screen_orientation_titles)
@@ -154,14 +172,14 @@ private fun LazyListScope.settingsItems(
             val index = orientationValues.indexOf(uiState.screenOrientation)
             if (index >= 0 && index < orientationTitles.size) orientationTitles[index] else orientationTitles[0]
         }
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_screen_orientation),
             summary = currentOrientationTitle,
             onClick = { onEvent(UiEvent.OnSelectOrientationClick) },
         )
     }
     item {
-        PreferenceSwitchItem(
+        SwitchItem(
             title = stringResource(R.string.pref_title_speech_recognizer),
             summary = if (uiState.shouldUseSpeechRecognizer) {
                 stringResource(R.string.pref_description_speech_recognizer_on)
@@ -175,7 +193,7 @@ private fun LazyListScope.settingsItems(
         )
     }
     item {
-        PreferenceSwitchItem(
+        SwitchItem(
             title = stringResource(R.string.pref_title_candidate_list),
             summary = if (uiState.shouldShowCandidateList) {
                 stringResource(R.string.pref_description_candidate_list_on)
@@ -189,7 +207,7 @@ private fun LazyListScope.settingsItems(
         )
     }
     item {
-        PreferenceSwitchItem(
+        SwitchItem(
             title = stringResource(R.string.pref_title_list_edit),
             summary = if (uiState.shouldShowEditorAfterSelect) {
                 stringResource(R.string.pref_description_list_edit_on)
@@ -204,7 +222,7 @@ private fun LazyListScope.settingsItems(
         )
     }
     item {
-        PreferenceSwitchItem(
+        SwitchItem(
             title = stringResource(R.string.pref_title_long_tap_edit),
             summary = if (uiState.shouldShowEditorWhenLongTap) {
                 stringResource(R.string.pref_description_long_tap_edit_on)
@@ -219,10 +237,10 @@ private fun LazyListScope.settingsItems(
     }
 
     item {
-        PreferenceCategoryHeader(title = stringResource(R.string.pref_header_display))
+        CategoryHeader(title = stringResource(R.string.pref_header_display))
     }
     item {
-        PreferenceSwitchItem(
+        SwitchItem(
             title = stringResource(R.string.pref_title_use_font),
             summary = if (uiState.useFont) {
                 stringResource(R.string.pref_description_use_font_on)
@@ -236,7 +254,7 @@ private fun LazyListScope.settingsItems(
         )
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_font_path),
             summary = uiState.fontName.ifEmpty { stringResource(R.string.pref_description_font_path) },
             enabled = uiState.useFont,
@@ -245,44 +263,44 @@ private fun LazyListScope.settingsItems(
     }
 
     item {
-        PreferenceCategoryHeader(title = stringResource(R.string.pref_header_information))
+        CategoryHeader(title = stringResource(R.string.pref_header_information))
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_version_number),
             summary = BuildConfig.VERSION_NAME,
         )
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_play_store),
             summary = stringResource(R.string.pref_description_play_store),
             onClick = { onEvent(UiEvent.OnOpenUrl(Constants.MARKET_URL)) },
         )
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_privacy_policy),
             summary = stringResource(R.string.pref_description_privacy_policy),
             onClick = { onEvent(UiEvent.OnOpenUrl(Constants.PRIVACY_POLICY_URL)) },
         )
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_source_code),
             summary = stringResource(R.string.pref_description_source_code),
             onClick = { onEvent(UiEvent.OnOpenUrl(Constants.SOURCE_CODE_URL)) },
         )
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_license),
             summary = stringResource(R.string.pref_description_license),
             onClick = { onEvent(UiEvent.OnOpenLicense) },
         )
     }
     item {
-        PreferenceClickableItem(
+        ClickableItem(
             title = stringResource(R.string.pref_title_copyright),
             summary = stringResource(R.string.pref_description_copyright),
         )
@@ -356,7 +374,7 @@ private fun ScreenOrientationDialog(
 }
 
 @Composable
-private fun PreferenceCategoryHeader(
+private fun CategoryHeader(
     title: String,
 ) {
     Text(
@@ -367,7 +385,7 @@ private fun PreferenceCategoryHeader(
 }
 
 @Composable
-private fun PreferenceSwitchItem(
+private fun SwitchItem(
     title: String,
     summary: String,
     checked: Boolean,
@@ -402,7 +420,7 @@ private fun PreferenceSwitchItem(
 }
 
 @Composable
-private fun PreferenceClickableItem(
+private fun ClickableItem(
     title: String,
     summary: String,
     enabled: Boolean = true,
