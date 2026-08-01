@@ -30,8 +30,14 @@ class SettingsViewModel(
         val shouldShowEditorWhenLongTap: Boolean = true,
         val useFont: Boolean = false,
         val fontName: String = "",
-        val showOrientationDialog: Boolean = false,
     )
+
+    sealed interface DialogUiState {
+        data object None : DialogUiState
+        data class Orientation(
+            val screenOrientation: String,
+        ) : DialogUiState
+    }
 
     sealed interface UiEvent {
         data object OnBackClick : UiEvent
@@ -92,6 +98,9 @@ class SettingsViewModel(
     )
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+    private val _dialogUiState = MutableStateFlow<DialogUiState>(DialogUiState.None)
+    val dialogUiState: StateFlow<DialogUiState> = _dialogUiState.asStateFlow()
+
     private val _uiEffect = Channel<UiEffect>(Channel.BUFFERED)
     val uiEffect = _uiEffect.receiveAsFlow()
 
@@ -110,19 +119,19 @@ class SettingsViewModel(
             }
 
             UiEvent.OnSelectOrientationClick -> {
-                _uiState.update { it.copy(showOrientationDialog = true) }
+                _dialogUiState.value = DialogUiState.Orientation(_uiState.value.screenOrientation)
             }
 
             UiEvent.OnDismissOrientationDialog -> {
-                _uiState.update { it.copy(showOrientationDialog = false) }
+                _dialogUiState.value = DialogUiState.None
             }
 
             is UiEvent.OnSelectScreenOrientation -> {
                 settings.screenOrientationString = event.value
+                _dialogUiState.value = DialogUiState.None
                 _uiState.update {
                     it.copy(
                         screenOrientation = event.value,
-                        showOrientationDialog = false,
                     )
                 }
             }
