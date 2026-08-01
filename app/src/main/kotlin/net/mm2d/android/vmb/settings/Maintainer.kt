@@ -7,11 +7,8 @@
 
 package net.mm2d.android.vmb.settings
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import androidx.preference.PreferenceManager
 import net.mm2d.android.vmb.BuildConfig
 import net.mm2d.android.vmb.settings.Key.Main
 
@@ -21,10 +18,9 @@ internal object Maintainer {
     private const val SETTINGS_VERSION = 1
 
     fun maintain(
-        context: Context,
         preferences: Preferences<Main>,
     ) {
-        Main.values().checkSuffix()
+        Main.entries.toTypedArray().checkSuffix()
         if (preferences.readInt(Main.APP_VERSION_AT_LAST_LAUNCHED_INT, 0) != BuildConfig.VERSION_CODE) {
             preferences.writeInt(Main.APP_VERSION_AT_LAST_LAUNCHED_INT, BuildConfig.VERSION_CODE)
         }
@@ -32,14 +28,6 @@ internal object Maintainer {
             return
         }
         preferences.writeInt(Main.PREFERENCES_VERSION_INT, SETTINGS_VERSION)
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        if (sharedPreferences.all.isNotEmpty()) {
-            if (sharedPreferences.getInt(OldKey.SETTINGS_VERSION.name, -1) == 0) {
-                migrateFromVersion0(sharedPreferences, preferences)
-                sharedPreferences.edit().clear().apply()
-                return
-            }
-        }
         if (!preferences.contains(Main.APP_VERSION_AT_INSTALL_INT)) {
             preferences.writeInt(Main.APP_VERSION_AT_INSTALL_INT, BuildConfig.VERSION_CODE)
         }
@@ -60,65 +48,5 @@ internal object Maintainer {
         preferences.writeBoolean(Main.USE_FONT_BOOLEAN, false)
         preferences.writeString(Main.FONT_PATH_STRING, "")
         preferences.writeString(Main.FONT_NAME_STRING, "")
-    }
-
-    private fun migrateFromVersion0(
-        sharedPreferences: SharedPreferences,
-        preferences: Preferences<Main>,
-    ) {
-        Migrator(sharedPreferences, preferences).apply {
-            int(OldKey.KEY_BACKGROUND, Main.BACKGROUND_INT)
-            int(OldKey.KEY_FOREGROUND, Main.FOREGROUND_INT)
-            set(OldKey.HISTORY, Main.HISTORY_SET)
-            boolean(OldKey.SPEECH_RECOGNIZER, Main.SHOULD_USE_SPEECH_RECOGNIZER_BOOLEAN)
-            boolean(OldKey.CANDIDATE_LIST, Main.SHOULD_SHOW_CANDIDATE_LIST_BOOLEAN)
-            boolean(OldKey.LIST_EDIT, Main.SHOULD_SHOW_EDITOR_BOOLEAN)
-            boolean(OldKey.LONG_TAP_EDIT, Main.SHOULD_SHOW_EDITOR_WHEN_LONG_TAP_BOOLEAN)
-            string(OldKey.SCREEN_ORIENTATION, Main.SCREEN_ORIENTATION_STRING)
-        }
-        preferences.writeBoolean(Main.USE_FONT_BOOLEAN, false)
-        preferences.writeString(Main.FONT_PATH_STRING, "")
-        preferences.writeString(Main.FONT_NAME_STRING, "")
-    }
-
-    private class Migrator(
-        private val sharedPreferences: SharedPreferences,
-        private val preferences: Preferences<Main>,
-    ) {
-        fun boolean(
-            oldKey: OldKey,
-            key: Main,
-        ) {
-            if (sharedPreferences.contains(oldKey.name)) {
-                preferences.writeBoolean(key, sharedPreferences.getBoolean(oldKey.name, false))
-            }
-        }
-
-        fun int(
-            oldKey: OldKey,
-            key: Main,
-        ) {
-            if (sharedPreferences.contains(oldKey.name)) {
-                preferences.writeInt(key, sharedPreferences.getInt(oldKey.name, 0))
-            }
-        }
-
-        fun string(
-            oldKey: OldKey,
-            key: Main,
-        ) {
-            if (sharedPreferences.contains(oldKey.name)) {
-                preferences.writeString(key, sharedPreferences.getString(oldKey.name, "")!!)
-            }
-        }
-
-        fun set(
-            oldKey: OldKey,
-            key: Main,
-        ) {
-            if (sharedPreferences.contains(oldKey.name)) {
-                preferences.writeStringSet(key, sharedPreferences.getStringSet(oldKey.name, emptySet())!!)
-            }
-        }
     }
 }

@@ -83,7 +83,7 @@ class Settings private constructor(
             context: Context,
         ) {
             Preferences(context, Main::class).also {
-                Maintainer.maintain(context, it)
+                Maintainer.maintain(it)
                 settings = Settings(it)
             }
         }

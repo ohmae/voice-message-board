@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.androidxAppCompat)
     implementation(libs.androidxPreferences)
+    implementation(libs.androidxDataStorePreferences)
     implementation(libs.androidxCore)
     implementation(libs.androidxBrowser)
     implementation(libs.androidxLifecycleViewModel)

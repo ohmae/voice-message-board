@@ -11,6 +11,7 @@ androidxAppCompat = "1.7.1"
 androidxBrowser = "1.10.0"
 androidxLifecycle = "2.11.0"
 androidxPreferences = "1.2.1"
+androidxDataStore = "1.2.1"
 androidxActivity = "1.13.0"
 composeBom = "2026.06.01"
 material = "1.14.0"
@@ -34,6 +35,7 @@ androidxLifecycleProcess = { group = "androidx.lifecycle", name = "lifecycle-pro
 androidxLifecycleViewModel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidxLifecycle" }
 androidxLifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidxPreferences = { group = "androidx.preference", name = "preference", version.ref = "androidxPreferences" }
+androidxDataStorePreferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidxComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidxComposeUi = { group = "androidx.compose.ui", name = "ui" }
