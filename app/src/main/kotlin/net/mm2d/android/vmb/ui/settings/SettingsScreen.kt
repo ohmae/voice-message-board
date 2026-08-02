@@ -11,6 +11,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -118,6 +119,7 @@ fun SettingsScreen(
 private fun SettingsScreen(
     uiState: UiState,
     onEvent: (UiEvent) -> Unit,
+    onScreenWidthDpChanged: (Int) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -134,11 +136,25 @@ private fun SettingsScreen(
             )
         },
     ) { innerPadding ->
-        SettingsContent(
-            uiState = uiState,
-            onEvent = onEvent,
-            modifier = Modifier.padding(innerPadding),
-        )
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            val currentOnScreenWidthDpChanged by rememberUpdatedState(onScreenWidthDpChanged)
+            LaunchedEffect(maxWidth) {
+                currentOnScreenWidthDpChanged(maxWidth.value.toInt())
+            }
+            Column {
+                SettingsContent(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                )
+            }
+        }
     }
 }
 
@@ -149,7 +165,7 @@ private fun SettingsContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
     ) {
         settingsItems(
             uiState = uiState,
@@ -304,6 +320,9 @@ private fun LazyListScope.settingsItems(
             title = stringResource(R.string.pref_title_copyright),
             summary = stringResource(R.string.pref_description_copyright),
         )
+    }
+    item {
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

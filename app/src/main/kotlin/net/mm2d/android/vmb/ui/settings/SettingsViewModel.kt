@@ -18,17 +18,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
+import net.mm2d.android.vmb.util.stateWhileSubscribedIn
 import java.io.File
 import javax.inject.Inject
 
@@ -119,12 +118,7 @@ class SettingsViewModel @Inject constructor(
                 useFont = data.useFont,
                 fontName = data.fontName,
             )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState(),
-        )
+        }.stateWhileSubscribedIn(viewModelScope, UiState())
 
     private val _dialogUiState = MutableStateFlow<DialogUiState>(DialogUiState.None)
     val dialogUiState: StateFlow<DialogUiState> = _dialogUiState.asStateFlow()

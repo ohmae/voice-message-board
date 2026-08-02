@@ -12,7 +12,6 @@ androidxCore = "1.19.0"
 androidxAppCompat = "1.7.1"
 androidxBrowser = "1.10.0"
 androidxLifecycle = "2.11.0"
-androidxPreferences = "1.2.1"
 androidxDataStore = "1.2.1"
 androidxActivity = "1.13.0"
 androidxHiltCompose = "1.4.0"
@@ -38,7 +37,6 @@ androidxLifecycleProcess = { group = "androidx.lifecycle", name = "lifecycle-pro
 androidxLifecycleViewModel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidxLifecycle" }
 androidxLifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidxLifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
-androidxPreferences = { group = "androidx.preference", name = "preference", version.ref = "androidxPreferences" }
 androidxDataStorePreferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidxHiltCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltCompose" }

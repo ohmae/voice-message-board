@@ -12,7 +12,6 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 
-@Suppress("unused")
 class DebugApp : App() {
     override fun initializeOverrideWhenDebug() {
         setUpStrictMode()

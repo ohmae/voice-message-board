@@ -36,7 +36,6 @@ android {
             isDebuggable = true
             applicationIdSuffix = ".debug"
             versionNameSuffix = "d"
-            enableAndroidTestCoverage = true
         }
         release {
             isShrinkResources = true
@@ -84,7 +83,6 @@ dependencies {
 
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.androidxAppCompat)
-    implementation(libs.androidxPreferences)
     implementation(libs.androidxDataStorePreferences)
     implementation(libs.androidxCore)
     implementation(libs.androidxBrowser)

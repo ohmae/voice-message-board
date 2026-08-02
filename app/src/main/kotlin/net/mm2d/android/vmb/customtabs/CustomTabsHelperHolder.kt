@@ -12,13 +12,12 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.core.graphics.createBitmap
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.util.AttrUtils
 
 object CustomTabsHelperHolder {
     private lateinit var customTabsHelper: CustomTabsHelper
@@ -53,15 +52,7 @@ object CustomTabsHelperHolder {
         val builder = customTabsHelper.createCustomTabsIntent()
             .setShowTitle(true)
             .setDefaultColorSchemeParams(
-                CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(
-                        AttrUtils.resolveColor(
-                            context,
-                            androidx.appcompat.R.attr.colorPrimary,
-                            Color.BLACK,
-                        ),
-                    )
-                    .build(),
+                CustomTabColorSchemeParams.Builder().build(),
             )
         AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
             ?.toBitmap()
@@ -78,7 +69,7 @@ object CustomTabsHelperHolder {
     ) {
         try {
             context.startActivity(OpenUriUtils.makeBrowseIntent(url))
-        } catch (ignored: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
         }
     }
 
@@ -86,7 +77,7 @@ object CustomTabsHelperHolder {
         if (this is BitmapDrawable) {
             bitmap
         } else {
-            Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
+            createBitmap(intrinsicWidth, intrinsicHeight)
                 .also { bitmap ->
                     Canvas(bitmap).also {
                         setBounds(0, 0, it.width, it.height)
