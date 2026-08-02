@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId = "net.mm2d.android.vmb"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         base.archivesName.set("$applicationName-$versionName")
