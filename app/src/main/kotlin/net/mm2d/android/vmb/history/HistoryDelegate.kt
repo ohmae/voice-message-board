@@ -22,7 +22,7 @@ import java.util.LinkedList
 class HistoryDelegate(
     private val activity: FragmentActivity,
     private val historyFab: FloatingActionButton,
-    private val settings: Settings = Settings.get(),
+    private val settings: Settings,
 ) {
     private val history = LinkedList<String>()
 

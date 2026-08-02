@@ -2,6 +2,8 @@
 androidGradlePlugin = "9.3.1"
 desugarJdkLibs = "2.1.5"
 kotlin = "2.4.10"
+ksp = "2.3.10"
+hilt = "2.60.1"
 kotlinxCoroutines = "1.11.0"
 dependencyGuard = "0.5.0"
 versionCatalogUpdate = "1.1.0"
@@ -13,6 +15,7 @@ androidxLifecycle = "2.11.0"
 androidxPreferences = "1.2.1"
 androidxDataStore = "1.2.1"
 androidxActivity = "1.13.0"
+androidxHiltCompose = "1.4.0"
 composeBom = "2026.06.01"
 material = "1.14.0"
 playAppUpdate = "2.1.0"
@@ -38,6 +41,7 @@ androidxLifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecy
 androidxPreferences = { group = "androidx.preference", name = "preference", version.ref = "androidxPreferences" }
 androidxDataStorePreferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidxHiltCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltCompose" }
 androidxComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidxComposeUi = { group = "androidx.compose.ui", name = "ui" }
 androidxComposeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -48,15 +52,21 @@ androidxComposeMaterialIcons = { group = "androidx.compose.material", name = "ma
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 playAppUpdate = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 
+hiltAndroid = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hiltAndroidCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+
 ktlint = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "ktlint" }
 
 # for release
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
-kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 # for release
 

@@ -35,6 +35,7 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.databinding.ActivityMainBinding
 import net.mm2d.android.vmb.dialog.EditStringDialog
@@ -48,11 +49,13 @@ import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.util.ViewUtils
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val settings by lazy {
-        Settings.get()
-    }
+    @Inject
+    lateinit var settings: Settings
+
     private var currentSettingsData: SettingsData = SettingsData()
 
     private lateinit var themeDelegate: ThemeDelegate
@@ -96,8 +99,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.scrollView.setOnTouchListener(listener)
         binding.textView.setOnTouchListener(listener)
-        themeDelegate = ThemeDelegate(this, binding.scrollView, binding.textView, binding.toolbar.overflowIcon)
-        historyDelegate = HistoryDelegate(this, binding.historyFab)
+        themeDelegate =
+            ThemeDelegate(this, binding.scrollView, binding.textView, binding.toolbar.overflowIcon, settings)
+        historyDelegate = HistoryDelegate(this, binding.historyFab, settings)
         voiceInputDelegate = VoiceInputDelegate(this, ::setText)
         restoreInstanceState(savedInstanceState)
         ViewUtils.execOnLayout(binding.scrollView) {

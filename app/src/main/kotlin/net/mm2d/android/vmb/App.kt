@@ -11,16 +11,27 @@ import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
+import dagger.hilt.android.HiltAndroidApp
+import jakarta.inject.Inject
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.customtabs.CustomTabsHelperHolder
 import net.mm2d.android.vmb.settings.Settings
 
-@Suppress("unused")
+@HiltAndroidApp
 open class App : Application() {
+    private val scope = MainScope()
+
+    @Inject
+    lateinit var settings: Settings
+
     override fun onCreate() {
         super.onCreate()
         initializeOverrideWhenDebug()
-        Settings.initialize(this)
         CustomTabsHelperHolder.initialize(this)
+        scope.launch {
+            settings.updateAppVersionAtLastLaunched()
+        }
     }
 
     protected open fun initializeOverrideWhenDebug() {

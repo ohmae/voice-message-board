@@ -3,9 +3,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
-    id("kotlin-parcelize")
-    alias(libs.plugins.dependencyGuard)
     alias(libs.plugins.kotlinCompose)
+    alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.dependencyGuard)
 
     // for release
 }
@@ -80,16 +82,6 @@ kotlin {
 dependencies {
     coreLibraryDesugaring(libs.desugarJdkLibs)
 
-    implementation(platform(libs.androidxComposeBom))
-    implementation(libs.androidxActivityCompose)
-    implementation(libs.androidxComposeUi)
-    implementation(libs.androidxComposeUiGraphics)
-    implementation(libs.androidxComposeUiToolingPreview)
-    implementation(libs.androidxComposeMaterial3)
-    implementation(libs.androidxComposeMaterialIcons)
-    implementation(libs.androidxLifecycleRuntimeCompose)
-    debugImplementation(libs.androidxComposeUiTooling)
-
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.androidxAppCompat)
     implementation(libs.androidxPreferences)
@@ -101,6 +93,20 @@ dependencies {
     implementation(libs.androidxLifecycleProcess)
     implementation(libs.material)
     implementation(libs.playAppUpdate)
+
+    implementation(libs.hiltAndroid)
+    ksp(libs.hiltAndroidCompiler)
+
+    implementation(platform(libs.androidxComposeBom))
+    implementation(libs.androidxActivityCompose)
+    implementation(libs.androidxHiltCompose)
+    implementation(libs.androidxComposeUi)
+    implementation(libs.androidxComposeUiGraphics)
+    implementation(libs.androidxComposeUiToolingPreview)
+    implementation(libs.androidxComposeMaterial3)
+    implementation(libs.androidxComposeMaterialIcons)
+    implementation(libs.androidxLifecycleRuntimeCompose)
+    debugImplementation(libs.androidxComposeUiTooling)
 
     // for release
 }

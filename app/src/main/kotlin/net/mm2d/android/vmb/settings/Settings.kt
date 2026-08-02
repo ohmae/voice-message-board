@@ -15,14 +15,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import kotlinx.coroutines.MainScope
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.BuildConfig
 import java.io.File
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val VERSION = 1
 private val DATA_VERSION =
@@ -54,8 +55,9 @@ private val FONT_PATH =
 private val FONT_NAME =
     Key.Main.FONT_NAME_STRING.stringKey()
 
-class Settings private constructor(
-    context: Context,
+@Singleton
+class Settings @Inject constructor(
+    @ApplicationContext context: Context,
 ) {
     private val Context.dataStore: DataStore<Preferences> by preferences(
         file = DataStoreFile.MAIN,
@@ -191,21 +193,6 @@ class Settings private constructor(
         dataStore.edit {
             it[APP_VERSION_AT_LAST_LAUNCHED] = BuildConfig.VERSION_CODE
         }
-    }
-
-    companion object {
-        private lateinit var instance: Settings
-
-        fun initialize(
-            context: Context,
-        ) {
-            instance = Settings(context.applicationContext)
-            MainScope().launch {
-                instance.updateAppVersionAtLastLaunched()
-            }
-        }
-
-        fun get(): Settings = instance
     }
 }
 

@@ -14,6 +14,7 @@ import androidx.annotation.StringRes
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,9 +30,11 @@ import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
 import java.io.File
+import javax.inject.Inject
 
-class SettingsViewModel(
-    private val settings: Settings = Settings.get(),
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    private val settings: Settings,
 ) : ViewModel() {
 
     data class UiState(

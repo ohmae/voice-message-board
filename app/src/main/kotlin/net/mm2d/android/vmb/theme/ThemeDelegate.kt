@@ -26,7 +26,7 @@ class ThemeDelegate(
     private val root: View,
     private val textView: TextView,
     private val icon: Drawable?,
-    private val settings: Settings = Settings.get(),
+    private val settings: Settings,
 ) {
     private val themes = arrayListOf(
         Theme(activity.getString(R.string.theme_white_black), Color.WHITE, Color.BLACK),
