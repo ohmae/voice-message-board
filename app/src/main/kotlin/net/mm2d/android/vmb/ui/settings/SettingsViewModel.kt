@@ -55,44 +55,44 @@ class SettingsViewModel @Inject constructor(
     }
 
     sealed interface UiEvent {
-        data object OnBackClick : UiEvent
-        data object OnSelectOrientationClick : UiEvent
-        data object OnDismissOrientationDialog : UiEvent
-        data class OnSelectScreenOrientation(
+        data object ClickBack : UiEvent
+        data object ClickSelectOrientation : UiEvent
+        data object DismissOrientationDialog : UiEvent
+        data class SelectScreenOrientation(
             val value: String,
         ) : UiEvent
 
-        data class OnChangeSpeechRecognizer(
+        data class ChangeSpeechRecognizer(
             val checked: Boolean,
         ) : UiEvent
 
-        data class OnChangeCandidateList(
+        data class ChangeCandidateList(
             val checked: Boolean,
         ) : UiEvent
 
-        data class OnChangeEditorAfterSelect(
+        data class ChangeEditorAfterSelect(
             val checked: Boolean,
         ) : UiEvent
 
-        data class OnChangeEditorWhenLongTap(
+        data class ChangeEditorWhenLongTap(
             val checked: Boolean,
         ) : UiEvent
 
-        data class OnChangeUseFont(
+        data class ChangeUseFont(
             val checked: Boolean,
         ) : UiEvent
 
-        data object OnSelectFontClick : UiEvent
-        data class OnSelectFontResult(
+        data object ClickSelectFont : UiEvent
+        data class SelectFontResult(
             val context: Context,
             val uri: Uri,
         ) : UiEvent
 
-        data class OnOpenUrl(
+        data class ClickUrl(
             val url: String,
         ) : UiEvent
 
-        data object OnOpenLicense : UiEvent
+        data object ClickLicense : UiEvent
     }
 
     sealed interface UiEffect {
@@ -136,63 +136,63 @@ class SettingsViewModel @Inject constructor(
         event: UiEvent,
     ) {
         when (event) {
-            UiEvent.OnBackClick ->
+            UiEvent.ClickBack ->
                 sendEffect(UiEffect.NavigateBack)
 
-            UiEvent.OnSelectOrientationClick ->
+            UiEvent.ClickSelectOrientation ->
                 _dialogUiState.value = DialogUiState.Orientation(uiState.value.screenOrientation)
 
-            UiEvent.OnDismissOrientationDialog ->
+            UiEvent.DismissOrientationDialog ->
                 _dialogUiState.value = DialogUiState.None
 
-            is UiEvent.OnSelectScreenOrientation -> {
+            is UiEvent.SelectScreenOrientation -> {
                 _dialogUiState.value = DialogUiState.None
                 viewModelScope.launch {
                     settings.updateScreenOrientation(event.value)
                 }
             }
 
-            is UiEvent.OnChangeSpeechRecognizer ->
+            is UiEvent.ChangeSpeechRecognizer ->
                 viewModelScope.launch {
                     settings.updateShouldUseSpeechRecognizer(event.checked)
                 }
 
-            is UiEvent.OnChangeCandidateList ->
+            is UiEvent.ChangeCandidateList ->
                 viewModelScope.launch {
                     settings.updateShouldShowCandidateList(event.checked)
                 }
 
-            is UiEvent.OnChangeEditorAfterSelect ->
+            is UiEvent.ChangeEditorAfterSelect ->
                 viewModelScope.launch {
                     settings.updateShouldShowEditorAfterSelect(event.checked)
                 }
 
-            is UiEvent.OnChangeEditorWhenLongTap ->
+            is UiEvent.ChangeEditorWhenLongTap ->
                 viewModelScope.launch {
                     settings.updateShouldShowEditorWhenLongTap(event.checked)
                 }
 
-            is UiEvent.OnChangeUseFont ->
+            is UiEvent.ChangeUseFont ->
                 viewModelScope.launch {
                     settings.updateUseFont(event.checked)
                 }
 
-            UiEvent.OnSelectFontClick ->
+            UiEvent.ClickSelectFont ->
                 sendEffect(UiEffect.LaunchFontChooser)
 
-            is UiEvent.OnSelectFontResult ->
+            is UiEvent.SelectFontResult ->
                 onSelectFontResult(event)
 
-            is UiEvent.OnOpenUrl ->
+            is UiEvent.ClickUrl ->
                 sendEffect(UiEffect.OpenUrl(event.url))
 
-            UiEvent.OnOpenLicense ->
+            UiEvent.ClickLicense ->
                 sendEffect(UiEffect.NavigateToLicense)
         }
     }
 
     private fun onSelectFontResult(
-        event: UiEvent.OnSelectFontResult,
+        event: UiEvent.SelectFontResult,
     ) {
         viewModelScope.launch {
             val (path, name) = withContext(Dispatchers.IO) {

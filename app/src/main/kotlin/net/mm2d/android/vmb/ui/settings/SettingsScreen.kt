@@ -81,7 +81,7 @@ fun SettingsScreen(
 
     val context = LocalContext.current
     val fontChooserLauncher = rememberLauncherForActivityResult(GetContent()) { uri: Uri? ->
-        uri?.let { viewModel.onEvent(UiEvent.OnSelectFontResult(context, it)) }
+        uri?.let { viewModel.onEvent(UiEvent.SelectFontResult(context, it)) }
     }
 
     val currentOnBackClick by rememberUpdatedState(onBackClick)
@@ -124,7 +124,7 @@ private fun SettingsScreen(
             TopAppBar(
                 title = { Text(text = stringResource(R.string.title_activity_settings)) },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(UiEvent.OnBackClick) }) {
+                    IconButton(onClick = { onEvent(UiEvent.ClickBack) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
@@ -175,7 +175,7 @@ private fun LazyListScope.settingsItems(
         ClickableItem(
             title = stringResource(R.string.pref_title_screen_orientation),
             summary = currentOrientationTitle,
-            onClick = { onEvent(UiEvent.OnSelectOrientationClick) },
+            onClick = { onEvent(UiEvent.ClickSelectOrientation) },
         )
     }
     item {
@@ -188,7 +188,7 @@ private fun LazyListScope.settingsItems(
             },
             checked = uiState.shouldUseSpeechRecognizer,
             onCheckedChange = { checked ->
-                onEvent(UiEvent.OnChangeSpeechRecognizer(checked))
+                onEvent(UiEvent.ChangeSpeechRecognizer(checked))
             },
         )
     }
@@ -202,7 +202,7 @@ private fun LazyListScope.settingsItems(
             },
             checked = uiState.shouldShowCandidateList,
             onCheckedChange = { checked ->
-                onEvent(UiEvent.OnChangeCandidateList(checked))
+                onEvent(UiEvent.ChangeCandidateList(checked))
             },
         )
     }
@@ -217,7 +217,7 @@ private fun LazyListScope.settingsItems(
             checked = uiState.shouldShowEditorAfterSelect,
             enabled = uiState.shouldShowCandidateList,
             onCheckedChange = { checked ->
-                onEvent(UiEvent.OnChangeEditorAfterSelect(checked))
+                onEvent(UiEvent.ChangeEditorAfterSelect(checked))
             },
         )
     }
@@ -231,7 +231,7 @@ private fun LazyListScope.settingsItems(
             },
             checked = uiState.shouldShowEditorWhenLongTap,
             onCheckedChange = { checked ->
-                onEvent(UiEvent.OnChangeEditorWhenLongTap(checked))
+                onEvent(UiEvent.ChangeEditorWhenLongTap(checked))
             },
         )
     }
@@ -249,7 +249,7 @@ private fun LazyListScope.settingsItems(
             },
             checked = uiState.useFont,
             onCheckedChange = { checked ->
-                onEvent(UiEvent.OnChangeUseFont(checked))
+                onEvent(UiEvent.ChangeUseFont(checked))
             },
         )
     }
@@ -258,7 +258,7 @@ private fun LazyListScope.settingsItems(
             title = stringResource(R.string.pref_title_font_path),
             summary = uiState.fontName.ifEmpty { stringResource(R.string.pref_description_font_path) },
             enabled = uiState.useFont,
-            onClick = { onEvent(UiEvent.OnSelectFontClick) },
+            onClick = { onEvent(UiEvent.ClickSelectFont) },
         )
     }
 
@@ -275,28 +275,28 @@ private fun LazyListScope.settingsItems(
         ClickableItem(
             title = stringResource(R.string.pref_title_play_store),
             summary = stringResource(R.string.pref_description_play_store),
-            onClick = { onEvent(UiEvent.OnOpenUrl(Constants.MARKET_URL)) },
+            onClick = { onEvent(UiEvent.ClickUrl(Constants.MARKET_URL)) },
         )
     }
     item {
         ClickableItem(
             title = stringResource(R.string.pref_title_privacy_policy),
             summary = stringResource(R.string.pref_description_privacy_policy),
-            onClick = { onEvent(UiEvent.OnOpenUrl(Constants.PRIVACY_POLICY_URL)) },
+            onClick = { onEvent(UiEvent.ClickUrl(Constants.PRIVACY_POLICY_URL)) },
         )
     }
     item {
         ClickableItem(
             title = stringResource(R.string.pref_title_source_code),
             summary = stringResource(R.string.pref_description_source_code),
-            onClick = { onEvent(UiEvent.OnOpenUrl(Constants.SOURCE_CODE_URL)) },
+            onClick = { onEvent(UiEvent.ClickUrl(Constants.SOURCE_CODE_URL)) },
         )
     }
     item {
         ClickableItem(
             title = stringResource(R.string.pref_title_license),
             summary = stringResource(R.string.pref_description_license),
-            onClick = { onEvent(UiEvent.OnOpenLicense) },
+            onClick = { onEvent(UiEvent.ClickLicense) },
         )
     }
     item {
@@ -319,9 +319,9 @@ private fun SettingsDialog(
             ScreenOrientationDialog(
                 screenOrientation = dialogUiState.screenOrientation,
                 onSelectScreenOrientation = { value ->
-                    onEvent(UiEvent.OnSelectScreenOrientation(value))
+                    onEvent(UiEvent.SelectScreenOrientation(value))
                 },
-                onDismiss = { onEvent(UiEvent.OnDismissOrientationDialog) },
+                onDismiss = { onEvent(UiEvent.DismissOrientationDialog) },
             )
         }
     }
