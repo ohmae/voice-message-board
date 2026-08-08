@@ -18,7 +18,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -57,6 +59,16 @@ class MainViewModel @Inject constructor(
             get() = history.isNotEmpty()
     }
 
+    sealed interface DialogUiState {
+        data object None : DialogUiState
+
+        data class HistorySelect(
+            val history: List<String>,
+        ) : DialogUiState
+
+        data object HistoryClear : DialogUiState
+    }
+
     sealed interface UiEvent {
         data object TapText : UiEvent
         data class ScaleFont(
@@ -68,6 +80,7 @@ class MainViewModel @Inject constructor(
         data object ClickSettings : UiEvent
         data object ClickTheme : UiEvent
         data object ClickClearHistory : UiEvent
+        data object DismissDialog : UiEvent
         data object ClickShare : UiEvent
         data class UpdateText(
             val text: String,
@@ -86,10 +99,8 @@ class MainViewModel @Inject constructor(
             val text: String,
         ) : UiEffect
 
-        data object ShowHistoryDialog : UiEffect
         data object OpenSettings : UiEffect
         data object ShowThemeDialog : UiEffect
-        data object ShowClearHistoryDialog : UiEffect
         data class ShareText(
             val text: String,
         ) : UiEffect
@@ -124,6 +135,9 @@ class MainViewModel @Inject constructor(
         )
     }.stateWhileSubscribedIn(viewModelScope, UiState())
 
+    private val _dialogUiState = MutableStateFlow<DialogUiState>(DialogUiState.None)
+    val dialogUiState: StateFlow<DialogUiState> = _dialogUiState.asStateFlow()
+
     private val _uiEffect = Channel<UiEffect>(Channel.BUFFERED)
     val uiEffect = _uiEffect.receiveAsFlow()
 
@@ -137,21 +151,31 @@ class MainViewModel @Inject constructor(
 
             UiEvent.ClickEdit -> sendEffect(UiEffect.ShowEditDialog(text.value))
 
-            UiEvent.ClickHistory -> sendEffect(UiEffect.ShowHistoryDialog)
+            UiEvent.ClickHistory -> {
+                _dialogUiState.value = DialogUiState.HistorySelect(uiState.value.history.toList())
+            }
 
             UiEvent.ClickSettings -> sendEffect(UiEffect.OpenSettings)
 
             UiEvent.ClickTheme -> sendEffect(UiEffect.ShowThemeDialog)
 
-            UiEvent.ClickClearHistory -> sendEffect(UiEffect.ShowClearHistoryDialog)
+            UiEvent.ClickClearHistory -> _dialogUiState.value = DialogUiState.HistoryClear
+
+            UiEvent.DismissDialog -> _dialogUiState.value = DialogUiState.None
 
             UiEvent.ClickShare -> sendEffect(UiEffect.ShareText(text.value))
 
             is UiEvent.UpdateText -> updateText(event.text)
 
-            is UiEvent.SelectText -> selectText(event.text)
+            is UiEvent.SelectText -> {
+                _dialogUiState.value = DialogUiState.None
+                selectText(event.text)
+            }
 
-            UiEvent.ClearHistory -> clearHistory()
+            UiEvent.ClearHistory -> {
+                _dialogUiState.value = DialogUiState.None
+                clearHistory()
+            }
         }
     }
 

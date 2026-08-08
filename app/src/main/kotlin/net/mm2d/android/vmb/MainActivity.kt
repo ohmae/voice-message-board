@@ -26,9 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
-import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
-import net.mm2d.android.vmb.history.HistoryDelegate
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.theme.ThemeDelegate
@@ -47,7 +45,6 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     private lateinit var themeDelegate: ThemeDelegate
-    private lateinit var historyDelegate: HistoryDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
 
     override fun onCreate(
@@ -55,7 +52,6 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onCreate(savedInstanceState)
         themeDelegate = ThemeDelegate(this, settings)
-        historyDelegate = HistoryDelegate(this)
         voiceInputDelegate = VoiceInputDelegate(this) {
             viewModel.onEvent(UiEvent.UpdateText(it))
         }
@@ -79,9 +75,6 @@ class MainActivity : AppCompatActivity() {
                 themeDelegate.select(theme)
             }
         }
-        SelectStringDialog.registerListener(this, REQUEST_SELECT) {
-            viewModel.onEvent(UiEvent.SelectText(it))
-        }
         RecognizerDialog.registerListener(this, REQUEST_RECOGNIZE) {
             voiceInputDelegate.onRecognize(it)
         }
@@ -90,7 +83,6 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.uiState.collect { uiState ->
-                        historyDelegate.updateHistory(uiState.history)
                         voiceInputDelegate.updateSettings(
                             uiState.shouldUseSpeechRecognizer,
                             uiState.shouldShowCandidateList,
@@ -133,21 +125,9 @@ class MainActivity : AppCompatActivity() {
     ) {
         when (effect) {
             UiEffect.StartVoiceInput -> voiceInputDelegate.start()
-
             is UiEffect.ShowEditDialog -> EditStringDialog.show(this, REQUEST_EDIT, effect.text)
-
-            UiEffect.ShowHistoryDialog -> historyDelegate.showSelectDialog()
-
             UiEffect.OpenSettings -> Unit
-
             UiEffect.ShowThemeDialog -> themeDelegate.showDialog()
-
-            UiEffect.ShowClearHistoryDialog -> {
-                historyDelegate.showClearDialog {
-                    viewModel.onEvent(UiEvent.ClearHistory)
-                }
-            }
-
             is UiEffect.ShareText -> Unit
         }
     }

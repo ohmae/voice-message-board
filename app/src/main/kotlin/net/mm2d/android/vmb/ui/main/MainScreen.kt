@@ -57,6 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.SettingsActivity
+import net.mm2d.android.vmb.ui.main.MainViewModel.DialogUiState
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiState
@@ -90,6 +91,12 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     MainScreenContent(
         uiState = uiState,
+        onEvent = viewModel::onEvent,
+    )
+
+    val dialogUiState by viewModel.dialogUiState.collectAsStateWithLifecycle()
+    DialogContent(
+        dialogUiState = dialogUiState,
         onEvent = viewModel::onEvent,
     )
 }
@@ -328,6 +335,31 @@ private fun gridColor(
     background.toHsv(hsv)
     hsv[2] += if (hsv[2] > 0.5f) -0.15f else 0.15f
     return Color.hsv(hsv[0], hsv[1], hsv[2])
+}
+
+@Composable
+private fun DialogContent(
+    dialogUiState: DialogUiState,
+    onEvent: (UiEvent) -> Unit,
+) {
+    when (dialogUiState) {
+        DialogUiState.None -> Unit
+
+        is DialogUiState.HistorySelect -> {
+            HistorySelectDialog(
+                history = dialogUiState.history,
+                onSelect = { onEvent(UiEvent.UpdateText(it)) },
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
+
+        DialogUiState.HistoryClear -> {
+            HistoryClearDialog(
+                onClear = { onEvent(UiEvent.ClearHistory) },
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
+    }
 }
 
 @Preview
