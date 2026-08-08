@@ -10,7 +10,6 @@ package net.mm2d.android.vmb.history
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
@@ -21,26 +20,15 @@ import java.util.LinkedList
 
 class HistoryDelegate(
     private val activity: FragmentActivity,
-    private val historyFab: FloatingActionButton,
     private val settings: Settings,
 ) {
     private val history = LinkedList<String>()
-
-    init {
-        historyFab.hide()
-        historyFab.setOnClickListener { showSelectDialog() }
-    }
 
     fun updateHistory(
         settingsData: SettingsData,
     ) {
         history.clear()
         history.addAll(settingsData.history)
-        if (history.isEmpty()) {
-            historyFab.hide()
-        } else {
-            historyFab.show()
-        }
     }
 
     fun exist(): Boolean = history.isNotEmpty()

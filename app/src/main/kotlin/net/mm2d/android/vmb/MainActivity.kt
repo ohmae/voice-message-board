@@ -7,25 +7,16 @@
 
 package net.mm2d.android.vmb
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.GestureDetector
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.View
-import android.widget.FrameLayout
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ShareCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -37,7 +28,6 @@ import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import net.mm2d.android.vmb.databinding.ActivityMainBinding
 import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog
@@ -48,7 +38,8 @@ import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.theme.ThemeDelegate
-import net.mm2d.android.vmb.util.ViewUtils
+import net.mm2d.android.vmb.ui.main.MainScreen
+import net.mm2d.android.vmb.ui.theme.AppTheme
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,56 +47,46 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settings: Settings
 
-    private var currentSettingsData: SettingsData = SettingsData()
+    private var currentSettingsData by mutableStateOf(SettingsData())
 
     private lateinit var themeDelegate: ThemeDelegate
     private lateinit var historyDelegate: HistoryDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
-    private lateinit var gestureDetector: GestureDetector
-    private lateinit var scaleDetector: ScaleGestureDetector
-    private lateinit var showHistoryMenu: MenuItem
-    private lateinit var clearHistoryMenu: MenuItem
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
-    private var fontSize: Float = 0.0f
-    private lateinit var binding: ActivityMainBinding
+    private var fontSize by mutableFloatStateOf(0.0f)
+    private var displayedText by mutableStateOf("")
+    private var typeface by mutableStateOf(android.graphics.Typeface.DEFAULT)
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(
         savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(left = systemBars.left, right = systemBars.right)
-            binding.toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = systemBars.top }
-            binding.fabLayout.updateLayoutParams<FrameLayout.LayoutParams> { bottomMargin = systemBars.bottom }
-            insets
-        }
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = null
-        scaleDetector = ScaleGestureDetector(this, ScaleListener())
-        gestureDetector = GestureDetector(this, GestureListener())
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
-        binding.editFab.setOnClickListener { startEdit() }
-        val listener = { _: View, event: MotionEvent ->
-            gestureDetector.onTouchEvent(event)
-            scaleDetector.onTouchEvent(event)
-            false
-        }
-        binding.scrollView.setOnTouchListener(listener)
-        binding.textView.setOnTouchListener(listener)
-        themeDelegate =
-            ThemeDelegate(this, binding.scrollView, binding.textView, binding.toolbar.overflowIcon, settings)
-        historyDelegate = HistoryDelegate(this, binding.historyFab, settings)
+        themeDelegate = ThemeDelegate(this, settings)
+        historyDelegate = HistoryDelegate(this, settings)
         voiceInputDelegate = VoiceInputDelegate(this, ::setText)
         restoreInstanceState(savedInstanceState)
-        ViewUtils.execOnLayout(binding.scrollView) {
-            updatePadding()
+        setContent {
+            AppTheme {
+                MainScreen(
+                    text = displayedText,
+                    fontSizePx = fontSize,
+                    typeface = typeface,
+                    backgroundColor = Color(currentSettingsData.backgroundColor),
+                    foregroundColor = Color(currentSettingsData.foregroundColor),
+                    showHistory = historyDelegate.exist(),
+                    onTap = voiceInputDelegate::start,
+                    onScale = ::scaleFont,
+                    onEditClick = ::startEdit,
+                    onHistoryClick = historyDelegate::showSelectDialog,
+                    onSettingsClick = { startActivity(Intent(this, SettingsActivity::class.java)) },
+                    onThemeClick = themeDelegate::showDialog,
+                    onClearHistoryClick = historyDelegate::showClearDialog,
+                    onShareClick = ::shareText,
+                )
+            }
         }
         checkUpdate()
         EditStringDialog.registerListener(this, REQUEST_EDIT) {
@@ -130,16 +111,14 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settings.settingsFlow.collect { data ->
                     currentSettingsData = data
-                    themeDelegate.apply(data)
                     historyDelegate.updateHistory(data)
                     voiceInputDelegate.updateSettings(data)
-                    FontUtils.setFont(binding.textView, data) {
+                    typeface = FontUtils.getFont(this@MainActivity, data) {
                         lifecycleScope.launch {
                             settings.resetFont()
                         }
                     }
                     requestedOrientation = data.screenOrientation
-                    invalidateOptionsMenu()
                 }
             }
         }
@@ -151,19 +130,17 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // 画面幅に初期文字列が収まる大きさに調整
             val width = resources.displayMetrics.widthPixels
-            val initialText = binding.textView.text.toString()
+            val initialText = getString(R.string.initial_string)
             fontSize = if (initialText[0] <= '\u007e') {
                 width.toFloat() / initialText.length * 2
             } else {
                 width.toFloat() / initialText.length
             }
-            binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            displayedText = initialText
         } else {
             // テキストとフォントサイズを復元
             fontSize = savedInstanceState.getFloat(TAG_FONT_SIZE)
-            val text = savedInstanceState.getString(TAG_TEXT)
-            binding.textView.text = text
-            binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            displayedText = savedInstanceState.getString(TAG_TEXT).orEmpty()
         }
     }
 
@@ -173,21 +150,7 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         // テキストとフォントサイズを保存
         outState.putFloat(TAG_FONT_SIZE, fontSize)
-        outState.putString(TAG_TEXT, binding.textView.text.toString())
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updatePadding()
-    }
-
-    override fun onConfigurationChanged(
-        newConfig: Configuration,
-    ) {
-        super.onConfigurationChanged(newConfig)
-        ViewUtils.execOnLayout(binding.scrollView) {
-            updatePadding()
-        }
+        outState.putString(TAG_TEXT, displayedText)
     }
 
     private fun checkUpdate() {
@@ -204,104 +167,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startEdit() {
-        val string = binding.textView.text.toString()
-        EditStringDialog.show(this, REQUEST_EDIT, string)
+        EditStringDialog.show(this, REQUEST_EDIT, displayedText)
     }
 
     private fun setText(
         string: String,
     ) {
-        binding.textView.text = string
+        displayedText = string
         lifecycleScope.launch {
             historyDelegate.put(string)
         }
-        binding.scrollView.scrollTo(0, 0)
-        updatePadding()
     }
 
-    override fun onCreateOptionsMenu(
-        menu: Menu,
-    ): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        showHistoryMenu = menu.findItem(R.id.action_show_history)
-        clearHistoryMenu = menu.findItem(R.id.action_clear_history)
-        return true
+    private fun shareText() {
+        ShareCompat.IntentBuilder(this)
+            .setText(displayedText)
+            .setType("text/plain")
+            .startChooser()
     }
 
-    override fun onPrepareOptionsMenu(
-        menu: Menu,
-    ): Boolean {
-        if (historyDelegate.exist()) {
-            showHistoryMenu.isEnabled = true
-            clearHistoryMenu.isEnabled = true
-        } else {
-            showHistoryMenu.isEnabled = false
-            clearHistoryMenu.isEnabled = false
-        }
-        return true
-    }
-
-    override fun onOptionsItemSelected(
-        item: MenuItem,
-    ): Boolean {
-        when (item.itemId) {
-            R.id.action_settings ->
-                startActivity(Intent(this, SettingsActivity::class.java))
-
-            R.id.action_theme ->
-                themeDelegate.showDialog()
-
-            R.id.action_show_history ->
-                historyDelegate.showSelectDialog()
-
-            R.id.action_clear_history ->
-                historyDelegate.showClearDialog()
-
-            R.id.action_share ->
-                ShareCompat.IntentBuilder(this)
-                    .setText(binding.textView.text)
-                    .setType("text/plain")
-                    .startChooser()
-
-            else ->
-                return super.onOptionsItemSelected(item)
-        }
-        return true
-    }
-
-    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(
-            e: MotionEvent,
-        ): Boolean {
-            voiceInputDelegate.start()
-            return true
-        }
-
-        override fun onLongPress(
-            e: MotionEvent,
-        ) {
-            if (currentSettingsData.shouldShowEditorWhenLongTap) {
-                startEdit()
-            }
-        }
-    }
-
-    private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(
-            detector: ScaleGestureDetector,
-        ): Boolean {
-            fontSize = (fontSize * detector.scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
-            binding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
-            updatePadding()
-            return true
-        }
-    }
-
-    private fun updatePadding() {
-        binding.scrollView.post {
-            val diff = binding.scrollView.height - binding.textView.height
-            binding.scrollView.updatePadding(top = if (diff > 0) diff / 2 else 0)
-        }
+    private fun scaleFont(
+        scaleFactor: Float,
+    ) {
+        fontSize = (fontSize * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
     }
 
     companion object {
