@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import net.mm2d.android.vmb.R
 
 @Composable
@@ -36,11 +37,13 @@ fun HistorySelectDialog(
                 items(history) { text ->
                     Text(
                         text = text,
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 18.sp,
                         modifier = Modifier
                             .clickable { onSelect(text) }
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                            .padding(vertical = 12.dp),
                     )
                 }
             }

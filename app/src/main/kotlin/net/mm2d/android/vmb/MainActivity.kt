@@ -25,10 +25,8 @@ import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.dialog.RecognizerDialog
-import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.ui.main.MainScreen
 import net.mm2d.android.vmb.ui.main.MainViewModel
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
@@ -43,14 +41,12 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private lateinit var themeDelegate: ThemeDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
 
     override fun onCreate(
         savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
-        themeDelegate = ThemeDelegate(this, settings)
         voiceInputDelegate = VoiceInputDelegate(this) {
             viewModel.onEvent(UiEvent.UpdateText(it))
         }
@@ -66,11 +62,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         checkUpdate()
-        SelectThemeDialog.registerListener(this, REQUEST_THEME) { theme ->
-            lifecycleScope.launch {
-                themeDelegate.select(theme)
-            }
-        }
         RecognizerDialog.registerListener(this, REQUEST_RECOGNIZE) {
             voiceInputDelegate.onRecognize(it)
         }
@@ -122,7 +113,6 @@ class MainActivity : AppCompatActivity() {
         when (effect) {
             UiEffect.StartVoiceInput -> voiceInputDelegate.start()
             UiEffect.OpenSettings -> Unit
-            UiEffect.ShowThemeDialog -> themeDelegate.showDialog()
             is UiEffect.ShareText -> Unit
         }
     }
@@ -131,7 +121,6 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_PREFIX = "MainActivity:"
         const val REQUEST_RECOGNIZE = REQUEST_PREFIX + "REQUEST_RECOGNIZE"
         const val REQUEST_SELECT = REQUEST_PREFIX + "REQUEST_SELECT"
-        const val REQUEST_THEME = REQUEST_PREFIX + "REQUEST_THEME"
         private const val DAYS_FOR_UPDATE: Int = 2
     }
 }

@@ -31,8 +31,10 @@ import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.settings.SettingsData
+import net.mm2d.android.vmb.theme.Theme
 import net.mm2d.android.vmb.util.stateWhileSubscribedIn
 import javax.inject.Inject
+import android.graphics.Color as AndroidColor
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -43,6 +45,15 @@ class MainViewModel @Inject constructor(
 
     private val fontSizeMin = context.resources.getDimension(R.dimen.font_size_min)
     private val fontSizeMax = context.resources.getDimension(R.dimen.font_size_max)
+
+    private val themes: List<Theme> by lazy {
+        listOf(
+            Theme(context.getString(R.string.theme_white_black), AndroidColor.WHITE, AndroidColor.BLACK),
+            Theme(context.getString(R.string.theme_black_white), AndroidColor.BLACK, AndroidColor.WHITE),
+            Theme(context.getString(R.string.theme_black_yellow), AndroidColor.BLACK, AndroidColor.YELLOW),
+            Theme(context.getString(R.string.theme_black_green), AndroidColor.BLACK, AndroidColor.GREEN),
+        )
+    }
 
     data class UiState(
         val text: String = "",
@@ -71,6 +82,10 @@ class MainViewModel @Inject constructor(
         ) : DialogUiState
 
         data object HistoryClear : DialogUiState
+
+        data class SelectTheme(
+            val themes: List<Theme>,
+        ) : DialogUiState
     }
 
     sealed interface UiEvent {
@@ -94,13 +109,16 @@ class MainViewModel @Inject constructor(
             val text: String,
         ) : UiEvent
 
+        data class SelectTheme(
+            val theme: Theme,
+        ) : UiEvent
+
         data object ClearHistory : UiEvent
     }
 
     sealed interface UiEffect {
         data object StartVoiceInput : UiEffect
         data object OpenSettings : UiEffect
-        data object ShowThemeDialog : UiEffect
         data class ShareText(
             val text: String,
         ) : UiEffect
@@ -159,7 +177,9 @@ class MainViewModel @Inject constructor(
 
             UiEvent.ClickSettings -> sendEffect(UiEffect.OpenSettings)
 
-            UiEvent.ClickTheme -> sendEffect(UiEffect.ShowThemeDialog)
+            UiEvent.ClickTheme -> {
+                _dialogUiState.value = DialogUiState.SelectTheme(themes)
+            }
 
             UiEvent.ClickClearHistory -> _dialogUiState.value = DialogUiState.HistoryClear
 
@@ -172,6 +192,11 @@ class MainViewModel @Inject constructor(
             is UiEvent.SelectText -> {
                 _dialogUiState.value = DialogUiState.None
                 selectText(event.text)
+            }
+
+            is UiEvent.SelectTheme -> {
+                _dialogUiState.value = DialogUiState.None
+                selectTheme(event.theme)
             }
 
             UiEvent.ClearHistory -> {
@@ -251,6 +276,14 @@ class MainViewModel @Inject constructor(
     private fun clearHistory() {
         viewModelScope.launch {
             settings.updateHistory(emptySet())
+        }
+    }
+
+    private fun selectTheme(
+        theme: Theme,
+    ) {
+        viewModelScope.launch {
+            settings.updateTheme(theme.backgroundColor, theme.foregroundColor)
         }
     }
 

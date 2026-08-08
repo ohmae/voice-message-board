@@ -367,6 +367,14 @@ private fun DialogContent(
                 onDismiss = { onEvent(UiEvent.DismissDialog) },
             )
         }
+
+        is DialogUiState.SelectTheme -> {
+            SelectThemeDialog(
+                themes = dialogUiState.themes,
+                onSelect = { onEvent(UiEvent.SelectTheme(it)) },
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
     }
 }
 
