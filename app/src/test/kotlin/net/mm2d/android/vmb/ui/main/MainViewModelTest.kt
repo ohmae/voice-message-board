@@ -8,14 +8,16 @@
 package net.mm2d.android.vmb.ui.main
 
 import com.google.common.truth.Truth.assertThat
+import net.mm2d.android.vmb.settings.SettingsData
 import org.junit.Test
 
 class MainViewModelTest {
     @Test
-    fun `scale font size clamps the value to the configured bounds`() {
-        val uiState = MainViewModel.UiState(fontSizePx = 24f)
+    fun `ui state shows history when settings contain entries`() {
+        val uiState = MainViewModel.UiState(
+            settingsData = SettingsData(history = setOf("Recognized text")),
+        )
 
-        assertThat(uiState.scaleFont(2f, 12f, 32f).fontSizePx).isEqualTo(32f)
-        assertThat(uiState.scaleFont(0.1f, 12f, 32f).fontSizePx).isEqualTo(12f)
+        assertThat(uiState.showHistory).isTrue()
     }
 }

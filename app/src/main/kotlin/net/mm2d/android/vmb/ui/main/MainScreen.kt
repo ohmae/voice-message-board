@@ -98,14 +98,7 @@ fun MainScreen(
         backgroundColor = Color(uiState.settingsData.backgroundColor),
         foregroundColor = Color(uiState.settingsData.foregroundColor),
         showHistory = uiState.showHistory,
-        onTap = { viewModel.onEvent(UiEvent.TapText) },
-        onScale = { viewModel.onEvent(UiEvent.ScaleFont(it)) },
-        onEditClick = { viewModel.onEvent(UiEvent.ClickEdit) },
-        onHistoryClick = { viewModel.onEvent(UiEvent.ClickHistory) },
-        onSettingsClick = { viewModel.onEvent(UiEvent.ClickSettings) },
-        onThemeClick = { viewModel.onEvent(UiEvent.ClickTheme) },
-        onClearHistoryClick = { viewModel.onEvent(UiEvent.ClickClearHistory) },
-        onShareClick = { viewModel.onEvent(UiEvent.ClickShare) },
+        onEvent = viewModel::onEvent,
     )
 }
 
@@ -117,14 +110,7 @@ private fun MainScreenContent(
     backgroundColor: Color,
     foregroundColor: Color,
     showHistory: Boolean,
-    onTap: () -> Unit,
-    onScale: (Float) -> Unit,
-    onEditClick: () -> Unit,
-    onHistoryClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    onThemeClick: () -> Unit,
-    onClearHistoryClick: () -> Unit,
-    onShareClick: () -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     val gridColor = gridColor(backgroundColor)
     val density = LocalDensity.current
@@ -147,7 +133,10 @@ private fun MainScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .observeMainGestures(onTap, onScale),
+                .observeMainGestures(
+                    onTap = { onEvent(UiEvent.TapText) },
+                    onScale = { onEvent(UiEvent.ScaleFont(it)) },
+                ),
             contentAlignment = Alignment.Center,
         ) {
             SelectionContainer {
@@ -164,11 +153,7 @@ private fun MainScreenContent(
         }
         MainTopBar(
             showHistory = showHistory,
-            onSettingsClick = onSettingsClick,
-            onThemeClick = onThemeClick,
-            onHistoryClick = onHistoryClick,
-            onClearHistoryClick = onClearHistoryClick,
-            onShareClick = onShareClick,
+            onEvent = onEvent,
             modifier = Modifier.align(Alignment.TopCenter),
         )
         Row(
@@ -179,14 +164,14 @@ private fun MainScreenContent(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (showHistory) {
-                FloatingActionButton(onClick = onHistoryClick) {
+                FloatingActionButton(onClick = { onEvent(UiEvent.ClickHistory) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_history),
                         contentDescription = stringResource(R.string.action_show_history),
                     )
                 }
             }
-            FloatingActionButton(onClick = onEditClick) {
+            FloatingActionButton(onClick = { onEvent(UiEvent.ClickEdit) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_edit),
                     contentDescription = stringResource(R.string.dialog_title_edit),
@@ -200,11 +185,7 @@ private fun MainScreenContent(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun MainTopBar(
     showHistory: Boolean,
-    onSettingsClick: () -> Unit,
-    onThemeClick: () -> Unit,
-    onHistoryClick: () -> Unit,
-    onClearHistoryClick: () -> Unit,
-    onShareClick: () -> Unit,
+    onEvent: (UiEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -223,29 +204,29 @@ private fun MainTopBar(
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 MenuItem(
                     label = R.string.action_settings,
-                    onClick = onSettingsClick,
+                    onClick = { onEvent(UiEvent.ClickSettings) },
                     dismiss = { expanded = false },
                 )
                 MenuItem(
                     label = R.string.action_theme,
-                    onClick = onThemeClick,
+                    onClick = { onEvent(UiEvent.ClickTheme) },
                     dismiss = { expanded = false },
                 )
                 MenuItem(
                     label = R.string.action_show_history,
-                    onClick = onHistoryClick,
+                    onClick = { onEvent(UiEvent.ClickHistory) },
                     enabled = showHistory,
                     dismiss = { expanded = false },
                 )
                 MenuItem(
                     label = R.string.action_clear_history,
-                    onClick = onClearHistoryClick,
+                    onClick = { onEvent(UiEvent.ClickClearHistory) },
                     enabled = showHistory,
                     dismiss = { expanded = false },
                 )
                 MenuItem(
                     label = R.string.action_share,
-                    onClick = onShareClick,
+                    onClick = { onEvent(UiEvent.ClickShare) },
                     dismiss = { expanded = false },
                 )
             }
@@ -373,14 +354,7 @@ private fun MainScreenPreview() {
             backgroundColor = Color.White,
             foregroundColor = Color.Black,
             showHistory = true,
-            onTap = {},
-            onScale = {},
-            onEditClick = {},
-            onHistoryClick = {},
-            onSettingsClick = {},
-            onThemeClick = {},
-            onClearHistoryClick = {},
-            onShareClick = {},
+            onEvent = {},
         )
     }
 }

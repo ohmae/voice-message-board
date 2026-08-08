@@ -42,12 +42,6 @@ class MainViewModel @Inject constructor(
     ) {
         val showHistory: Boolean
             get() = settingsData.history.isNotEmpty()
-
-        fun scaleFont(
-            scaleFactor: Float,
-            min: Float,
-            max: Float,
-        ): UiState = copy(fontSizePx = (fontSizePx * scaleFactor).coerceIn(min, max))
     }
 
     sealed interface UiEvent {
@@ -119,10 +113,7 @@ class MainViewModel @Inject constructor(
 
             UiEvent.TapText -> sendEffect(UiEffect.StartVoiceInput)
 
-            is UiEvent.ScaleFont ->
-                savedStateHandle[KEY_FONT_SIZE] = uiState.value
-                    .scaleFont(event.scaleFactor, fontSizeMin, fontSizeMax)
-                    .fontSizePx
+            is UiEvent.ScaleFont -> updateFontSize(event.scaleFactor)
 
             UiEvent.ClickEdit -> sendEffect(UiEffect.ShowEditDialog(text.value))
 
@@ -153,6 +144,13 @@ class MainViewModel @Inject constructor(
         if (!savedStateHandle.contains(KEY_FONT_SIZE)) {
             savedStateHandle[KEY_FONT_SIZE] = event.initialFontSizePx
         }
+    }
+
+    private fun updateFontSize(
+        scaleFactor: Float
+    ) {
+        val fontSizePx = uiState.value.fontSizePx
+        savedStateHandle[KEY_FONT_SIZE] = (fontSizePx * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
     }
 
     private fun updateText(
