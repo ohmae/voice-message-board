@@ -10,14 +10,15 @@ package net.mm2d.android.vmb
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -36,9 +37,11 @@ import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.history.HistoryDelegate
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
-import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.theme.ThemeDelegate
 import net.mm2d.android.vmb.ui.main.MainScreen
+import net.mm2d.android.vmb.ui.main.MainViewModel
+import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
+import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
 import net.mm2d.android.vmb.ui.theme.AppTheme
 import javax.inject.Inject
 
@@ -47,15 +50,13 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settings: Settings
 
-    private var currentSettingsData by mutableStateOf(SettingsData())
+    private val viewModel: MainViewModel by viewModels()
 
     private lateinit var themeDelegate: ThemeDelegate
     private lateinit var historyDelegate: HistoryDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
     private var fontSizeMin: Float = 0.0f
     private var fontSizeMax: Float = 0.0f
-    private var fontSize by mutableFloatStateOf(0.0f)
-    private var displayedText by mutableStateOf("")
     private var typeface by mutableStateOf(android.graphics.Typeface.DEFAULT)
 
     override fun onCreate(
@@ -65,32 +66,40 @@ class MainActivity : AppCompatActivity() {
         fontSizeMin = resources.getDimension(R.dimen.font_size_min)
         fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         themeDelegate = ThemeDelegate(this, settings)
-        historyDelegate = HistoryDelegate(this, settings)
-        voiceInputDelegate = VoiceInputDelegate(this, ::setText)
-        restoreInstanceState(savedInstanceState)
+        historyDelegate = HistoryDelegate(this)
+        voiceInputDelegate = VoiceInputDelegate(this) {
+            viewModel.onEvent(UiEvent.UpdateText(it))
+        }
+        viewModel.onEvent(
+            UiEvent.Initialize(
+                initialText = getString(R.string.initial_string),
+                initialFontSizePx = initialFontSize(),
+            ),
+        )
         setContent {
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             AppTheme {
                 MainScreen(
-                    text = displayedText,
-                    fontSizePx = fontSize,
+                    text = uiState.text,
+                    fontSizePx = uiState.fontSizePx,
                     typeface = typeface,
-                    backgroundColor = Color(currentSettingsData.backgroundColor),
-                    foregroundColor = Color(currentSettingsData.foregroundColor),
-                    showHistory = historyDelegate.exist(),
-                    onTap = voiceInputDelegate::start,
-                    onScale = ::scaleFont,
-                    onEditClick = ::startEdit,
-                    onHistoryClick = historyDelegate::showSelectDialog,
-                    onSettingsClick = { startActivity(Intent(this, SettingsActivity::class.java)) },
-                    onThemeClick = themeDelegate::showDialog,
-                    onClearHistoryClick = historyDelegate::showClearDialog,
-                    onShareClick = ::shareText,
+                    backgroundColor = Color(uiState.settingsData.backgroundColor),
+                    foregroundColor = Color(uiState.settingsData.foregroundColor),
+                    showHistory = uiState.showHistory,
+                    onTap = { viewModel.onEvent(UiEvent.TapText) },
+                    onScale = { viewModel.onEvent(UiEvent.ScaleFont(it, fontSizeMin, fontSizeMax)) },
+                    onEditClick = { viewModel.onEvent(UiEvent.ClickEdit) },
+                    onHistoryClick = { viewModel.onEvent(UiEvent.ClickHistory) },
+                    onSettingsClick = { viewModel.onEvent(UiEvent.ClickSettings) },
+                    onThemeClick = { viewModel.onEvent(UiEvent.ClickTheme) },
+                    onClearHistoryClick = { viewModel.onEvent(UiEvent.ClickClearHistory) },
+                    onShareClick = { viewModel.onEvent(UiEvent.ClickShare) },
                 )
             }
         }
         checkUpdate()
         EditStringDialog.registerListener(this, REQUEST_EDIT) {
-            setText(it)
+            viewModel.onEvent(UiEvent.UpdateText(it))
         }
         SelectThemeDialog.registerListener(this, REQUEST_THEME) { theme ->
             lifecycleScope.launch {
@@ -98,10 +107,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         SelectStringDialog.registerListener(this, REQUEST_SELECT) {
-            setText(it)
-            if (currentSettingsData.shouldShowEditorAfterSelect) {
-                startEdit()
-            }
+            viewModel.onEvent(UiEvent.SelectText(it))
         }
         RecognizerDialog.registerListener(this, REQUEST_RECOGNIZE) {
             voiceInputDelegate.onRecognize(it)
@@ -109,48 +115,35 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settings.settingsFlow.collect { data ->
-                    currentSettingsData = data
-                    historyDelegate.updateHistory(data)
-                    voiceInputDelegate.updateSettings(data)
-                    typeface = FontUtils.getFont(this@MainActivity, data) {
-                        lifecycleScope.launch {
-                            settings.resetFont()
+                launch {
+                    viewModel.uiState.collect { uiState ->
+                        val settingsData = uiState.settingsData
+                        historyDelegate.updateHistory(settingsData.history)
+                        voiceInputDelegate.updateSettings(settingsData)
+                        typeface = FontUtils.getFont(this@MainActivity, settingsData) {
+                            lifecycleScope.launch {
+                                settings.resetFont()
+                            }
                         }
+                        requestedOrientation = settingsData.screenOrientation
                     }
-                    requestedOrientation = data.screenOrientation
+                }
+                launch {
+                    viewModel.uiEffect.collect(::handleEffect)
                 }
             }
         }
     }
 
-    private fun restoreInstanceState(
-        savedInstanceState: Bundle?,
-    ) {
-        if (savedInstanceState == null) {
-            // 画面幅に初期文字列が収まる大きさに調整
-            val width = resources.displayMetrics.widthPixels
-            val initialText = getString(R.string.initial_string)
-            fontSize = if (initialText[0] <= '\u007e') {
-                width.toFloat() / initialText.length * 2
-            } else {
-                width.toFloat() / initialText.length
-            }
-            displayedText = initialText
+    private fun initialFontSize(): Float {
+        // 画面幅に初期文字列が収まる大きさに調整
+        val width = resources.displayMetrics.widthPixels
+        val initialText = getString(R.string.initial_string)
+        return if (initialText[0] <= '\u007e') {
+            width.toFloat() / initialText.length * 2
         } else {
-            // テキストとフォントサイズを復元
-            fontSize = savedInstanceState.getFloat(TAG_FONT_SIZE)
-            displayedText = savedInstanceState.getString(TAG_TEXT).orEmpty()
+            width.toFloat() / initialText.length
         }
-    }
-
-    override fun onSaveInstanceState(
-        outState: Bundle,
-    ) {
-        super.onSaveInstanceState(outState)
-        // テキストとフォントサイズを保存
-        outState.putFloat(TAG_FONT_SIZE, fontSize)
-        outState.putString(TAG_TEXT, displayedText)
     }
 
     private fun checkUpdate() {
@@ -166,30 +159,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startEdit() {
-        EditStringDialog.show(this, REQUEST_EDIT, displayedText)
-    }
-
-    private fun setText(
-        string: String,
+    private fun handleEffect(
+        effect: UiEffect,
     ) {
-        displayedText = string
-        lifecycleScope.launch {
-            historyDelegate.put(string)
+        when (effect) {
+            UiEffect.StartVoiceInput -> voiceInputDelegate.start()
+
+            is UiEffect.ShowEditDialog -> EditStringDialog.show(this, REQUEST_EDIT, effect.text)
+
+            UiEffect.ShowHistoryDialog -> historyDelegate.showSelectDialog()
+
+            UiEffect.OpenSettings -> startActivity(Intent(this, SettingsActivity::class.java))
+
+            UiEffect.ShowThemeDialog -> themeDelegate.showDialog()
+
+            UiEffect.ShowClearHistoryDialog -> {
+                historyDelegate.showClearDialog {
+                    viewModel.onEvent(UiEvent.ClearHistory)
+                }
+            }
+
+            is UiEffect.ShareText -> shareText(effect.text)
         }
     }
 
-    private fun shareText() {
+    private fun shareText(
+        text: String,
+    ) {
         ShareCompat.IntentBuilder(this)
-            .setText(displayedText)
+            .setText(text)
             .setType("text/plain")
             .startChooser()
-    }
-
-    private fun scaleFont(
-        scaleFactor: Float,
-    ) {
-        fontSize = (fontSize * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
     }
 
     companion object {
@@ -198,8 +198,6 @@ class MainActivity : AppCompatActivity() {
         const val REQUEST_RECOGNIZE = REQUEST_PREFIX + "REQUEST_RECOGNIZE"
         const val REQUEST_SELECT = REQUEST_PREFIX + "REQUEST_SELECT"
         const val REQUEST_THEME = REQUEST_PREFIX + "REQUEST_THEME"
-        private const val TAG_FONT_SIZE = "TAG_FONT_SIZE"
-        private const val TAG_TEXT = "TAG_TEXT"
         private const val DAYS_FOR_UPDATE: Int = 2
     }
 }

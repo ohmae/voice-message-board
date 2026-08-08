@@ -20,6 +20,8 @@ material = "1.14.0"
 playAppUpdate = "2.1.0"
 
 ktlint = "1.8.0"
+junit = "4.13.2"
+truth = "1.4.5"
 
 # for release
 
@@ -54,6 +56,8 @@ hiltAndroid = { group = "com.google.dagger", name = "hilt-android", version.ref 
 hiltAndroidCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 
 ktlint = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "ktlint" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 
 # for release
 
