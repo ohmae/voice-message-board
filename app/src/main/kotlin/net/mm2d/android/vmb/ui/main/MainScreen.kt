@@ -345,6 +345,14 @@ private fun DialogContent(
     when (dialogUiState) {
         DialogUiState.None -> Unit
 
+        is DialogUiState.EditString -> {
+            EditStringDialog(
+                initialText = dialogUiState.text,
+                onConfirm = { onEvent(UiEvent.UpdateText(it)) },
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
+
         is DialogUiState.HistorySelect -> {
             HistorySelectDialog(
                 history = dialogUiState.history,

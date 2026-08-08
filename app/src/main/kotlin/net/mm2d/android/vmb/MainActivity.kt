@@ -24,7 +24,6 @@ import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
@@ -67,9 +66,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         checkUpdate()
-        EditStringDialog.registerListener(this, REQUEST_EDIT) {
-            viewModel.onEvent(UiEvent.UpdateText(it))
-        }
         SelectThemeDialog.registerListener(this, REQUEST_THEME) { theme ->
             lifecycleScope.launch {
                 themeDelegate.select(theme)
@@ -125,7 +121,6 @@ class MainActivity : AppCompatActivity() {
     ) {
         when (effect) {
             UiEffect.StartVoiceInput -> voiceInputDelegate.start()
-            is UiEffect.ShowEditDialog -> EditStringDialog.show(this, REQUEST_EDIT, effect.text)
             UiEffect.OpenSettings -> Unit
             UiEffect.ShowThemeDialog -> themeDelegate.showDialog()
             is UiEffect.ShareText -> Unit
@@ -134,7 +129,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_PREFIX = "MainActivity:"
-        const val REQUEST_EDIT = REQUEST_PREFIX + "REQUEST_EDIT"
         const val REQUEST_RECOGNIZE = REQUEST_PREFIX + "REQUEST_RECOGNIZE"
         const val REQUEST_SELECT = REQUEST_PREFIX + "REQUEST_SELECT"
         const val REQUEST_THEME = REQUEST_PREFIX + "REQUEST_THEME"

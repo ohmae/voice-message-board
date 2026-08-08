@@ -62,6 +62,10 @@ class MainViewModel @Inject constructor(
     sealed interface DialogUiState {
         data object None : DialogUiState
 
+        data class EditString(
+            val text: String,
+        ) : DialogUiState
+
         data class HistorySelect(
             val history: List<String>,
         ) : DialogUiState
@@ -95,10 +99,6 @@ class MainViewModel @Inject constructor(
 
     sealed interface UiEffect {
         data object StartVoiceInput : UiEffect
-        data class ShowEditDialog(
-            val text: String,
-        ) : UiEffect
-
         data object OpenSettings : UiEffect
         data object ShowThemeDialog : UiEffect
         data class ShareText(
@@ -149,7 +149,9 @@ class MainViewModel @Inject constructor(
 
             is UiEvent.ScaleFont -> updateFontSize(event.scaleFactor)
 
-            UiEvent.ClickEdit -> sendEffect(UiEffect.ShowEditDialog(text.value))
+            UiEvent.ClickEdit -> {
+                _dialogUiState.value = DialogUiState.EditString(text.value)
+            }
 
             UiEvent.ClickHistory -> {
                 _dialogUiState.value = DialogUiState.HistorySelect(uiState.value.history.toList())
@@ -216,6 +218,7 @@ class MainViewModel @Inject constructor(
     private fun updateText(
         value: String,
     ) {
+        _dialogUiState.value = DialogUiState.None
         savedStateHandle[KEY_TEXT] = value
         viewModelScope.launch {
             addToHistory(value, settings.settingsFlow.first())
@@ -230,7 +233,7 @@ class MainViewModel @Inject constructor(
             val settingsData = settings.settingsFlow.first()
             addToHistory(value, settingsData)
             if (settingsData.shouldShowEditorAfterSelect) {
-                sendEffect(UiEffect.ShowEditDialog(value))
+                _dialogUiState.value = DialogUiState.EditString(value)
             }
         }
     }
