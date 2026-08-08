@@ -8,6 +8,10 @@
 package net.mm2d.android.vmb.ui.main
 
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.graphics.Typeface
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,10 +20,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.util.stateWhileSubscribedIn
@@ -27,7 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext private val context: Context,
     private val settings: Settings,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -38,18 +45,19 @@ class MainViewModel @Inject constructor(
     data class UiState(
         val text: String = "",
         val fontSizePx: Float = 0f,
-        val settingsData: SettingsData = SettingsData(),
+        val backgroundColor: Color = Color.White,
+        val foregroundColor: Color = Color.Black,
+        val history: Set<String> = emptySet(),
+        val fontFamily: FontFamily = FontFamily(Typeface.DEFAULT),
+        val screenOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
+        val shouldUseSpeechRecognizer: Boolean = false,
+        val shouldShowCandidateList: Boolean = false,
     ) {
         val showHistory: Boolean
-            get() = settingsData.history.isNotEmpty()
+            get() = history.isNotEmpty()
     }
 
     sealed interface UiEvent {
-        data class Initialize(
-            val initialText: String,
-            val initialFontSizePx: Float,
-        ) : UiEvent
-
         data object TapText : UiEvent
         data class ScaleFont(
             val scaleFactor: Float,
@@ -89,16 +97,30 @@ class MainViewModel @Inject constructor(
 
     private val text: StateFlow<String> = savedStateHandle.getStateFlow(KEY_TEXT, "")
     private val fontSizePx: StateFlow<Float> = savedStateHandle.getStateFlow(KEY_FONT_SIZE, 0f)
+    private val settingsData: StateFlow<SettingsData> = settings.settingsFlow
+        .stateWhileSubscribedIn(viewModelScope, SettingsData())
+    private val fontFamily: StateFlow<FontFamily> = settingsData
+        .map { it.fontPathToUse }
+        .distinctUntilChanged()
+        .map(::createFontFamily)
+        .stateWhileSubscribedIn(viewModelScope, FontFamily(Typeface.DEFAULT))
 
     val uiState: StateFlow<UiState> = combine(
-        settings.settingsFlow,
+        settingsData,
         text,
         fontSizePx,
-    ) { settingsData, text, fontSizePx ->
+        fontFamily,
+    ) { settingsData, text, fontSizePx, fontFamily ->
         UiState(
             text = text,
             fontSizePx = fontSizePx,
-            settingsData = settingsData,
+            backgroundColor = Color(settingsData.backgroundColor),
+            foregroundColor = Color(settingsData.foregroundColor),
+            history = settingsData.history,
+            fontFamily = fontFamily,
+            screenOrientation = settingsData.screenOrientation,
+            shouldUseSpeechRecognizer = settingsData.shouldUseSpeechRecognizer,
+            shouldShowCandidateList = settingsData.shouldShowCandidateList,
         )
     }.stateWhileSubscribedIn(viewModelScope, UiState())
 
@@ -109,8 +131,6 @@ class MainViewModel @Inject constructor(
         event: UiEvent,
     ) {
         when (event) {
-            is UiEvent.Initialize -> initialize(event)
-
             UiEvent.TapText -> sendEffect(UiEffect.StartVoiceInput)
 
             is UiEvent.ScaleFont -> updateFontSize(event.scaleFactor)
@@ -135,22 +155,38 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun initialize(
-        event: UiEvent.Initialize,
+    fun initialize(
+        initialText: String,
+        initialFontSizePx: Float,
     ) {
-        if (!savedStateHandle.contains(KEY_TEXT)) {
-            savedStateHandle[KEY_TEXT] = event.initialText
+        if (savedStateHandle.get<Boolean>(KEY_INITIALIZED) == true) {
+            return
         }
-        if (!savedStateHandle.contains(KEY_FONT_SIZE)) {
-            savedStateHandle[KEY_FONT_SIZE] = event.initialFontSizePx
-        }
+        savedStateHandle[KEY_INITIALIZED] = true
+        savedStateHandle[KEY_TEXT] = initialText
+        savedStateHandle[KEY_FONT_SIZE] = initialFontSizePx
     }
 
     private fun updateFontSize(
-        scaleFactor: Float
+        scaleFactor: Float,
     ) {
         val fontSizePx = uiState.value.fontSizePx
         savedStateHandle[KEY_FONT_SIZE] = (fontSizePx * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
+    }
+
+    private fun createFontFamily(
+        fontPath: String,
+    ): FontFamily {
+        val typeface = FontUtils.getFont(
+            context = context,
+            fontPathToUse = fontPath,
+            onInvalidFont = {
+                viewModelScope.launch {
+                    settings.resetFont()
+                }
+            },
+        )
+        return FontFamily(typeface)
     }
 
     private fun updateText(
@@ -200,6 +236,7 @@ class MainViewModel @Inject constructor(
     }
 
     companion object {
+        private const val KEY_INITIALIZED = "initialized"
         private const val KEY_TEXT = "text"
         private const val KEY_FONT_SIZE = "fontSize"
         private const val MAX_HISTORY = 30

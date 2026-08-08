@@ -8,7 +8,6 @@
 package net.mm2d.android.vmb.ui.main
 
 import android.content.Intent
-import android.graphics.Typeface
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -50,11 +49,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -62,11 +59,11 @@ import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.SettingsActivity
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
+import net.mm2d.android.vmb.ui.main.MainViewModel.UiState
 import net.mm2d.android.vmb.util.toHsv
 
 @Composable
 fun MainScreen(
-    typeface: Typeface,
     onActivityEffect: (UiEffect) -> Unit,
     viewModel: MainViewModel = viewModel(),
 ) {
@@ -92,32 +89,22 @@ fun MainScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     MainScreenContent(
-        text = uiState.text,
-        fontSizePx = uiState.fontSizePx,
-        typeface = typeface,
-        backgroundColor = Color(uiState.settingsData.backgroundColor),
-        foregroundColor = Color(uiState.settingsData.foregroundColor),
-        showHistory = uiState.showHistory,
+        uiState = uiState,
         onEvent = viewModel::onEvent,
     )
 }
 
 @Composable
 private fun MainScreenContent(
-    text: String,
-    fontSizePx: Float,
-    typeface: Typeface,
-    backgroundColor: Color,
-    foregroundColor: Color,
-    showHistory: Boolean,
+    uiState: UiState,
     onEvent: (UiEvent) -> Unit,
 ) {
-    val gridColor = gridColor(backgroundColor)
+    val gridColor = remember(uiState.backgroundColor) { gridColor(uiState.backgroundColor) }
     val density = LocalDensity.current
-    val textFontSize = (fontSizePx / density.density / density.fontScale).sp
+    val textFontSize = with(density) { uiState.fontSizePx.toSp() }
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(text) {
+    LaunchedEffect(uiState.text) {
         scrollState.scrollTo(0)
     }
 
@@ -125,7 +112,7 @@ private fun MainScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .gridBackground(
-                background = backgroundColor,
+                background = uiState.backgroundColor,
                 grid = gridColor,
             ),
     ) {
@@ -141,18 +128,18 @@ private fun MainScreenContent(
         ) {
             SelectionContainer {
                 Text(
-                    text = text,
-                    color = foregroundColor,
+                    text = uiState.text,
+                    color = uiState.foregroundColor,
                     fontSize = textFontSize,
                     lineHeight = textFontSize * 1.2f,
-                    fontFamily = FontFamily(typeface),
+                    fontFamily = uiState.fontFamily,
                     modifier = Modifier.padding(bottom = 72.dp),
                     textAlign = TextAlign.Center,
                 )
             }
         }
         MainTopBar(
-            showHistory = showHistory,
+            showHistory = uiState.showHistory,
             onEvent = onEvent,
             modifier = Modifier.align(Alignment.TopCenter),
         )
@@ -163,7 +150,7 @@ private fun MainScreenContent(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            if (showHistory) {
+            if (uiState.showHistory) {
                 FloatingActionButton(onClick = { onEvent(UiEvent.ClickHistory) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_history),
@@ -348,12 +335,10 @@ private fun gridColor(
 private fun MainScreenPreview() {
     MaterialTheme {
         MainScreenContent(
-            text = "Tap Here!",
-            fontSizePx = 50f,
-            typeface = Typeface.DEFAULT,
-            backgroundColor = Color.White,
-            foregroundColor = Color.Black,
-            showHistory = true,
+            uiState = UiState(
+                text = "Hello, World!",
+                fontSizePx = 48f,
+            ),
             onEvent = {},
         )
     }

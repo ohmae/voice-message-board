@@ -11,9 +11,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.luminance
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -29,7 +28,6 @@ import net.mm2d.android.vmb.dialog.EditStringDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.dialog.SelectThemeDialog
-import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.history.HistoryDelegate
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
@@ -51,7 +49,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var themeDelegate: ThemeDelegate
     private lateinit var historyDelegate: HistoryDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
-    private var typeface by mutableStateOf(android.graphics.Typeface.DEFAULT)
 
     override fun onCreate(
         savedInstanceState: Bundle?,
@@ -62,16 +59,13 @@ class MainActivity : AppCompatActivity() {
         voiceInputDelegate = VoiceInputDelegate(this) {
             viewModel.onEvent(UiEvent.UpdateText(it))
         }
-        viewModel.onEvent(
-            UiEvent.Initialize(
-                initialText = getString(R.string.initial_string),
-                initialFontSizePx = initialFontSize(),
-            ),
+        viewModel.initialize(
+            initialText = getString(R.string.initial_string),
+            initialFontSizePx = initialFontSize(),
         )
         setContent {
             AppTheme {
                 MainScreen(
-                    typeface = typeface,
                     onActivityEffect = ::handleActivityEffect,
                 )
             }
@@ -96,15 +90,14 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.uiState.collect { uiState ->
-                        val settingsData = uiState.settingsData
-                        historyDelegate.updateHistory(settingsData.history)
-                        voiceInputDelegate.updateSettings(settingsData)
-                        typeface = FontUtils.getFont(this@MainActivity, settingsData) {
-                            lifecycleScope.launch {
-                                settings.resetFont()
-                            }
-                        }
-                        requestedOrientation = settingsData.screenOrientation
+                        historyDelegate.updateHistory(uiState.history)
+                        voiceInputDelegate.updateSettings(
+                            uiState.shouldUseSpeechRecognizer,
+                            uiState.shouldShowCandidateList,
+                        )
+                        requestedOrientation = uiState.screenOrientation
+                        WindowInsetsControllerCompat(window, window.decorView)
+                            .isAppearanceLightStatusBars = uiState.backgroundColor.luminance() > 0.5f
                     }
                 }
             }
