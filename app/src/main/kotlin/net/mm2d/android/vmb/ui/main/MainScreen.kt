@@ -43,7 +43,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
+import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -286,10 +286,13 @@ private fun Modifier.observeMainGestures(
             var isTap = false
             var previousSpan: Float? = null
             while (true) {
-                val event = awaitPointerEvent(PointerEventPass.Initial)
+                val event = awaitPointerEvent(PointerEventPass.Main)
                 val pointers = event.changes.filter { it.pressed }
+                if (event.changes.any { it.isConsumed }) {
+                    isTap = false
+                }
                 event.changes
-                    .firstOrNull { it.changedToDownIgnoreConsumed() }
+                    .firstOrNull { it.changedToDown() }
                     ?.takeIf { pointers.size == 1 }
                     ?.let {
                         downPosition = it.position
@@ -318,7 +321,7 @@ private fun Modifier.observeMainGestures(
                 }
                 if (pointers.isEmpty()) {
                     val upTime = event.changes.firstOrNull()?.uptimeMillis ?: downTime
-                    if (isTap && upTime - downTime < viewConfiguration.longPressTimeoutMillis) {
+                    if (isTap && !event.changes.any { it.isConsumed } && upTime - downTime < viewConfiguration.longPressTimeoutMillis) {
                         onTap()
                     }
                     downPosition = null
