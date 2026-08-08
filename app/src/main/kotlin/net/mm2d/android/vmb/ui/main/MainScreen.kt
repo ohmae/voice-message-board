@@ -7,6 +7,7 @@
 
 package net.mm2d.android.vmb.ui.main
 
+import android.content.Intent
 import android.graphics.Typeface
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,11 +55,62 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ShareCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import net.mm2d.android.vmb.R
+import net.mm2d.android.vmb.SettingsActivity
+import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
+import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
 import net.mm2d.android.vmb.util.toHsv
 
 @Composable
 fun MainScreen(
+    typeface: Typeface,
+    onActivityEffect: (UiEffect) -> Unit,
+    viewModel: MainViewModel = viewModel(),
+) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.uiEffect.collect { effect ->
+            when (effect) {
+                UiEffect.OpenSettings -> {
+                    context.startActivity(Intent(context, SettingsActivity::class.java))
+                }
+
+                is UiEffect.ShareText -> {
+                    ShareCompat.IntentBuilder(context)
+                        .setText(effect.text)
+                        .setType("text/plain")
+                        .startChooser()
+                }
+
+                else -> onActivityEffect(effect)
+            }
+        }
+    }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    MainScreenContent(
+        text = uiState.text,
+        fontSizePx = uiState.fontSizePx,
+        typeface = typeface,
+        backgroundColor = Color(uiState.settingsData.backgroundColor),
+        foregroundColor = Color(uiState.settingsData.foregroundColor),
+        showHistory = uiState.showHistory,
+        onTap = { viewModel.onEvent(UiEvent.TapText) },
+        onScale = { viewModel.onEvent(UiEvent.ScaleFont(it)) },
+        onEditClick = { viewModel.onEvent(UiEvent.ClickEdit) },
+        onHistoryClick = { viewModel.onEvent(UiEvent.ClickHistory) },
+        onSettingsClick = { viewModel.onEvent(UiEvent.ClickSettings) },
+        onThemeClick = { viewModel.onEvent(UiEvent.ClickTheme) },
+        onClearHistoryClick = { viewModel.onEvent(UiEvent.ClickClearHistory) },
+        onShareClick = { viewModel.onEvent(UiEvent.ClickShare) },
+    )
+}
+
+@Composable
+private fun MainScreenContent(
     text: String,
     fontSizePx: Float,
     typeface: Typeface,
@@ -313,7 +366,7 @@ private fun gridColor(
 @Composable
 private fun MainScreenPreview() {
     MaterialTheme {
-        MainScreen(
+        MainScreenContent(
             text = "Tap Here!",
             fontSizePx = 50f,
             typeface = Typeface.DEFAULT,

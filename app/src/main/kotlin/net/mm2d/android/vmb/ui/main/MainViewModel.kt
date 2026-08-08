@@ -7,16 +7,19 @@
 
 package net.mm2d.android.vmb.ui.main
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.util.stateWhileSubscribedIn
@@ -24,9 +27,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val settings: Settings,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val fontSizeMin = context.resources.getDimension(R.dimen.font_size_min)
+    private val fontSizeMax = context.resources.getDimension(R.dimen.font_size_max)
 
     data class UiState(
         val text: String = "",
@@ -52,8 +59,6 @@ class MainViewModel @Inject constructor(
         data object TapText : UiEvent
         data class ScaleFont(
             val scaleFactor: Float,
-            val min: Float,
-            val max: Float,
         ) : UiEvent
 
         data object ClickEdit : UiEvent
@@ -116,7 +121,7 @@ class MainViewModel @Inject constructor(
 
             is UiEvent.ScaleFont ->
                 savedStateHandle[KEY_FONT_SIZE] = uiState.value
-                    .scaleFont(event.scaleFactor, event.min, event.max)
+                    .scaleFont(event.scaleFactor, fontSizeMin, fontSizeMax)
                     .fontSizePx
 
             UiEvent.ClickEdit -> sendEffect(UiEffect.ShowEditDialog(text.value))

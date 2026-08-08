@@ -7,7 +7,6 @@
 
 package net.mm2d.android.vmb
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -15,10 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.core.app.ShareCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -55,16 +51,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var themeDelegate: ThemeDelegate
     private lateinit var historyDelegate: HistoryDelegate
     private lateinit var voiceInputDelegate: VoiceInputDelegate
-    private var fontSizeMin: Float = 0.0f
-    private var fontSizeMax: Float = 0.0f
     private var typeface by mutableStateOf(android.graphics.Typeface.DEFAULT)
 
     override fun onCreate(
         savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
-        fontSizeMin = resources.getDimension(R.dimen.font_size_min)
-        fontSizeMax = resources.getDimension(R.dimen.font_size_max)
         themeDelegate = ThemeDelegate(this, settings)
         historyDelegate = HistoryDelegate(this)
         voiceInputDelegate = VoiceInputDelegate(this) {
@@ -77,23 +69,10 @@ class MainActivity : AppCompatActivity() {
             ),
         )
         setContent {
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             AppTheme {
                 MainScreen(
-                    text = uiState.text,
-                    fontSizePx = uiState.fontSizePx,
                     typeface = typeface,
-                    backgroundColor = Color(uiState.settingsData.backgroundColor),
-                    foregroundColor = Color(uiState.settingsData.foregroundColor),
-                    showHistory = uiState.showHistory,
-                    onTap = { viewModel.onEvent(UiEvent.TapText) },
-                    onScale = { viewModel.onEvent(UiEvent.ScaleFont(it, fontSizeMin, fontSizeMax)) },
-                    onEditClick = { viewModel.onEvent(UiEvent.ClickEdit) },
-                    onHistoryClick = { viewModel.onEvent(UiEvent.ClickHistory) },
-                    onSettingsClick = { viewModel.onEvent(UiEvent.ClickSettings) },
-                    onThemeClick = { viewModel.onEvent(UiEvent.ClickTheme) },
-                    onClearHistoryClick = { viewModel.onEvent(UiEvent.ClickClearHistory) },
-                    onShareClick = { viewModel.onEvent(UiEvent.ClickShare) },
+                    onActivityEffect = ::handleActivityEffect,
                 )
             }
         }
@@ -128,9 +107,6 @@ class MainActivity : AppCompatActivity() {
                         requestedOrientation = settingsData.screenOrientation
                     }
                 }
-                launch {
-                    viewModel.uiEffect.collect(::handleEffect)
-                }
             }
         }
     }
@@ -159,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleEffect(
+    private fun handleActivityEffect(
         effect: UiEffect,
     ) {
         when (effect) {
@@ -169,7 +145,7 @@ class MainActivity : AppCompatActivity() {
 
             UiEffect.ShowHistoryDialog -> historyDelegate.showSelectDialog()
 
-            UiEffect.OpenSettings -> startActivity(Intent(this, SettingsActivity::class.java))
+            UiEffect.OpenSettings -> Unit
 
             UiEffect.ShowThemeDialog -> themeDelegate.showDialog()
 
@@ -179,17 +155,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            is UiEffect.ShareText -> shareText(effect.text)
+            is UiEffect.ShareText -> Unit
         }
-    }
-
-    private fun shareText(
-        text: String,
-    ) {
-        ShareCompat.IntentBuilder(this)
-            .setText(text)
-            .setType("text/plain")
-            .startChooser()
     }
 
     companion object {
