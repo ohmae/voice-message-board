@@ -32,6 +32,7 @@ import net.mm2d.android.vmb.font.FontUtils
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.settings.SettingsData
 import net.mm2d.android.vmb.theme.Theme
+import net.mm2d.android.vmb.util.Toaster
 import net.mm2d.android.vmb.util.stateWhileSubscribedIn
 import javax.inject.Inject
 import android.graphics.Color as AndroidColor
@@ -88,6 +89,12 @@ class MainViewModel @Inject constructor(
         data class SelectTheme(
             val themes: List<Theme>,
         ) : DialogUiState
+
+        data object Permission : DialogUiState
+
+        data class SelectCandidate(
+            val candidates: List<String>,
+        ) : DialogUiState
     }
 
     sealed interface UiEvent {
@@ -99,6 +106,10 @@ class MainViewModel @Inject constructor(
         data object ClickRecognizer : UiEvent
         data class RecognizeResult(
             val results: List<String>,
+        ) : UiEvent
+        data class PermissionResult(
+            val granted: Boolean,
+            val dialogShown: Boolean,
         ) : UiEvent
 
         data object ClickEdit : UiEvent
@@ -179,7 +190,17 @@ class MainViewModel @Inject constructor(
             }
 
             is UiEvent.RecognizeResult -> {
-                _dialogUiState.value = DialogUiState.None
+                handleRecognizeResult(event.results)
+            }
+
+            is UiEvent.PermissionResult -> {
+                if (event.granted) {
+                    _dialogUiState.value = DialogUiState.Recognizer
+                } else if (!event.dialogShown) {
+                    _dialogUiState.value = DialogUiState.Permission
+                } else {
+                    Toaster.show(context, R.string.toast_should_allow_microphone_permission)
+                }
             }
 
             UiEvent.ClickEdit -> {
@@ -253,6 +274,18 @@ class MainViewModel @Inject constructor(
             },
         )
         return FontFamily(typeface)
+    }
+
+    private fun handleRecognizeResult(
+        results: List<String>,
+    ) {
+        _dialogUiState.value = DialogUiState.None
+        if (results.isEmpty()) return
+        if (results.size > 1 && uiState.value.shouldShowCandidateList) {
+            _dialogUiState.value = DialogUiState.SelectCandidate(results)
+        } else {
+            updateText(results[0])
+        }
     }
 
     private fun updateText(

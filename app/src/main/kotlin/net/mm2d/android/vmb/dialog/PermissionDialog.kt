@@ -7,53 +7,51 @@
 
 package net.mm2d.android.vmb.dialog
 
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import android.provider.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.R
-import net.mm2d.android.vmb.util.isInActive
 
-class PermissionDialog : DialogFragment() {
-    override fun onCreateDialog(
-        savedInstanceState: Bundle?,
-    ): Dialog {
-        val context = requireContext()
-        return AlertDialog.Builder(context)
-            .setTitle(R.string.dialog_permission_title)
-            .setMessage(R.string.dialog_microphone_permission_message)
-            .setPositiveButton(R.string.app_info) { _, _ ->
-                startAppInfo(context)
+@Composable
+fun PermissionDialog(
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.dialog_permission_title)) },
+        text = { Text(text = stringResource(R.string.dialog_microphone_permission_message)) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismiss()
+                    startAppInfo(context)
+                },
+            ) {
+                Text(text = stringResource(R.string.app_info))
             }
-            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
-            .create()
-    }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        },
+    )
+}
 
-    private fun startAppInfo(
-        context: Context,
-    ) {
-        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = ("package:" + context.packageName).toUri()
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(intent)
+private fun startAppInfo(
+    context: Context,
+) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = ("package:" + context.packageName).toUri()
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
-
-    companion object {
-        private const val TAG = "PermissionDialog"
-
-        fun show(
-            activity: FragmentActivity,
-        ) {
-            if (activity.isInActive()) return
-            val manager = activity.supportFragmentManager
-            if (manager.isStateSaved) return
-            if (manager.findFragmentByTag(TAG) != null) return
-            PermissionDialog().show(manager, TAG)
-        }
-    }
+    context.startActivity(intent)
 }

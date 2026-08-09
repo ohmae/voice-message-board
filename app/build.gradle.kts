@@ -104,6 +104,7 @@ dependencies {
     implementation(libs.androidxComposeMaterial3)
     implementation(libs.androidxComposeMaterialIcons)
     implementation(libs.androidxLifecycleRuntimeCompose)
+    implementation(libs.accompanistPermissions)
     debugImplementation(libs.androidxComposeUiTooling)
     testImplementation(libs.junit)
     testImplementation(libs.truth)

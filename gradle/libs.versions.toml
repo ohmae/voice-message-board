@@ -23,6 +23,8 @@ ktlint = "1.8.0"
 junit = "4.13.2"
 truth = "1.4.5"
 
+accompanist = "0.37.3"
+
 # for release
 
 [libraries]
@@ -49,6 +51,7 @@ androidxComposeUiToolingPreview = { group = "androidx.compose.ui", name = "ui-to
 androidxComposeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidxComposeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
 androidxComposeMaterialIcons = { group = "androidx.compose.material", name = "material-icons-core" }
+accompanistPermissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 playAppUpdate = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 

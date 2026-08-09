@@ -7,7 +7,9 @@
 
 package net.mm2d.android.vmb.ui.main
 
+import android.Manifest
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -55,25 +57,56 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.SettingsActivity
+import net.mm2d.android.vmb.dialog.PermissionDialog
 import net.mm2d.android.vmb.dialog.RecognizerDialog
+import net.mm2d.android.vmb.dialog.SelectCandidateDialog
+import net.mm2d.android.vmb.permission.rememberPermissionStateWithDialogTracking
+import net.mm2d.android.vmb.recognize.RecognizeSpeechContract
 import net.mm2d.android.vmb.ui.main.MainViewModel.DialogUiState
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiState
 import net.mm2d.android.vmb.util.toHsv
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(
-    onActivityEffect: (UiEffect) -> Unit,
-    onRecognizeResult: (List<String>) -> Unit = {},
     viewModel: MainViewModel = viewModel(),
 ) {
     val context = LocalContext.current
+    val permissionState = rememberPermissionStateWithDialogTracking(
+        permission = Manifest.permission.RECORD_AUDIO,
+        onPermissionResult = { granted, dialogShown ->
+            viewModel.onEvent(UiEvent.PermissionResult(granted = granted, dialogShown = dialogShown))
+        },
+    )
+    val recognizerTitle = stringResource(R.string.recognizer_title)
+
+    val speechLauncher = rememberLauncherForActivityResult(
+        contract = RecognizeSpeechContract(),
+    ) { results ->
+        viewModel.onEvent(UiEvent.RecognizeResult(results))
+    }
+
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
+                UiEffect.StartVoiceInput -> {
+                    if (viewModel.uiState.value.shouldUseSpeechRecognizer) {
+                        if (permissionState.status.isGranted) {
+                            viewModel.onEvent(UiEvent.ClickRecognizer)
+                        } else {
+                            permissionState.launchPermissionRequest()
+                        }
+                    } else {
+                        speechLauncher.launch(recognizerTitle)
+                    }
+                }
+
                 UiEffect.OpenSettings -> {
                     context.startActivity(Intent(context, SettingsActivity::class.java))
                 }
@@ -84,8 +117,6 @@ fun MainScreen(
                         .setType("text/plain")
                         .startChooser()
                 }
-
-                else -> onActivityEffect(effect)
             }
         }
     }
@@ -100,7 +131,6 @@ fun MainScreen(
     DialogContent(
         dialogUiState = dialogUiState,
         onEvent = viewModel::onEvent,
-        onRecognizeResult = onRecognizeResult,
     )
 }
 
@@ -143,7 +173,7 @@ private fun MainScreenContent(
                     fontSize = textFontSize,
                     lineHeight = textFontSize * 1.2f,
                     fontFamily = uiState.fontFamily,
-                    modifier = Modifier.padding(bottom = 72.dp),
+                    modifier = Modifier.padding(bottom = 56.dp),
                     textAlign = TextAlign.Center,
                 )
             }
@@ -349,7 +379,6 @@ private fun gridColor(
 private fun DialogContent(
     dialogUiState: DialogUiState,
     onEvent: (UiEvent) -> Unit,
-    onRecognizeResult: (List<String>) -> Unit,
 ) {
     when (dialogUiState) {
         DialogUiState.None -> Unit
@@ -358,7 +387,6 @@ private fun DialogContent(
             RecognizerDialog(
                 onResult = { results ->
                     onEvent(UiEvent.RecognizeResult(results))
-                    onRecognizeResult(results)
                 },
                 onDismiss = { onEvent(UiEvent.DismissDialog) },
             )
@@ -391,6 +419,20 @@ private fun DialogContent(
             SelectThemeDialog(
                 themes = dialogUiState.themes,
                 onSelect = { onEvent(UiEvent.SelectTheme(it)) },
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
+
+        DialogUiState.Permission -> {
+            PermissionDialog(
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
+
+        is DialogUiState.SelectCandidate -> {
+            SelectCandidateDialog(
+                candidates = dialogUiState.candidates,
+                onSelect = { onEvent(UiEvent.UpdateText(it)) },
                 onDismiss = { onEvent(UiEvent.DismissDialog) },
             )
         }

@@ -24,12 +24,9 @@ import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.ui.main.MainScreen
 import net.mm2d.android.vmb.ui.main.MainViewModel
-import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
-import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
 import net.mm2d.android.vmb.ui.theme.AppTheme
 import javax.inject.Inject
 
@@ -40,27 +37,17 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private lateinit var voiceInputDelegate: VoiceInputDelegate
-
     override fun onCreate(
         savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
-        voiceInputDelegate = VoiceInputDelegate(
-            activity = this,
-            onShowRecognizer = { viewModel.onEvent(UiEvent.ClickRecognizer) },
-            setText = { viewModel.onEvent(UiEvent.UpdateText(it)) },
-        )
         viewModel.initialize(
             initialText = getString(R.string.initial_string),
             initialFontSizePx = initialFontSize(),
         )
         setContent {
             AppTheme {
-                MainScreen(
-                    onActivityEffect = ::handleActivityEffect,
-                    onRecognizeResult = voiceInputDelegate::onRecognize,
-                )
+                MainScreen()
             }
         }
         checkUpdate()
@@ -69,10 +56,6 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.uiState.collect { uiState ->
-                        voiceInputDelegate.updateSettings(
-                            uiState.shouldUseSpeechRecognizer,
-                            uiState.shouldShowCandidateList,
-                        )
                         requestedOrientation = uiState.screenOrientation
                         WindowInsetsControllerCompat(window, window.decorView)
                             .isAppearanceLightStatusBars = uiState.backgroundColor.luminance() > 0.5f
@@ -106,19 +89,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleActivityEffect(
-        effect: UiEffect,
-    ) {
-        when (effect) {
-            UiEffect.StartVoiceInput -> voiceInputDelegate.start()
-            UiEffect.OpenSettings -> Unit
-            is UiEffect.ShareText -> Unit
-        }
-    }
-
     companion object {
-        private const val REQUEST_PREFIX = "MainActivity:"
-        const val REQUEST_SELECT = REQUEST_PREFIX + "REQUEST_SELECT"
         private const val DAYS_FOR_UPDATE: Int = 2
     }
 }
