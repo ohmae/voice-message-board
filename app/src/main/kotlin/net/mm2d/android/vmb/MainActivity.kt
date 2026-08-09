@@ -24,7 +24,6 @@ import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.recognize.VoiceInputDelegate
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.ui.main.MainScreen
@@ -47,9 +46,11 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
-        voiceInputDelegate = VoiceInputDelegate(this) {
-            viewModel.onEvent(UiEvent.UpdateText(it))
-        }
+        voiceInputDelegate = VoiceInputDelegate(
+            activity = this,
+            onShowRecognizer = { viewModel.onEvent(UiEvent.ClickRecognizer) },
+            setText = { viewModel.onEvent(UiEvent.UpdateText(it)) },
+        )
         viewModel.initialize(
             initialText = getString(R.string.initial_string),
             initialFontSizePx = initialFontSize(),
@@ -58,13 +59,11 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 MainScreen(
                     onActivityEffect = ::handleActivityEffect,
+                    onRecognizeResult = voiceInputDelegate::onRecognize,
                 )
             }
         }
         checkUpdate()
-        RecognizerDialog.registerListener(this, REQUEST_RECOGNIZE) {
-            voiceInputDelegate.onRecognize(it)
-        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -119,7 +118,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_PREFIX = "MainActivity:"
-        const val REQUEST_RECOGNIZE = REQUEST_PREFIX + "REQUEST_RECOGNIZE"
         const val REQUEST_SELECT = REQUEST_PREFIX + "REQUEST_SELECT"
         private const val DAYS_FOR_UPDATE: Int = 2
     }

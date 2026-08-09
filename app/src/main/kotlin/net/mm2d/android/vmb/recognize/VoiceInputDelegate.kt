@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentActivity
 import net.mm2d.android.vmb.MainActivity
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.dialog.PermissionDialog
-import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.dialog.SelectStringDialog
 import net.mm2d.android.vmb.permission.RecordAudioPermission
 import net.mm2d.android.vmb.util.Toaster
@@ -21,6 +20,7 @@ import net.mm2d.android.vmb.util.registerForActivityResultWrapper
 
 class VoiceInputDelegate(
     private val activity: FragmentActivity,
+    private val onShowRecognizer: () -> Unit,
     private val setText: (text: String) -> Unit,
 ) {
     private var shouldUseSpeechRecognizer: Boolean = false
@@ -57,7 +57,7 @@ class VoiceInputDelegate(
 
     private fun startDialogWithPermission() {
         if (RecordAudioPermission.hasPermission(activity)) {
-            RecognizerDialog.show(activity, MainActivity.REQUEST_RECOGNIZE)
+            onShowRecognizer()
         } else {
             permissionLauncher.launch()
         }
@@ -86,7 +86,7 @@ class VoiceInputDelegate(
     ) {
         when {
             granted -> {
-                RecognizerDialog.show(activity, MainActivity.REQUEST_RECOGNIZE)
+                onShowRecognizer()
             }
 
             RecordAudioPermission.deniedWithoutShowDialog(activity) -> {

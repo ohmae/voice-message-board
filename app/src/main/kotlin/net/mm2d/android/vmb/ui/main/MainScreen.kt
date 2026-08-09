@@ -57,6 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.mm2d.android.vmb.R
 import net.mm2d.android.vmb.SettingsActivity
+import net.mm2d.android.vmb.dialog.RecognizerDialog
 import net.mm2d.android.vmb.ui.main.MainViewModel.DialogUiState
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEffect
 import net.mm2d.android.vmb.ui.main.MainViewModel.UiEvent
@@ -66,6 +67,7 @@ import net.mm2d.android.vmb.util.toHsv
 @Composable
 fun MainScreen(
     onActivityEffect: (UiEffect) -> Unit,
+    onRecognizeResult: (List<String>) -> Unit = {},
     viewModel: MainViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -98,6 +100,7 @@ fun MainScreen(
     DialogContent(
         dialogUiState = dialogUiState,
         onEvent = viewModel::onEvent,
+        onRecognizeResult = onRecognizeResult,
     )
 }
 
@@ -321,7 +324,9 @@ private fun Modifier.observeMainGestures(
                 }
                 if (pointers.isEmpty()) {
                     val upTime = event.changes.firstOrNull()?.uptimeMillis ?: downTime
-                    if (isTap && !event.changes.any { it.isConsumed } && upTime - downTime < viewConfiguration.longPressTimeoutMillis) {
+                    if (isTap && !event.changes.any { it.isConsumed } &&
+                        upTime - downTime < viewConfiguration.longPressTimeoutMillis
+                    ) {
                         onTap()
                     }
                     downPosition = null
@@ -344,9 +349,20 @@ private fun gridColor(
 private fun DialogContent(
     dialogUiState: DialogUiState,
     onEvent: (UiEvent) -> Unit,
+    onRecognizeResult: (List<String>) -> Unit,
 ) {
     when (dialogUiState) {
         DialogUiState.None -> Unit
+
+        DialogUiState.Recognizer -> {
+            RecognizerDialog(
+                onResult = { results ->
+                    onEvent(UiEvent.RecognizeResult(results))
+                    onRecognizeResult(results)
+                },
+                onDismiss = { onEvent(UiEvent.DismissDialog) },
+            )
+        }
 
         is DialogUiState.EditString -> {
             EditStringDialog(

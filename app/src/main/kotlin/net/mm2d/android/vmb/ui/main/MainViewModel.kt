@@ -73,6 +73,8 @@ class MainViewModel @Inject constructor(
     sealed interface DialogUiState {
         data object None : DialogUiState
 
+        data object Recognizer : DialogUiState
+
         data class EditString(
             val text: String,
         ) : DialogUiState
@@ -92,6 +94,11 @@ class MainViewModel @Inject constructor(
         data object TapText : UiEvent
         data class ScaleFont(
             val scaleFactor: Float,
+        ) : UiEvent
+
+        data object ClickRecognizer : UiEvent
+        data class RecognizeResult(
+            val results: List<String>,
         ) : UiEvent
 
         data object ClickEdit : UiEvent
@@ -166,6 +173,14 @@ class MainViewModel @Inject constructor(
             UiEvent.TapText -> sendEffect(UiEffect.StartVoiceInput)
 
             is UiEvent.ScaleFont -> updateFontSize(event.scaleFactor)
+
+            UiEvent.ClickRecognizer -> {
+                _dialogUiState.value = DialogUiState.Recognizer
+            }
+
+            is UiEvent.RecognizeResult -> {
+                _dialogUiState.value = DialogUiState.None
+            }
 
             UiEvent.ClickEdit -> {
                 _dialogUiState.value = DialogUiState.EditString(text.value)

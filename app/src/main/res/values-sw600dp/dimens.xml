@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_margin">10dp</dimen>
-    <dimen name="edit_font_size">60sp</dimen>
-    <dimen name="recognizer_dialog_margin">32dp</dimen>
 </resources>
