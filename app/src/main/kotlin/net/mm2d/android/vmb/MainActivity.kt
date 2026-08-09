@@ -12,6 +12,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewModel.initialize(
             initialText = getString(R.string.initial_string),
-            initialFontSizePx = initialFontSize(),
+            initialFontSizeDp = initialFontSize(),
         )
         setContent {
             AppTheme {
@@ -65,15 +67,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initialFontSize(): Float {
+    private fun initialFontSize(): Dp {
         // 画面幅に初期文字列が収まる大きさに調整
+        val density = resources.displayMetrics.density
         val width = resources.displayMetrics.widthPixels
         val initialText = getString(R.string.initial_string)
         return if (initialText[0] <= '\u007e') {
-            width.toFloat() / initialText.length * 2
+            (width.toFloat() / initialText.length * 2) / density
         } else {
-            width.toFloat() / initialText.length
-        }
+            (width.toFloat() / initialText.length) / density
+        }.dp
     }
 
     private fun checkUpdate() {

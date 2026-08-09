@@ -12,12 +12,15 @@ import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,8 +47,8 @@ class MainViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val fontSizeMin = context.resources.getDimension(R.dimen.font_size_min)
-    private val fontSizeMax = context.resources.getDimension(R.dimen.font_size_max)
+    private val fontSizeMin = 10.dp
+    private val fontSizeMax = 500.dp
 
     private val themes: List<Theme> by lazy {
         listOf(
@@ -58,7 +61,7 @@ class MainViewModel @Inject constructor(
 
     data class UiState(
         val text: String = "",
-        val fontSizePx: Float = 0f,
+        val fontSizeDp: Dp = 0.dp,
         val backgroundColor: Color = Color.White,
         val foregroundColor: Color = Color.Black,
         val history: Set<String> = emptySet(),
@@ -143,7 +146,8 @@ class MainViewModel @Inject constructor(
     }
 
     private val text: StateFlow<String> = savedStateHandle.getStateFlow(KEY_TEXT, "")
-    private val fontSizePx: StateFlow<Float> = savedStateHandle.getStateFlow(KEY_FONT_SIZE, 0f)
+    private val fontSizeDp: Flow<Dp> = savedStateHandle.getStateFlow(KEY_FONT_SIZE, 0f)
+        .map { it.dp }
     private val settingsData: StateFlow<SettingsData> = settings.settingsFlow
         .stateWhileSubscribedIn(viewModelScope, SettingsData())
     private val fontFamily: StateFlow<FontFamily> = settingsData
@@ -155,12 +159,12 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<UiState> = combine(
         settingsData,
         text,
-        fontSizePx,
+        fontSizeDp,
         fontFamily,
-    ) { settingsData, text, fontSizePx, fontFamily ->
+    ) { settingsData, text, fontSizeDp, fontFamily ->
         UiState(
             text = text,
-            fontSizePx = fontSizePx,
+            fontSizeDp = fontSizeDp,
             backgroundColor = Color(settingsData.backgroundColor),
             foregroundColor = Color(settingsData.foregroundColor),
             history = settingsData.history,
@@ -244,21 +248,21 @@ class MainViewModel @Inject constructor(
 
     fun initialize(
         initialText: String,
-        initialFontSizePx: Float,
+        initialFontSizeDp: Dp,
     ) {
         if (savedStateHandle.get<Boolean>(KEY_INITIALIZED) == true) {
             return
         }
         savedStateHandle[KEY_INITIALIZED] = true
         savedStateHandle[KEY_TEXT] = initialText
-        savedStateHandle[KEY_FONT_SIZE] = initialFontSizePx
+        savedStateHandle[KEY_FONT_SIZE] = initialFontSizeDp.value
     }
 
     private fun updateFontSize(
         scaleFactor: Float,
     ) {
-        val fontSizePx = uiState.value.fontSizePx
-        savedStateHandle[KEY_FONT_SIZE] = (fontSizePx * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
+        val fontSizeDp = uiState.value.fontSizeDp
+        savedStateHandle[KEY_FONT_SIZE] = (fontSizeDp * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
     }
 
     private fun createFontFamily(

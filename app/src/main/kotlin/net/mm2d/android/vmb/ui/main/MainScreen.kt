@@ -141,7 +141,7 @@ private fun MainScreenContent(
 ) {
     val gridColor = remember(uiState.backgroundColor) { gridColor(uiState.backgroundColor) }
     val density = LocalDensity.current
-    val textFontSize = with(density) { uiState.fontSizePx.toSp() }
+    val textFontSize = with(density) { uiState.fontSizeDp.toSp() }
     val scrollState = rememberScrollState()
 
     LaunchedEffect(uiState.text) {
@@ -446,7 +446,7 @@ private fun MainScreenPreview() {
         MainScreenContent(
             uiState = UiState(
                 text = "Hello, World!",
-                fontSizePx = 48f,
+                fontSizeDp = 48.dp,
             ),
             onEvent = {},
         )
