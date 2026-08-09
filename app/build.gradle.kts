@@ -14,7 +14,7 @@ plugins {
 
 val applicationName = "VoiceMessageBoard"
 val versionMajor = 1
-val versionMinor = 13
+val versionMinor = 14
 val versionPatch = 0
 
 android {
