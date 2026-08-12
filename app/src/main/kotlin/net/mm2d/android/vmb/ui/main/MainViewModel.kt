@@ -261,8 +261,9 @@ class MainViewModel @Inject constructor(
     private fun updateFontSize(
         scaleFactor: Float,
     ) {
+        if (scaleFactor == 0f) return
         val fontSizeDp = uiState.value.fontSizeDp
-        savedStateHandle[KEY_FONT_SIZE] = (fontSizeDp * scaleFactor).coerceIn(fontSizeMin, fontSizeMax)
+        savedStateHandle[KEY_FONT_SIZE] = (fontSizeDp * scaleFactor).coerceIn(fontSizeMin, fontSizeMax).value
     }
 
     private fun createFontFamily(
