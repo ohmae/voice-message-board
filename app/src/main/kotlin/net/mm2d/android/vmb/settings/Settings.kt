@@ -141,6 +141,13 @@ class Settings @Inject constructor(
         }
     }
 
+    suspend fun clearFontInfo() {
+        dataStore.edit {
+            it[FONT_PATH] = ""
+            it[FONT_NAME] = ""
+        }
+    }
+
     suspend fun resetFont() {
         dataStore.edit {
             it[USE_FONT] = false

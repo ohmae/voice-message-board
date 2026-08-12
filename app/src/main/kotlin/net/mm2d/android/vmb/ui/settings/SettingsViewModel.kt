@@ -189,6 +189,7 @@ class SettingsViewModel @Inject constructor(
         event: UiEvent.SelectFontResult,
     ) {
         viewModelScope.launch {
+            settings.clearFontInfo()
             val (path, name) = withContext(Dispatchers.IO) {
                 prepareFontFile(event.context, event.uri)
             }

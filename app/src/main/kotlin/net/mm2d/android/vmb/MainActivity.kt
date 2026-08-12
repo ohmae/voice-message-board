@@ -15,9 +15,8 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
@@ -25,7 +24,8 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.clientVersionStalenessDays
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import net.mm2d.android.vmb.settings.Settings
 import net.mm2d.android.vmb.ui.main.MainScreen
 import net.mm2d.android.vmb.ui.main.MainViewModel
@@ -54,17 +54,14 @@ class MainActivity : AppCompatActivity() {
         }
         checkUpdate()
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiState.collect { uiState ->
-                        requestedOrientation = uiState.screenOrientation
-                        WindowInsetsControllerCompat(window, window.decorView)
-                            .isAppearanceLightStatusBars = uiState.backgroundColor.luminance() > 0.5f
-                    }
-                }
+        viewModel.uiState
+            .flowWithLifecycle(lifecycle)
+            .onEach { uiState ->
+                requestedOrientation = uiState.screenOrientation
+                WindowInsetsControllerCompat(window, window.decorView)
+                    .isAppearanceLightStatusBars = uiState.backgroundColor.luminance() > 0.5f
             }
-        }
+            .launchIn(lifecycleScope)
     }
 
     private fun initialFontSize(): Dp {
