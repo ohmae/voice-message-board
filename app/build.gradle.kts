@@ -15,7 +15,7 @@ plugins {
 val applicationName = "VoiceMessageBoard"
 val versionMajor = 1
 val versionMinor = 14
-val versionPatch = 2
+val versionPatch = 3
 
 android {
     namespace = "net.mm2d.android.vmb"
