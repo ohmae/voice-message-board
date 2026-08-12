@@ -10,6 +10,8 @@ package net.mm2d.android.vmb.ui.main
 import android.Manifest
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -37,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +48,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -143,6 +145,7 @@ private fun MainScreenContent(
     val density = LocalDensity.current
     val textFontSize = with(density) { uiState.fontSizeDp.toSp() }
     val scrollState = rememberScrollState()
+    val currentOnEvent by rememberUpdatedState(onEvent)
 
     LaunchedEffect(uiState.text) {
         scrollState.scrollTo(0)
@@ -161,8 +164,8 @@ private fun MainScreenContent(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .observeMainGestures(
-                    onTap = { onEvent(UiEvent.TapText) },
-                    onScale = { onEvent(UiEvent.ScaleFont(it)) },
+                    onTap = { currentOnEvent(UiEvent.TapText) },
+                    onScale = { currentOnEvent(UiEvent.ScaleFont(it)) },
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -312,26 +315,19 @@ private fun Modifier.observeMainGestures(
     onTap: () -> Unit,
     onScale: (Float) -> Unit,
 ): Modifier =
-    pointerInput(onTap, onScale) {
-        awaitPointerEventScope {
-            var downPosition: Offset? = null
-            var downTime = 0L
-            var isTap = false
+    pointerInput(Unit) {
+        awaitEachGesture {
+            val down = awaitFirstDown(
+                requireUnconsumed = false,
+                pass = PointerEventPass.Main,
+            )
+            var isTap = true
             var previousSpan: Float? = null
-            while (true) {
+            var eventTime = down.uptimeMillis
+            do {
                 val event = awaitPointerEvent(PointerEventPass.Main)
                 val pointers = event.changes.filter { it.pressed }
-                if (event.changes.any { it.isConsumed }) {
-                    isTap = false
-                }
-                event.changes
-                    .firstOrNull { it.changedToDown() }
-                    ?.takeIf { pointers.size == 1 }
-                    ?.let {
-                        downPosition = it.position
-                        downTime = it.uptimeMillis
-                        isTap = true
-                    }
+                eventTime = event.changes.maxOfOrNull { it.uptimeMillis } ?: eventTime
                 if (pointers.size >= 2) {
                     isTap = false
                     val span = (pointers[0].position - pointers[1].position).getDistance()
@@ -343,25 +339,18 @@ private fun Modifier.observeMainGestures(
                     previousSpan = span
                 } else {
                     previousSpan = null
-                    downPosition?.let { start ->
-                        val distance = pointers.firstOrNull()
-                            ?.let { (it.position - start).getDistance() }
-                            ?: 0f
-                        if (distance > viewConfiguration.touchSlop) {
-                            isTap = false
-                        }
+                    val distance = pointers
+                        .firstOrNull { it.id == down.id }
+                        ?.let { (it.position - down.position).getDistance() }
+                        ?: 0f
+                    if (distance > viewConfiguration.touchSlop) {
+                        isTap = false
                     }
                 }
-                if (pointers.isEmpty()) {
-                    val upTime = event.changes.firstOrNull()?.uptimeMillis ?: downTime
-                    if (isTap && !event.changes.any { it.isConsumed } &&
-                        upTime - downTime < viewConfiguration.longPressTimeoutMillis
-                    ) {
-                        onTap()
-                    }
-                    downPosition = null
-                    isTap = false
-                }
+            } while (pointers.isNotEmpty())
+
+            if (isTap && eventTime - down.uptimeMillis < viewConfiguration.longPressTimeoutMillis) {
+                onTap()
             }
         }
     }
