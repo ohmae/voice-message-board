@@ -52,7 +52,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
-        viewBinding = true
         buildConfig = true
         compose = true
     }

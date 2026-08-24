@@ -7,6 +7,7 @@
 
 package net.mm2d.android.vmb.ui.license
 
+import android.view.ViewGroup.LayoutParams
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -55,6 +56,7 @@ fun LicenseScreen(
                     settings.setSupportZoom(false)
                     settings.displayZoomControls = false
                     loadUrl("file:///android_asset/license.html")
+                    layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
                 }
             },
             modifier = Modifier
