@@ -14,7 +14,6 @@ androidxBrowser = "1.10.0"
 androidxLifecycle = "2.11.0"
 androidxDataStore = "1.2.1"
 androidxActivity = "1.13.0"
-androidxHiltCompose = "1.4.0"
 composeBom = "2026.09.00"
 material = "1.14.0"
 playAppUpdate = "2.1.0"
@@ -43,7 +42,6 @@ androidxLifecycleViewModelCompose = { group = "androidx.lifecycle", name = "life
 androidxLifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidxDataStorePreferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
-androidxHiltCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltCompose" }
 androidxComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidxComposeUi = { group = "androidx.compose.ui", name = "ui" }
 androidxComposeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics" }

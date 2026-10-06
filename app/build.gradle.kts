@@ -96,7 +96,6 @@ dependencies {
 
     implementation(platform(libs.androidxComposeBom))
     implementation(libs.androidxActivityCompose)
-    implementation(libs.androidxHiltCompose)
     implementation(libs.androidxComposeUi)
     implementation(libs.androidxComposeUiGraphics)
     implementation(libs.androidxComposeUiToolingPreview)

@@ -81,9 +81,6 @@ androidx.fragment:fragment:1.5.4
 androidx.graphics:graphics-path:1.0.1
 androidx.graphics:graphics-shapes-android:1.0.1
 androidx.graphics:graphics-shapes:1.0.1
-androidx.hilt:hilt-lifecycle-viewmodel-compose:1.4.0
-androidx.hilt:hilt-lifecycle-viewmodel:1.4.0
-androidx.hilt:hilt-navigation-compose:1.4.0
 androidx.interpolator:interpolator:1.0.0
 androidx.lifecycle:lifecycle-common-java8:2.11.0
 androidx.lifecycle:lifecycle-common-jvm:2.11.0
@@ -106,12 +103,6 @@ androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.11.0
 androidx.lifecycle:lifecycle-viewmodel-savedstate:2.11.0
 androidx.lifecycle:lifecycle-viewmodel:2.11.0
 androidx.loader:loader:1.0.0
-androidx.navigation:navigation-common-android:2.9.0
-androidx.navigation:navigation-common:2.9.0
-androidx.navigation:navigation-compose-android:2.9.0
-androidx.navigation:navigation-compose:2.9.0
-androidx.navigation:navigation-runtime-android:2.9.0
-androidx.navigation:navigation-runtime:2.9.0
 androidx.navigationevent:navigationevent-android:1.0.0
 androidx.navigationevent:navigationevent-compose-android:1.0.0
 androidx.navigationevent:navigationevent-compose:1.0.0
